@@ -39,9 +39,6 @@
     <ClCompile Include="DataMember.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BstrWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DiaDataSource.h">
