@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataMember.cpp" />
     <ClCompile Include="DiaSymbol.cpp" />
     <ClCompile Include="DiaDataSource.cpp" />
     <ClCompile Include="DiaStruct.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="DiaSymbolEnumerator.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="hashing.h" />
+    <ClInclude Include="DataMember.h" />
     <ClInclude Include="TypeResolution.h" />
     <ClInclude Include="Union.h" />
     <ClInclude Include="UserDefinedType.h" />

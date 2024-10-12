@@ -23,3 +23,5 @@ std::wostream& operator<<(std::wostream& os, const dia::Union& v)
     os << L"} " << structPureName << L", *P" << structPureName << L";";
     return os;
 }
+
+

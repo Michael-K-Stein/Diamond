@@ -1,6 +1,6 @@
 #include "DiaStruct.h"
+#include "DataMember.h"
 #include <sstream>
-
 namespace dia
 {
 DiaSymbolEnumerator Struct::enumerateMembers() const
@@ -20,14 +20,20 @@ std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)
     bool processingBitfield = false;
     LONG previousMemberOffset = -1;
     size_t membersInStringStream = 0;
-    for (const auto& member : diaStruct.enumerateMembers())
+    size_t indentationLevel = 1;
+
+    for (const dia::DataMember& member : diaStruct.enumerateMembers())
     {
         const auto currentOffset = member.getOffset();
         if (previousMemberOffset != currentOffset)
         {
             if (membersInStringStream > 1)
             {
-                os << L"\tunion {\n";
+                for (size_t i = 0; i < indentationLevel; ++i)
+                {
+                    os << L"\t";
+                }
+                os << L"union {\n";
                 os << tmpUnionStream.str();
                 os << L"\t};\n";
             }
@@ -43,28 +49,41 @@ std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)
         {
             if (!processingBitfield)
             {
-                tmpUnionStream << L"\t/* " << " 0x" << std::hex
-                               << member.getOffset() << L" * / \t "
+                for (size_t i = 0; i < indentationLevel; ++i)
+                {
+                    tmpUnionStream << L"\t";
+                }
+                tmpUnionStream << L"/* " << " 0x" << std::hex
+                               << member.getOffset() << L" */ \t "
                                << L"struct {\n";
+                // Now inside an inner struct
+                ++indentationLevel;
             }
             processingBitfield = true;
-            tmpUnionStream << L"\t\t/* " << " 0x" << std::hex
-                           << member.getBitPosition() << L" * / \t ";
-            tmpUnionStream << member << L" : " << std::dec
-                           << member.getLength();
-            tmpUnionStream << L";\n";
+            for (size_t i = 0; i < indentationLevel; ++i)
+            {
+                tmpUnionStream << L"\t";
+            }
+            tmpUnionStream << member << L"\n";
         }
         else
         {
             if (processingBitfield)
             {
-                tmpUnionStream << L"\t\t};\n";
+                for (size_t i = 0; i < indentationLevel; ++i)
+                {
+                    tmpUnionStream << L"\t";
+                }
+                tmpUnionStream << L"};\n";
+                // Inner struct finished
+                --indentationLevel;
             }
             processingBitfield = false;
-            tmpUnionStream << L"\t/* " << " 0x" << std::hex
-                           << member.getOffset() << L" * / \t ";
-            tmpUnionStream << member;
-            tmpUnionStream << L";\n";
+            for (size_t i = 0; i < indentationLevel; ++i)
+            {
+                tmpUnionStream << L"\t";
+            }
+            tmpUnionStream << member << L"\n";
         }
         ++membersInStringStream;
     }
