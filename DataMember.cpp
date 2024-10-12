@@ -2,13 +2,13 @@
 namespace dia
 {
 DataMember::DataMember(const Symbol& other) : Symbol{other} {}
-DataMember& DataMember::operator=(const Symbol& other)
+DataMember DataMember::operator=(const Symbol& other)
 {
     DataMember member{other};
     return member;
 }
 DataMember::DataMember(Symbol&& other) : Symbol{std::move(other)} {}
-DataMember& DataMember::operator=(Symbol&& other)
+DataMember DataMember::operator=(Symbol&& other)
 {
     DataMember member{other};
     return member;

@@ -1,12 +1,76 @@
 #include "DiaStruct.h"
 #include "DataMember.h"
 #include <sstream>
+
+namespace std
+{
+template <>
+struct hash<dia::Struct>
+{
+    size_t operator()(const dia::Struct& diaStruct) const
+    {
+        size_t calculatedHash = 0;
+        const size_t nameHash = hash<std::wstring>()(diaStruct.getName());
+        hash_combine(calculatedHash, std::wstring(L"Struct"), nameHash);
+
+        for (const auto& member : diaStruct.enumerateMembers())
+        {
+            const auto memberOffset = member.getOffset();
+            const auto memberTypeName = member.getFieldCType().getTypeName();
+            const auto memberName = member.getFieldName();
+            const auto memberLength = member.getLength();
+            hash_combine(calculatedHash, memberOffset, memberTypeName,
+                         memberName, memberLength);
+        }
+
+        return calculatedHash;
+    }
+};
+} // namespace std
+
 namespace dia
 {
-DiaSymbolEnumerator Struct::enumerateMembers() const
+DiaSymbolEnumerator<DataMember> Struct::enumerateMembers() const
 {
-    return enumerate(*this, SymTagData);
+    return enumerate<DataMember>(*this, SymTagData);
 }
+std::set<UserDefinedType> Struct::queryDependsOnTypes() const
+{
+    std::set<UserDefinedType> types{};
+    for (const auto& member : enumerateMembers())
+    {
+        if (!member.getFieldCType().isUserDefinedType())
+        {
+            continue;
+        }
+        const auto cType = member.getFieldCType();
+        const auto udt = cType.asUserDefinedType();
+        types.insert(udt);
+    }
+    return types;
+}
+std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
+{
+    std::set<UserDefinedType> types{};
+    for (const auto& member : enumerateMembers())
+    {
+        const auto cType = member.getFieldCType();
+        if (!cType.isPointer())
+        {
+            continue;
+        }
+        const auto decayType = cType.getType();
+        if (!decayType.isUserDefinedType())
+        {
+            continue;
+        }
+        const auto udt = decayType.asUserDefinedType();
+        types.insert(udt);
+    }
+    return types;
+}
+size_t Struct::calcHash() const { return std::hash<Struct>()(*this); }
+
 } // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)

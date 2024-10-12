@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BstrWrapper.cpp" />
     <ClCompile Include="DataMember.cpp" />
     <ClCompile Include="DiaSymbol.cpp" />
     <ClCompile Include="DiaDataSource.cpp" />

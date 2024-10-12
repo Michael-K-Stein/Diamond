@@ -1,44 +1,50 @@
 #pragma once
+#include "DataMember.h"
 #include "DiaSymbol.h"
 #include <atlbase.h>
 #include <cstddef> // For std::ptrdiff_t
 #include <dia2.h>
 #include <iterator> // For std::forward_iterator_tag
 #include <string>
+
 namespace dia
 {
 
-// Forward decleration
+// Forward declaration
+template <typename T = Symbol>
 class DiaSymbolEnumerator;
-DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                              enum SymTagEnum symTag, LPCOLESTR name,
-                              DWORD compareFlags);
 
+template <typename T = Symbol>
+DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
+                                 enum SymTagEnum symTag, LPCOLESTR name,
+                                 DWORD compareFlags);
+
+template <typename T>
 class DiaSymbolEnumerator final
 {
 public:
     static DiaSymbolEnumerator enumerate(const Symbol& parentSymbol)
     {
-        return enumerate(parentSymbol, SymTagNull);
+        return ::dia::enumerate<T>(parentSymbol, SymTagNull);
     }
 
     static DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
                                          enum SymTagEnum symTag)
     {
-        return enumerate(parentSymbol, symTag, nullptr);
+        return ::dia::enumerate<T>(parentSymbol, symTag, nullptr, nsNone);
     }
 
     static DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
                                          enum SymTagEnum symTag, LPCOLESTR name)
     {
-        return enumerate(parentSymbol, symTag, name, nsNone);
+        return ::dia::enumerate<T>(parentSymbol, symTag, name, nsNone);
     }
 
     static DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
                                          enum SymTagEnum symTag, LPCOLESTR name,
                                          DWORD compareFlags)
     {
-        return dia::enumerate(parentSymbol, symTag, name, compareFlags);
+        return ::dia::enumerate<T>(parentSymbol, symTag, name, compareFlags);
     }
 
     class Iterator
@@ -46,9 +52,9 @@ public:
     public:
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
-        using value_type = Symbol;
-        using pointer = Symbol*;
-        using reference = Symbol&;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
 
         // Default constructor (end iterator)
         Iterator()
@@ -68,9 +74,9 @@ public:
 
         // Dereference operators
         reference operator*() { return m_currentData; }
-        const Symbol& operator*() const { return m_currentData; }
+        const T& operator*() const { return m_currentData; }
         pointer operator->() { return &m_currentData; }
-        const Symbol* operator->() const { return &m_currentData; }
+        const T* operator->() const { return &m_currentData; }
 
         // Prefix increment
         Iterator& operator++()
@@ -118,7 +124,7 @@ public:
             if (SUCCEEDED(hr) && celt == 1 && symbol)
             {
                 m_currentSymbol = symbol;
-                m_currentData = Symbol(std::move(symbol));
+                m_currentData = T{std::move(symbol)};
             }
             else
             {
@@ -129,7 +135,7 @@ public:
 
         CComPtr<IDiaEnumSymbols> m_enumSymbols{nullptr};
         CComPtr<IDiaSymbol> m_currentSymbol{nullptr};
-        Symbol m_currentData{};
+        T m_currentData{};
         bool m_endReached{false};
     };
 
@@ -140,43 +146,22 @@ public:
 private:
     DiaSymbolEnumerator() = default;
     DiaSymbolEnumerator(CComPtr<IDiaEnumSymbols>&& enumSymbols)
-        : m_enumSymbols{std::move(enumSymbols)} {};
+        : m_enumSymbols{std::move(enumSymbols)}
+    {
+    }
 
     CComPtr<IDiaEnumSymbols> m_enumSymbols{nullptr};
 
-    friend DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                                         enum SymTagEnum symTag, LPCOLESTR name,
-                                         DWORD compareFlags);
+    // Correct friend function declaration
+    template <typename U>
+    friend DiaSymbolEnumerator<U> enumerate(const Symbol& parentSymbol,
+                                            enum SymTagEnum symTag,
+                                            LPCOLESTR name, DWORD compareFlags);
 };
 
-static inline DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                                            enum SymTagEnum symTag)
-{
-    return DiaSymbolEnumerator::enumerate(parentSymbol, symTag);
-}
-
-static inline DiaSymbolEnumerator
-enumerate(const Symbol& parentSymbol, enum SymTagEnum symTag, LPCOLESTR name)
-{
-    return DiaSymbolEnumerator::enumerate(parentSymbol, symTag, name);
-}
-
-static inline DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                                            enum SymTagEnum symTag,
-                                            LPCOLESTR name, DWORD compareFlags)
-{
-    CComPtr<IDiaEnumSymbols> enumSymbols{nullptr};
-    HRESULT hr = parentSymbol.get()->findChildren(symTag, name, compareFlags,
-                                                  &enumSymbols);
-    if (FAILED(hr) || !enumSymbols)
-    {
-        return {};
-    }
-    return DiaSymbolEnumerator{std::move(enumSymbols)};
-}
-
 // Begin iterator
-inline DiaSymbolEnumerator::Iterator DiaSymbolEnumerator::begin()
+template <typename T>
+inline typename DiaSymbolEnumerator<T>::Iterator DiaSymbolEnumerator<T>::begin()
 {
     if (!m_enumSymbols)
     {
@@ -187,6 +172,40 @@ inline DiaSymbolEnumerator::Iterator DiaSymbolEnumerator::begin()
 }
 
 // End iterator
-inline DiaSymbolEnumerator::Iterator DiaSymbolEnumerator::end() { return Iterator(); }
+template <typename T>
+inline typename DiaSymbolEnumerator<T>::Iterator DiaSymbolEnumerator<T>::end()
+{
+    return Iterator();
+}
+
+// Templated enumerate implementations
+template <typename T>
+inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
+                                        enum SymTagEnum symTag)
+{
+    return enumerate<T>(parentSymbol, symTag, nullptr, nsNone);
+}
+
+template <typename T>
+inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
+                                        enum SymTagEnum symTag, LPCOLESTR name)
+{
+    return enumerate<T>(parentSymbol, symTag, name, nsNone);
+}
+
+template <typename T>
+inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
+                                        enum SymTagEnum symTag, LPCOLESTR name,
+                                        DWORD compareFlags)
+{
+    CComPtr<IDiaEnumSymbols> enumSymbols{nullptr};
+    HRESULT hr = parentSymbol.get()->findChildren(symTag, name, compareFlags,
+                                                  &enumSymbols);
+    if (FAILED(hr) || !enumSymbols)
+    {
+        return {};
+    }
+    return DiaSymbolEnumerator<T>{std::move(enumSymbols)};
+}
 
 } // namespace dia

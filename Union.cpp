@@ -1,12 +1,40 @@
 #include "Union.h"
+#include "DataMember.h"
 #include "DiaSymbolEnumerator.h"
+
+namespace std
+{
+template <>
+struct hash<dia::Union>
+{
+    size_t operator()(const dia::Union& diaUnion) const
+    {
+        size_t calculatedHash = 0;
+        const size_t nameHash = hash<std::wstring>()(diaUnion.getName());
+        hash_combine(calculatedHash, std::wstring(L"Union"), nameHash);
+
+        for (const auto& member : diaUnion.enumerateMembers())
+        {
+            const auto memberOffset = member.getOffset();
+            const auto memberTypeName = member.getFieldCType().getTypeName();
+            const auto memberName = member.getFieldName();
+            const auto memberLength = member.getLength();
+            hash_combine(calculatedHash, memberOffset, memberTypeName,
+                         memberName, memberLength);
+        }
+
+        return calculatedHash;
+    }
+};
+} // namespace std
 
 namespace dia
 {
-DiaSymbolEnumerator Union::enumerateMembers() const
+DiaSymbolEnumerator<DataMember> Union::enumerateMembers() const
 {
-    return enumerate(*this, SymTagData);
+    return enumerate<DataMember>(*this, SymTagData);
 }
+size_t Union::calcHash() const { return std::hash<Union>()(*this); }
 } // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Union& v)
@@ -23,5 +51,3 @@ std::wostream& operator<<(std::wostream& os, const dia::Union& v)
     os << L"} " << structPureName << L", *P" << structPureName << L";";
     return os;
 }
-
-

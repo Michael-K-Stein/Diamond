@@ -3,9 +3,9 @@
 #include "DiaStruct.h"
 #include "DiaSymbolEnumerator.h"
 #include "Exceptions.h"
+
 namespace dia
 {
-
 DiaDataSource::DiaDataSource()
 {
     const auto result = CoCreateInstance(
@@ -44,7 +44,7 @@ void DiaDataSource::loadDataForExe(const std::wstring& exePath)
 std::vector<Symbol> DiaDataSource::getExports(enum SymTagEnum symTag) const
 {
     std::vector<Symbol> items{};
-    auto exports = enumerate(getGlobalScope(), symTag);
+    auto exports = enumerate<Symbol>(getGlobalScope(), symTag);
     for (const auto& item : exports)
     {
         items.push_back(item);

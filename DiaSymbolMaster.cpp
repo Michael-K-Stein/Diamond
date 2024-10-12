@@ -52,7 +52,20 @@ int main()
         //     L"pdb\\36D4EAA48F7E03C46A5F0FDE2A8F78301\\ntkrnlmp.pdb");
         // // dia.loadDataForExe(L"C:\\Windows\\System32\\ntoskrnl.exe");
 
-        std::wcout << dia.getExportedStruct(L"_KTHREAD") << std::endl;
+        const auto& kthread = dia.getExportedStruct(L"_KTHREAD");
+        std::wcout << kthread << std::endl;
+
+        std::wcout << L"Depends on: " << std::endl;
+        for (const auto& type : kthread.queryDependsOnTypes())
+        {
+            std::wcout << type.getTypeName() << std::endl;
+        }
+
+        std::wcout << L"Depends on (as pointers): " << std::endl;
+        for (const auto& type : kthread.queryDependsOnForwardTypes())
+        {
+            std::wcout << type.getTypeName() << std::endl;
+        }
 
         return 0;
 

@@ -15,7 +15,7 @@ enum UdtKind UserDefinedType::getUdtKind() const
 
 bool UserDefinedType::isUnion() const { return UdtUnion == getUdtKind(); }
 
-Union& UserDefinedType::asUnion() const
+Union UserDefinedType::asUnion() const
 {
     Union u{*this};
     return u;
@@ -23,10 +23,23 @@ Union& UserDefinedType::asUnion() const
 
 bool UserDefinedType::isStruct() const { return UdtStruct == getUdtKind(); }
 
-Struct& UserDefinedType::asStruct() const
+Struct UserDefinedType::asStruct() const
 {
     Struct s{*this};
     return s;
+}
+
+size_t UserDefinedType::calcHash() const
+{
+    if (isStruct())
+    {
+        return asStruct().calcHash();
+    }
+    if (isUnion())
+    {
+        return asUnion().calcHash();
+    }
+    throw std::runtime_error("Invalid UDT kind!");
 }
 
 } // namespace dia

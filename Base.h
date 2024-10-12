@@ -53,6 +53,7 @@ Base<InterfaceT>::operator=(Base<InterfaceT>&& other) noexcept
 template <typename InterfaceT>
 inline Base<InterfaceT>::Base(const Base& other) : m_itemRef{other.m_itemRef}
 {
+    incRef();
 }
 
 template <typename InterfaceT>
@@ -60,6 +61,7 @@ inline Base<InterfaceT>&
 Base<InterfaceT>::operator=(const Base<InterfaceT>& other) noexcept
 {
     Base base{other.m_itemRef};
+    base.get().p->AddRef();
     return base;
 }
 
@@ -81,7 +83,7 @@ inline bool Base<InterfaceT>::operator!() const
 template <typename InterfaceT>
 inline void Base<InterfaceT>::incRef()
 {
-    // m_itemRef.p->AddRef();
+    m_itemRef.p->AddRef();
 }
 
 template <typename InterfaceT>

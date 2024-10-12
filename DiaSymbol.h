@@ -10,10 +10,15 @@ namespace dia
 
 // Forward decleration
 class Symbol;
+class DataMember;
+
+template <typename T>
 class DiaSymbolEnumerator;
-DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                              enum SymTagEnum symTag, LPCOLESTR name,
-                              DWORD compareFlags);
+
+template <typename T>
+DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
+                                 enum SymTagEnum symTag, LPCOLESTR name,
+                                 DWORD compareFlags);
 
 // Derived Types
 class UserDefinedType;
@@ -40,17 +45,25 @@ public:
     using Base::operator=;
 
     bool isArray() const;
+    bool isPointer() const;
 
-    bool isUserDefinedType() const { return SymTagUDT == getSymTag(); }
-    UserDefinedType& asUserDefinedType() const;
+    bool isUserDefinedType() const
+    {
+        return SymTagUDT == getSymTag() || SymTagEnum == getSymTag() ||
+               SymTagTypedef == getSymTag();
+    }
+    UserDefinedType asUserDefinedType() const;
 
 protected:
     using Base::get;
 
 private:
-    friend DiaSymbolEnumerator enumerate(const Symbol& parentSymbol,
-                                         enum SymTagEnum symTag, LPCOLESTR name,
-                                         DWORD compareFlags);
+    friend DiaSymbolEnumerator<Symbol>
+    enumerate<Symbol>(const Symbol& parentSymbol, enum SymTagEnum symTag,
+                      LPCOLESTR name, DWORD compareFlags);
+    friend DiaSymbolEnumerator<DataMember>
+    enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag,
+                          LPCOLESTR name, DWORD compareFlags);
 };
 } // namespace dia
 

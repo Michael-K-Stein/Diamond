@@ -5,11 +5,12 @@ namespace dia
 class DataMember : public Symbol
 {
 public:
+    DataMember() = default;
     using Symbol::Symbol;
     DataMember(const Symbol& other);
-    DataMember& operator=(const Symbol& other);
+    DataMember operator=(const Symbol& other);
     DataMember(Symbol&& other);
-    DataMember& operator=(Symbol&& other);
+    DataMember operator=(Symbol&& other);
 
     std::wstring getFieldName() const;
     Symbol getFieldCType() const;

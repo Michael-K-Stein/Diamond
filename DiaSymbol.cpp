@@ -1,5 +1,6 @@
 #pragma once
 #include "DiaSymbol.h"
+#include "BstrWrapper.h"
 #include "Exceptions.h"
 #include "TypeResolution.h"
 #include "UserDefinedType.h"
@@ -8,19 +9,10 @@ namespace dia
 {
 const std::wstring Symbol::getName() const
 {
-    if (!get())
-    {
-        return L"";
-    }
-
-    BSTR nameBSTR = nullptr;
-    if (SUCCEEDED(get()->get_name(&nameBSTR)) && nameBSTR)
-    {
-        std::wstring name(nameBSTR, SysStringLen(nameBSTR));
-        SysFreeString(nameBSTR);
-        return name;
-    }
-    return L"";
+    BstrWrapper bstr{};
+    const auto result = get()->get_name(bstr.makeFromRaw());
+    CHECK_DIACOM_EXCEPTION("Failed to get symbol's name!", result);
+    return bstr;
 }
 
 LONG Symbol::getOffset() const
@@ -34,11 +26,6 @@ LONG Symbol::getOffset() const
 // Update the GetType() function in the Symbol class
 Symbol Symbol::getType() const
 {
-    if (!get())
-    {
-        return {};
-    }
-
     Symbol typeSymbol{};
     const auto result = get()->get_type(&typeSymbol.makeFromRaw());
     CHECK_DIACOM_EXCEPTION("Failed to get symbol's type symbol!", result);
@@ -110,7 +97,9 @@ bool Symbol::isVolatile() const
 
 bool Symbol::isArray() const { return SymTagArrayType == getSymTag(); }
 
-UserDefinedType& Symbol::asUserDefinedType() const
+bool Symbol::isPointer() const { return SymTagPointerType == getSymTag(); }
+
+UserDefinedType Symbol::asUserDefinedType() const
 {
     UserDefinedType udt(*this);
     return udt;

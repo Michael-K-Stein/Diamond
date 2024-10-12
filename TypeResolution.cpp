@@ -158,6 +158,10 @@ std::wstring dia::resolveTypeName(const Symbol& symbol)
         const auto typeName = symbol.getName();
         return typeName;
     }
+    case SymTagFunctionType:
+    {
+        return L"Function : " + symbol.getName();
+    }
     default:
         std::wcerr << L"Unknown tag type: " << std::to_wstring(symTag)
                    << std::endl;
