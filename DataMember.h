@@ -1,19 +1,19 @@
 #pragma once
-#include "DiaSymbol.h"
+#include "DiaData.h"
 namespace dia
 {
-class DataMember : public Symbol
+class DataMember : public Data
 {
 public:
     DataMember() = default;
-    using Symbol::Symbol;
-    DataMember(const Symbol& other);
-    DataMember operator=(const Symbol& other);
-    DataMember(Symbol&& other);
-    DataMember operator=(Symbol&& other);
+    using Data::Data;
+    DataMember(const Data& other);
+    DataMember operator=(const Data& other);
+    DataMember(Data&& other);
+    DataMember operator=(Data&& other);
 
     std::wstring getFieldName() const;
-    Symbol getFieldCType() const;
+    const Symbol getFieldCType() const;
 
 protected:
 private:

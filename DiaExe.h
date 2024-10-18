@@ -9,5 +9,8 @@ namespace dia
 /// It serves as the global scope and does not have a lexical parent.
 class Exe : protected Symbol
 {
+public:
+    using Symbol::Symbol;
+    TRIVIAL_CONVERT(Symbol, Exe);
 };
 } // namespace dia

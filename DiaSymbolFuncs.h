@@ -1,4 +1,5 @@
 #pragma once
+#include "Base.h"
 #include "BstrWrapper.h"
 #include <dia2.h>
 #include <vector>
@@ -9,86 +10,100 @@
 // Notice that all the functions are alphabetically sorted, and should remain as
 // such!
 
+#define DEFINE_TRIVIAL_DIA_WRAPPER(wrapperName, diaInterface)                  \
+    class wrapperName : public Base<diaInterface>                              \
+    {                                                                          \
+    public:                                                                    \
+        using Base<diaInterface>::Base;                                        \
+    };
+
 namespace dia
 {
+// Forward declaration
+template <typename T>
+class DiaSymbolEnumerator;
 
 class Symbol;
-class SymbolEnum;
-class FrameEnum;
-class LineEnum;
-class Address;
-class AssemblyFile;
-class TagArray;
-class AccessModifier;
-class LineNumber;
-class DataBytes;
-class Tag;
+using SymbolEnum = DiaSymbolEnumerator<Symbol>;
+DEFINE_TRIVIAL_DIA_WRAPPER(Frame, IDiaFrameData);
+DEFINE_TRIVIAL_DIA_WRAPPER(LineNumber, IDiaLineNumber);
+using FrameEnum = DiaSymbolEnumerator<Frame>;
+using LineEnum = DiaSymbolEnumerator<LineNumber>;
+DEFINE_TRIVIAL_DIA_WRAPPER(InputAssemblyFile, IDiaInputAssemblyFile);
+using Tag = DWORD;
+using TagArray = std::vector<Tag>;
+using Address = IDiaEnumLineNumbers; // ???
+enum class AccessModifier : DWORD
+{
+    Private = CV_private,
+    Protected = CV_protected,
+    Public = CV_public,
+};
+using DataBytes = std::vector<BYTE>;
 using RVA = DWORD;
 using VA = DWORD;
 
 /// @brief Retrieves all children of the symbol.
 /// @param symbol The symbol of which to get the children.
 /// @return An enumeration of the children symbols.
-static const SymbolEnum findChildren(const Symbol& symbol);
+const SymbolEnum findChildren(const Symbol& symbol);
 
 /// @brief Retrieves the children of the symbol. This method is the extended
 /// version of findChildren.
 /// @param symbol The symbol of which to get the children.
 /// @return An enumeration of the children symbols.
-static const SymbolEnum findChildrenEx(const Symbol& symbol);
+const SymbolEnum findChildrenEx(const Symbol& symbol);
 
 /// @brief Retrieves the children of the symbol that are valid at a
 /// specified address.
 /// @param symbol The symbol of which to get the children.
 /// @param address The address to filter the children.
 /// @return An enumeration of the children symbols.
-static const SymbolEnum findChildrenExByAddr(const Symbol& symbol,
-                                             const Address& address);
+const SymbolEnum findChildrenExByAddr(const Symbol& symbol,
+                                      const Address& address);
 
 /// @brief Retrieves the children of the symbol that are valid at a
 /// specified relative virtual address (RVA).
 /// @param symbol The symbol of which to get the children.
 /// @param rva The relative virtual address to filter the children.
 /// @return An enumeration of the children symbols.
-static const SymbolEnum findChildrenExByRVA(const Symbol& symbol,
-                                            const RVA& rva);
+const SymbolEnum findChildrenExByRVA(const Symbol& symbol, const RVA& rva);
 
 /// @brief Retrieves the children of the symbol that are valid at a
 /// specified virtual address (VA).
 /// @param symbol The symbol of which to get the children.
 /// @param va The virtual address to filter the children.
 /// @return An enumeration of the children symbols.
-static const SymbolEnum findChildrenExByVA(const Symbol& symbol, const VA& va);
+const SymbolEnum findChildrenExByVA(const Symbol& symbol, const VA& va);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// all of the inline frames on a given address.
 /// @param symbol The symbol of which to get the inline frames.
 /// @param address The address to filter the inline frames.
 /// @return An enumeration of the inline frames.
-static const FrameEnum findInlineFramesByAddr(const Symbol& symbol,
-                                              const Address& address);
+const FrameEnum findInlineFramesByAddr(const Symbol& symbol,
+                                       const Address& address);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// all of the inline frames on a specified relative virtual address (RVA).
 /// @param symbol The symbol of which to get the inline frames.
 /// @param rva The relative virtual address to filter the inline frames.
 /// @return An enumeration of the inline frames.
-static const FrameEnum findInlineFramesByRVA(const Symbol& symbol,
-                                             const RVA& rva);
+const FrameEnum findInlineFramesByRVA(const Symbol& symbol, const RVA& rva);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// all of the inline frames on a specified virtual address (VA).
 /// @param symbol The symbol of which to get the inline frames.
 /// @param va The virtual address to filter the inline frames.
 /// @return An enumeration of the inline frames.
-static const FrameEnum findInlineFramesByVA(const Symbol& symbol, const VA& va);
+const FrameEnum findInlineFramesByVA(const Symbol& symbol, const VA& va);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// the line number information of all functions that are inlined, directly
 /// or indirectly, in this symbol.
 /// @param symbol The symbol of which to get the inlinee lines.
 /// @return An enumeration of the inlinee lines.
-static const LineEnum findInlineeLines(const Symbol& symbol);
+const LineEnum findInlineeLines(const Symbol& symbol);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// the line number information of all functions that are inlined, directly
@@ -96,8 +111,8 @@ static const LineEnum findInlineeLines(const Symbol& symbol);
 /// @param symbol The symbol of which to get the inlinee lines.
 /// @param address The address range to filter the inlinee lines.
 /// @return An enumeration of the inlinee lines.
-static const LineEnum findInlineeLinesByAddr(const Symbol& symbol,
-                                             const Address& address);
+const LineEnum findInlineeLinesByAddr(const Symbol& symbol,
+                                      const Address& address);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// the line number information of all functions that are inlined, directly
@@ -106,8 +121,7 @@ static const LineEnum findInlineeLinesByAddr(const Symbol& symbol,
 /// @param symbol The symbol of which to get the inlinee lines.
 /// @param rva The relative virtual address to filter the inlinee lines.
 /// @return An enumeration of the inlinee lines.
-static const LineEnum findInlineeLinesByRVA(const Symbol& symbol,
-                                            const RVA& rva);
+const LineEnum findInlineeLinesByRVA(const Symbol& symbol, const RVA& rva);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// the line number information of all functions that are inlined, directly
@@ -115,13 +129,13 @@ static const LineEnum findInlineeLinesByRVA(const Symbol& symbol,
 /// @param symbol The symbol of which to get the inlinee lines.
 /// @param va The virtual address to filter the inlinee lines.
 /// @return An enumeration of the inlinee lines.
-static const LineEnum findInlineeLinesByVA(const Symbol& symbol, const VA& va);
+const LineEnum findInlineeLinesByVA(const Symbol& symbol, const VA& va);
 
 /// @brief Retrieves the .NET Native input assembly file that is the parent
 /// of the symbol.
 /// @param symbol The symbol of which to get the input assembly file.
 /// @return The input assembly file.
-static const AssemblyFile findInputAssemblyFile(const Symbol& symbol);
+const InputAssemblyFile findInputAssemblyFile(const Symbol& symbol);
 
 /// @brief Given a corresponding tag value, this method returns an
 /// enumeration of symbols that are contained in this stub function at a
@@ -130,28 +144,29 @@ static const AssemblyFile findInputAssemblyFile(const Symbol& symbol);
 /// @param rva The relative virtual address to filter the symbols.
 /// @param tag The tag value to filter the symbols.
 /// @return An enumeration of the symbols.
-static const SymbolEnum
-findSymbolsByRVAForAcceleratorPointerTag(const Symbol& symbol, const RVA& rva,
-                                         const Tag& tag);
+const SymbolEnum findSymbolsByRVAForAcceleratorPointerTag(const Symbol& symbol,
+                                                          const RVA& rva,
+                                                          const Tag& tag);
 
 #if 0
 /// @brief Returns the number of accelerator pointer tags in a C++ AMP stub
 /// function.
 /// @param symbol The symbol of which to get the accelerator pointer tags.
 /// @return The number of accelerator pointer tags.
-static const int findSymbolsForAcceleratorPointerTag(const Symbol& symbol);
+const int findSymbolsForAcceleratorPointerTag(const Symbol& symbol);
 #endif
 
 /// @brief Returns all accelerator pointer tag values that correspond to a
 /// C++ AMP accelerator stub function.
 /// @param symbol The symbol of which to get the accelerator pointer tags.
 /// @return An array of accelerator pointer tag values.
-static const TagArray getAcceleratorPointerTags(const Symbol& symbol);
+const TagArray
+getAcceleratorPointerTags(const Symbol& symbol); // TODO: Imlement
 
 /// @brief Retrieves the access modifier of a class member.
 /// @param symbol The symbol of which to get the access modifier.
 /// @return The access modifier.
-static const AccessModifier getAccess(const Symbol& symbol);
+AccessModifier getAccess(const Symbol& symbol);
 
 /// @brief Retrieves the offset part of an address location. Use when the
 /// LocationType Enumeration is set to LocIsStatic.
@@ -164,7 +179,7 @@ static const AccessModifier getAccess(const Symbol& symbol);
 /// been called with a nonzero parameter specifying the load address of the
 /// DLL. To get the section part of an address, call the
 /// IDiaSymbol::get_addressSection method.
-static DWORD getAddressOffset(const Symbol& symbol);
+DWORD getAddressOffset(const Symbol& symbol);
 
 /// @brief Retrieves the section part of an address location. Use when the
 /// LocationType Enumeration is set to LocIsStatic.
@@ -177,226 +192,233 @@ static DWORD getAddressOffset(const Symbol& symbol);
 /// been called with a nonzero parameter specifying the load address of the
 /// DLL. To get the offset part of an address, call the
 /// IDiaSymbol::get_addressOffset method.
-static DWORD getAddressSection(const Symbol& symbol);
+DWORD getAddressSection(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol's address is taken.
 /// @param symbol The symbol of which to get the address-taken status.
 /// @return True if the symbol's address is taken, otherwise false.
-static bool getAddressTaken(const Symbol& symbol);
+bool getAddressTaken(const Symbol& symbol);
 
 /// @brief Retrieves the age of the symbol.
 /// @param symbol The symbol of which to get the age.
 /// @return The age.
-static DWORD getAge(const Symbol& symbol);
+DWORD getAge(const Symbol& symbol);
+
+/// @brief Retrieves the symbol interface of the array index type of the symbol.
+/// @param symbol The symbol of which to get the array index type.
+/// @return An Symbol object that represents the array index type of the symbol.
+/// @note Some languages can specify the type used as an index to an array. The
+/// symbol returned from this method specifies that type.
+const Symbol getArrayIndexType(const Symbol& symbol);
 
 /// @brief Retrieves the array index type ID of the symbol.
 /// @param symbol The symbol of which to get the array index type ID.
 /// @return The array index type ID.
-static DWORD getArrayIndexTypeId(const Symbol& symbol);
+DWORD getArrayIndexTypeId(const Symbol& symbol);
 
 /// @brief Retrieves the back end build number of the compiler.
 /// @param symbol The symbol of which to get the back end build number.
 /// @return The back end build number.
-static DWORD getBackEndBuild(const Symbol& symbol);
+DWORD getBackEndBuild(const Symbol& symbol);
 
 /// @brief Retrieves the back end major version number of the compiler.
 /// @param symbol The symbol of which to get the back end major version number.
 /// @return The back end major version number.
-static DWORD getBackEndMajor(const Symbol& symbol);
+DWORD getBackEndMajor(const Symbol& symbol);
 
 /// @brief Retrieves the back end minor version number of the compiler.
 /// @param symbol The symbol of which to get the back end minor version number.
 /// @return The back end minor version number.
-static DWORD getBackEndMinor(const Symbol& symbol);
+DWORD getBackEndMinor(const Symbol& symbol);
 
 /// @brief Retrieves the back end QFE number of the compiler.
 /// @param symbol The symbol of which to get the back end QFE number.
 /// @return The back end QFE number.
-static DWORD getBackEndQFE(const Symbol& symbol);
+DWORD getBackEndQFE(const Symbol& symbol);
 
 /// @brief Retrieves the base data offset of the symbol.
 /// @param symbol The symbol of which to get the base data offset.
 /// @return The base data offset.
-static DWORD getBaseDataOffset(const Symbol& symbol);
+DWORD getBaseDataOffset(const Symbol& symbol);
 
 /// @brief Retrieves the base data slot of the symbol.
 /// @param symbol The symbol of which to get the base data slot.
 /// @return The base data slot.
-static DWORD getBaseDataSlot(const Symbol& symbol);
+DWORD getBaseDataSlot(const Symbol& symbol);
 
 /// @brief Retrieves the base symbol of the current symbol.
 /// @param symbol The symbol of which to get the base symbol.
 /// @return The base symbol.
-static const Symbol getBaseSymbol(const Symbol& symbol);
+const Symbol getBaseSymbol(const Symbol& symbol);
 
 /// @brief Retrieves the base symbol ID of the current symbol.
 /// @param symbol The symbol of which to get the base symbol ID.
 /// @return The base symbol ID.
-static DWORD getBaseSymbolId(const Symbol& symbol);
+DWORD getBaseSymbolId(const Symbol& symbol);
 
 /// @brief Retrieves the base type of the symbol.
 /// @param symbol The symbol of which to get the base type.
 /// @return The base type.
-static DWORD getBaseType(const Symbol& symbol);
+DWORD getBaseType(const Symbol& symbol);
 
 /// @brief Retrieves the binding ID of the symbol.
 /// @param symbol The symbol of which to get the binding ID.
 /// @return The binding ID.
-static DWORD getBindID(const Symbol& symbol);
+DWORD getBindID(const Symbol& symbol);
 
 /// @brief Retrieves the binding slot of the symbol.
 /// @param symbol The symbol of which to get the binding slot.
 /// @return The binding slot.
-static DWORD getBindSlot(const Symbol& symbol);
+DWORD getBindSlot(const Symbol& symbol);
 
 /// @brief Retrieves the binding space.
 /// @param symbol The symbol of which to get the binding space.
 /// @return The binding space.
-static DWORD getBindSpace(const Symbol& symbol);
+DWORD getBindSpace(const Symbol& symbol);
 
 /// @brief Retrieves the bit field of the current symbol.
 /// @param symbol The symbol of which to get the bit field.
 /// @return The bit field.
-static DWORD getBitField(const Symbol& symbol);
+DWORD getBitField(const Symbol& symbol);
 
 /// @brief Retrieves the bit position of the current symbol.
 /// @param symbol The symbol of which to get the bit position.
 /// @return The bit position.
-static DWORD getBitPosition(const Symbol& symbol);
+DWORD getBitPosition(const Symbol& symbol);
 
 /// @brief Retrieves the bit size of the current symbol.
 /// @param symbol The symbol of which to get the bit size.
 /// @return The bit size.
-static DWORD getBitSize(const Symbol& symbol);
+DWORD getBitSize(const Symbol& symbol);
 
 /// @brief Retrieves a built-in kind of the HLSL type.
 /// @param symbol The symbol of which to get the built-in kind.
 /// @return The built-in kind.
-static DWORD getBuiltInKind(const Symbol& symbol);
+DWORD getBuiltInKind(const Symbol& symbol);
 
 /// @brief Returns an indicator of a method's calling convention.
 /// @param symbol The symbol of which to get the calling convention.
 /// @return The calling convention.
-static DWORD getCallingConvention(const Symbol& symbol);
+DWORD getCallingConvention(const Symbol& symbol);
 
 /// @brief Retrieves the characteristics of this COFF section.
 /// @param symbol The symbol of which to get the characteristics.
 /// @return The characteristics.
-static DWORD getCharacteristics(const Symbol& symbol);
+DWORD getCharacteristics(const Symbol& symbol);
 
 /// @brief Retrieves a reference to the class parent of the symbol.
 /// @param symbol
 /// @return An IDiaSymbol object that represents the class parent of the
 /// symbol.
-static const Symbol getClassParent(const Symbol& symbol);
+const Symbol getClassParent(const Symbol& symbol);
 
 /// @brief Retrieves the class parent ID of the symbol.
 /// @param symbol The symbol of which to get the class parent ID.
 /// @return The class parent ID.
-static DWORD getClassParentId(const Symbol& symbol);
+DWORD getClassParentId(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol represents code.
 /// @param symbol The symbol of which to get the code status.
 /// @return True if the symbol represents code, otherwise false.
-static bool getCode(const Symbol& symbol);
+bool getCode(const Symbol& symbol);
 
 /// @brief Retrieves the COFF group symbol this symbol comes from.
 /// @param symbol The symbol of which to get the COFF group.
 /// @return The COFF group symbol.
-static const Symbol getCoffGroup(const Symbol& symbol);
+const Symbol getCoffGroup(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is compiler-generated.
 /// @param symbol The symbol of which to get the compiler-generated status.
 /// @return True if the symbol is compiler-generated, otherwise false.
-static bool getCompilerGenerated(const Symbol& symbol);
+bool getCompilerGenerated(const Symbol& symbol);
 
 /// @brief Retrieves the compiler name of the symbol.
 /// @param symbol The symbol of which to get the compiler name.
 /// @return The compiler name.
-static const BstrWrapper getCompilerName(const Symbol& symbol);
+const BstrWrapper getCompilerName(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the user-defined data type is
 /// constant.
 /// @param symbol The symbol of which to get the constant status.
 /// @return Whether the UDT is constant.
-static bool getConstType(const Symbol& symbol);
+bool getConstType(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a constant export.
 /// @param symbol The symbol of which to get the constant export status.
 /// @return True if the symbol is a constant export, otherwise false.
-static bool getConstantExport(const Symbol& symbol);
+bool getConstantExport(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a constructor.
 /// @param symbol The symbol of which to get the constructor status.
 /// @return True if the symbol is a constructor, otherwise false.
-static bool getConstructor(const Symbol& symbol);
+bool getConstructor(const Symbol& symbol);
 
 /// @brief Retrieves the container of the symbol.
 /// @param symbol The symbol of which to get the container.
 /// @return The container.
-static const Symbol getContainer(const Symbol& symbol);
+const Symbol getContainer(const Symbol& symbol);
 
 /// @brief Retrieves the count of the symbol.
 /// @param symbol The symbol of which to get the count.
 /// @return The count.
-static DWORD getCount(const Symbol& symbol);
+DWORD getCount(const Symbol& symbol);
 
 /// @brief Retrieves the count of live ranges of the symbol.
 /// @param symbol The symbol of which to get the count of live ranges.
 /// @return The count of live ranges.
-static DWORD getCountLiveRanges(const Symbol& symbol);
+DWORD getCountLiveRanges(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the function uses a custom
 /// calling convention.
 /// @param symbol The symbol of which to check for custom calling convention.
 /// @return True if the symbol has a custom calling convention, otherwise false.
-static bool getCustomCallingConvention(const Symbol& symbol);
+bool getCustomCallingConvention(const Symbol& symbol);
 
 /// @brief Retrieves the data bytes of the symbol.
 /// @param symbol The symbol of which to get the data bytes.
 /// @return The data bytes.
-static const DataBytes getDataBytes(const Symbol& symbol);
+const DataBytes getDataBytes(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a data export.
 /// @param symbol The symbol of which to get the data export status.
 /// @return True if the symbol is a data export, otherwise false.
-static bool getDataExport(const Symbol& symbol);
+bool getDataExport(const Symbol& symbol);
 
 /// @brief Retrieves the variable classification of a data symbol.
 /// @param symbol
 /// @return A value from the DataKind Enumeration enumeration specifying the
 /// kind of data such as global, static, or constant, for example.
-static enum DataKind getDataKind(const Symbol& symbol);
+enum DataKind getDataKind(const Symbol& symbol);
 
 /// @brief Retrieves whether Edit and Continue is enabled for the symbol.
 /// @param symbol The symbol of which to get the Edit and Continue status.
 /// @return True if Edit and Continue is enabled, otherwise false.
-static bool getEditAndContinueEnabled(const Symbol& symbol);
+bool getEditAndContinueEnabled(const Symbol& symbol);
 
 /// @brief Retrieves the exception handler address offset of the symbol.
 /// @param symbol The symbol of which to get the exception handler address
 /// offset.
 /// @return The exception handler address offset.
-static DWORD getExceptionHandlerAddressOffset(const Symbol& symbol);
+DWORD getExceptionHandlerAddressOffset(const Symbol& symbol);
 
 /// @brief Retrieves the exception handler address section of the symbol.
 /// @param symbol The symbol of which to get the exception handler address
 /// section.
 /// @return The exception handler address section.
-static DWORD getExceptionHandlerAddressSection(const Symbol& symbol);
+DWORD getExceptionHandlerAddressSection(const Symbol& symbol);
 
 /// @brief Retrieves the exception handler relative virtual address of the
 /// symbol.
 /// @param symbol The symbol of which to get the exception handler relative
 /// virtual address.
 /// @return The exception handler relative virtual address.
-static DWORD getExceptionHandlerRelativeVirtualAddress(const Symbol& symbol);
+DWORD getExceptionHandlerRelativeVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves the exception handler virtual address of the symbol.
 /// @param symbol The symbol of which to get the exception handler virtual
 /// address.
 /// @return The exception handler virtual address.
-static ULONGLONG getExceptionHandlerVirtualAddress(const Symbol& symbol);
+ULONGLONG getExceptionHandlerVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol's export has an explicitly assigned
 /// ordinal.
@@ -404,187 +426,187 @@ static ULONGLONG getExceptionHandlerVirtualAddress(const Symbol& symbol);
 /// status.
 /// @return True if the symbol's export has an explicitly assigned ordinal,
 /// otherwise false.
-static bool getExportHasExplicitlyAssignedOrdinal(const Symbol& symbol);
+bool getExportHasExplicitlyAssignedOrdinal(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol's export is a forwarder.
 /// @param symbol The symbol of which to get the forwarder status.
 /// @return True if the symbol's export is a forwarder, otherwise false.
-static bool getExportIsForwarder(const Symbol& symbol);
+bool getExportIsForwarder(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a far return.
 /// @param symbol The symbol of which to get the far return status.
 /// @return True if the symbol has a far return, otherwise false.
-static bool getFarReturn(const Symbol& symbol);
+bool getFarReturn(const Symbol& symbol);
 
 /// @brief Retrieves the final live static size of the symbol.
 /// @param symbol The symbol of which to get the final live static size.
 /// @return The final live static size.
-static DWORD getFinalLiveStaticSize(const Symbol& symbol);
+DWORD getFinalLiveStaticSize(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a frame pointer present.
 /// @param symbol The symbol of which to get the frame pointer present status.
 /// @return True if the symbol has a frame pointer present, otherwise false.
-static bool getFramePointerPresent(const Symbol& symbol);
+bool getFramePointerPresent(const Symbol& symbol);
 
 /// @brief Retrieves the frame size of the symbol.
 /// @param symbol The symbol of which to get the frame size.
 /// @return The frame size.
-static DWORD getFrameSize(const Symbol& symbol);
+DWORD getFrameSize(const Symbol& symbol);
 
 /// @brief Retrieves the front end build number of the compiler.
 /// @param symbol The symbol of which to get the front end build number.
 /// @return The front end build number.
-static DWORD getFrontEndBuild(const Symbol& symbol);
+DWORD getFrontEndBuild(const Symbol& symbol);
 
 /// @brief Retrieves the front end major version number of the compiler.
 /// @param symbol The symbol of which to get the front end major version number.
 /// @return The front end major version number.
-static DWORD getFrontEndMajor(const Symbol& symbol);
+DWORD getFrontEndMajor(const Symbol& symbol);
 
 /// @brief Retrieves the front end minor version number of the compiler.
 /// @param symbol The symbol of which to get the front end minor version number.
 /// @return The front end minor version number.
-static DWORD getFrontEndMinor(const Symbol& symbol);
+DWORD getFrontEndMinor(const Symbol& symbol);
 
 /// @brief Retrieves the front end QFE number of the compiler.
 /// @param symbol The symbol of which to get the front end QFE number.
 /// @return The front end QFE number.
-static DWORD getFrontEndQFE(const Symbol& symbol);
+DWORD getFrontEndQFE(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol represents a function.
 /// @param symbol The symbol of which to get the function status.
 /// @return True if the symbol represents a function, otherwise false.
-static bool getFunction(const Symbol& symbol);
+bool getFunction(const Symbol& symbol);
 
 /// @brief Retrieves the GUID of the symbol.
 /// @param symbol The symbol of which to get the GUID.
 /// @return The GUID.
-static const GUID getGuid(const Symbol& symbol);
+const GUID getGuid(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has an alloca.
 /// @param symbol The symbol of which to get the alloca status.
 /// @return True if the symbol has an alloca, otherwise false.
-static bool getHasAlloca(const Symbol& symbol);
+bool getHasAlloca(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has an assignment operator.
 /// @param symbol The symbol of which to get the assignment operator status.
 /// @return True if the symbol has an assignment operator, otherwise false.
-static bool getHasAssignmentOperator(const Symbol& symbol);
+bool getHasAssignmentOperator(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a cast operator.
 /// @param symbol The symbol of which to get the cast operator status.
 /// @return True if the symbol has a cast operator, otherwise false.
-static bool getHasCastOperator(const Symbol& symbol);
+bool getHasCastOperator(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a control flow check.
 /// @param symbol The symbol of which to get the control flow check status.
 /// @return True if the symbol has a control flow check, otherwise false.
-static bool getHasControlFlowCheck(const Symbol& symbol);
+bool getHasControlFlowCheck(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has debug information.
 /// @param symbol The symbol of which to get the debug information status.
 /// @return True if the symbol has debug information, otherwise false.
-static bool getHasDebugInfo(const Symbol& symbol);
+bool getHasDebugInfo(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has exception handling.
 /// @param symbol The symbol of which to get the exception handling status.
 /// @return True if the symbol has exception handling, otherwise false.
-static bool getHasEH(const Symbol& symbol);
+bool getHasEH(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has asynchronous exception handling.
 /// @param symbol The symbol of which to get the asynchronous exception handling
 /// status.
 /// @return True if the symbol has asynchronous exception handling, otherwise
 /// false.
-static bool getHasEHa(const Symbol& symbol);
+bool getHasEHa(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has inline assembly.
 /// @param symbol The symbol of which to get the inline assembly status.
 /// @return True if the symbol has inline assembly, otherwise false.
-static bool getHasInlAsm(const Symbol& symbol);
+bool getHasInlAsm(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a long jump.
 /// @param symbol The symbol of which to get the long jump status.
 /// @return True if the symbol has a long jump, otherwise false.
-static bool getHasLongJump(const Symbol& symbol);
+bool getHasLongJump(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has managed code.
 /// @param symbol The symbol of which to get the managed code status.
 /// @return True if the symbol has managed code, otherwise false.
-static bool getHasManagedCode(const Symbol& symbol);
+bool getHasManagedCode(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has nested types.
 /// @param symbol The symbol of which to get the nested types status.
 /// @return True if the symbol has nested types, otherwise false.
-static bool getHasNestedTypes(const Symbol& symbol);
+bool getHasNestedTypes(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has structured exception handling.
 /// @param symbol The symbol of which to get the structured exception handling
 /// status.
 /// @return True if the symbol has structured exception handling, otherwise
 /// false.
-static bool getHasSEH(const Symbol& symbol);
+bool getHasSEH(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has security checks.
 /// @param symbol The symbol of which to get the security checks status.
 /// @return True if the symbol has security checks, otherwise false.
-static bool getHasSecurityChecks(const Symbol& symbol);
+bool getHasSecurityChecks(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a set jump.
 /// @param symbol The symbol of which to get the set jump status.
 /// @return True if the symbol has a set jump, otherwise false.
-static bool getHasSetJump(const Symbol& symbol);
+bool getHasSetJump(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has valid PGO counts.
 /// @param symbol The symbol of which to get the valid PGO counts status.
 /// @return True if the symbol has valid PGO counts, otherwise false.
-static bool getHasValidPGOCounts(const Symbol& symbol);
+bool getHasValidPGOCounts(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a double HFA.
 /// @param symbol The symbol of which to get the double HFA status.
 /// @return True if the symbol has a double HFA, otherwise false.
-static bool getHfaDouble(const Symbol& symbol);
+bool getHfaDouble(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has a float HFA.
 /// @param symbol The symbol of which to get the float HFA status.
 /// @return True if the symbol has a float HFA, otherwise false.
-static bool getHfaFloat(const Symbol& symbol);
+bool getHfaFloat(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an indirect virtual base class.
 /// @param symbol The symbol of which to get the indirect virtual base class
 /// status.
 /// @return True if the symbol is an indirect virtual base class, otherwise
 /// false.
-static bool getIndirectVirtualBaseClass(const Symbol& symbol);
+bool getIndirectVirtualBaseClass(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the function has been marked with
 /// the inline attribute.
 /// @param symbol The symbol of which to check the inline specification.
 /// @return TODO
-static bool getInlSpec(const Symbol& symbol);
+bool getInlSpec(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has an interrupt return.
 /// @param symbol The symbol of which to get the interrupt return status.
 /// @return True if the symbol has an interrupt return, otherwise false.
-static bool getInterruptReturn(const Symbol& symbol);
+bool getInterruptReturn(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is intrinsic.
 /// @param symbol The symbol of which to get the intrinsic status.
 /// @return True if the symbol is intrinsic, otherwise false.
-static bool getIntrinsic(const Symbol& symbol);
+bool getIntrinsic(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the function is the base class
 /// virtual function.
 /// @param symbol TODO
 /// @return TODO
-static bool getIntro(const Symbol& symbol);
+bool getIntro(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an accelerator group shared local.
 /// @param symbol The symbol of which to get the accelerator group shared local
 /// status.
 /// @return True if the symbol is an accelerator group shared local, otherwise
 /// false.
-static bool getIsAcceleratorGroupSharedLocal(const Symbol& symbol);
+bool getIsAcceleratorGroupSharedLocal(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an accelerator pointer tag live
 /// range.
@@ -592,30 +614,30 @@ static bool getIsAcceleratorGroupSharedLocal(const Symbol& symbol);
 /// range status.
 /// @return True if the symbol is an accelerator pointer tag live range,
 /// otherwise false.
-static bool getIsAcceleratorPointerTagLiveRange(const Symbol& symbol);
+bool getIsAcceleratorPointerTagLiveRange(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an accelerator stub function.
 /// @param symbol The symbol of which to get the accelerator stub function
 /// status.
 /// @return True if the symbol is an accelerator stub function, otherwise false.
-static bool getIsAcceleratorStubFunction(const Symbol& symbol);
+bool getIsAcceleratorStubFunction(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is aggregated.
 /// @param symbol The symbol of which to get the aggregated status.
 /// @return True if the symbol is aggregated, otherwise false.
-static bool getIsAggregated(const Symbol& symbol);
+bool getIsAggregated(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol file contains C types.
 /// @param symbol The symbol of which to get the C types status.
 /// @return True if the symbol file contains C types, otherwise false.
-static bool getIsCTypes(const Symbol& symbol);
+bool getIsCTypes(const Symbol& symbol);
 
 /// @brief Retrieves whether the module was converted from a Common Intermediate
 /// Language (CIL) module to a native module.
 /// @param symbol The symbol of which to get the CVTCIL status.
 /// @return True if the module was converted from CIL to native code, otherwise
 /// false.
-static bool getIsCVTCIL(const Symbol& symbol);
+bool getIsCVTCIL(const Symbol& symbol);
 
 /// @brief Retrieves whether this is an instance constructor of a class with a
 /// virtual base.
@@ -623,162 +645,162 @@ static bool getIsCVTCIL(const Symbol& symbol);
 /// status.
 /// @return True if this is an instance constructor of a class with a virtual
 /// base, otherwise false.
-static bool getIsConstructorVirtualBase(const Symbol& symbol);
+bool getIsConstructorVirtualBase(const Symbol& symbol);
 
 /// @brief Retrieves whether the function's return parameter uses C++ semantics
 /// for UDT.
 /// @param symbol The symbol of which to get the C++ return UDT status.
 /// @return True if the function's return parameter uses C++ semantics for UDT,
 /// otherwise false.
-static bool getIsCxxReturnUdt(const Symbol& symbol);
+bool getIsCxxReturnUdt(const Symbol& symbol);
 
 /// @brief Retrieves whether the user-defined type (UDT) has been aligned to a
 /// specific memory boundary.
 /// @param symbol The symbol of which to get the data alignment status.
 /// @return True if the UDT has been aligned to a specific memory boundary,
 /// otherwise false.
-static bool getIsDataAligned(const Symbol& symbol);
+bool getIsDataAligned(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is HLSL data.
 /// @param symbol The symbol of which to get the HLSL data status.
 /// @return True if the symbol is HLSL data, otherwise false.
-static bool getIsHLSLData(const Symbol& symbol);
+bool getIsHLSLData(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is hotpatchable.
 /// @param symbol The symbol of which to get the hotpatchable status.
 /// @return True if the symbol is hotpatchable, otherwise false.
-static bool getIsHotpatchable(const Symbol& symbol);
+bool getIsHotpatchable(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an interface UDT.
 /// @param symbol The symbol of which to get the interface UDT status.
 /// @return True if the symbol is an interface UDT, otherwise false.
-static bool getIsInterfaceUdt(const Symbol& symbol);
+bool getIsInterfaceUdt(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is LTCG.
 /// @param symbol The symbol of which to get the LTCG status.
 /// @return True if the symbol is LTCG, otherwise false.
-static bool getIsLTCG(const Symbol& symbol);
+bool getIsLTCG(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol's location is control flow dependent.
 /// @param symbol The symbol of which to get the location control flow dependent
 /// status.
 /// @return True if the symbol's location is control flow dependent, otherwise
 /// false.
-static bool getIsLocationControlFlowDependent(const Symbol& symbol);
+bool getIsLocationControlFlowDependent(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an MSIL netmodule.
 /// @param symbol The symbol of which to get the MSIL netmodule status.
 /// @return True if the symbol is an MSIL netmodule, otherwise false.
-static bool getIsMSILNetmodule(const Symbol& symbol);
+bool getIsMSILNetmodule(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a matrix row major.
 /// @param symbol The symbol of which to get the matrix row major status.
 /// @return True if the symbol is a matrix row major, otherwise false.
-static bool getIsMatrixRowMajor(const Symbol& symbol);
+bool getIsMatrixRowMajor(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has multiple inheritance.
 /// @param symbol The symbol of which to get the multiple inheritance status.
 /// @return True if the symbol has multiple inheritance, otherwise false.
-static bool getIsMultipleInheritance(const Symbol& symbol);
+bool getIsMultipleInheritance(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is naked.
 /// @param symbol The symbol of which to get the naked status.
 /// @return True if the symbol is naked, otherwise false.
-static bool getIsNaked(const Symbol& symbol);
+bool getIsNaked(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is optimized away.
 /// @param symbol The symbol of which to get the optimized away status.
 /// @return True if the symbol is optimized away, otherwise false.
-static bool getIsOptimizedAway(const Symbol& symbol);
+bool getIsOptimizedAway(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is optimized for speed.
 /// @param symbol The symbol of which to get the optimized for speed status.
 /// @return True if the symbol is optimized for speed, otherwise false.
-static bool getIsOptimizedForSpeed(const Symbol& symbol);
+bool getIsOptimizedForSpeed(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is PGO.
 /// @param symbol The symbol of which to get the PGO status.
 /// @return True if the symbol is PGO, otherwise false.
-static bool getIsPGO(const Symbol& symbol);
+bool getIsPGO(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is pointer based on symbol value.
 /// @param symbol The symbol of which to get the pointer based on symbol value
 /// status.
 /// @return True if the symbol is pointer based on symbol value, otherwise
 /// false.
-static bool getIsPointerBasedOnSymbolValue(const Symbol& symbol);
+bool getIsPointerBasedOnSymbolValue(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a pointer to a data member.
 /// @param symbol The symbol of which to get the pointer to data member status.
 /// @return True if the symbol is a pointer to a data member, otherwise false.
-static bool getIsPointerToDataMember(const Symbol& symbol);
+bool getIsPointerToDataMember(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a pointer to a member function.
 /// @param symbol The symbol of which to get the pointer to member function
 /// status.
 /// @return True if the symbol is a pointer to a member function, otherwise
 /// false.
-static bool getIsPointerToMemberFunction(const Symbol& symbol);
+bool getIsPointerToMemberFunction(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a reference UDT.
 /// @param symbol The symbol of which to get the reference UDT status.
 /// @return True if the symbol is a reference UDT, otherwise false.
-static bool getIsRefUdt(const Symbol& symbol);
+bool getIsRefUdt(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a return value.
 /// @param symbol The symbol of which to get the return value status.
 /// @return True if the symbol is a return value, otherwise false.
-static bool getIsReturnValue(const Symbol& symbol);
+bool getIsReturnValue(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has safe buffers.
 /// @param symbol The symbol of which to get the safe buffers status.
 /// @return True if the symbol has safe buffers, otherwise false.
-static bool getIsSafeBuffers(const Symbol& symbol);
+bool getIsSafeBuffers(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is SDL.
 /// @param symbol The symbol of which to get the SDL status.
 /// @return True if the symbol is SDL, otherwise false.
-static bool getIsSdl(const Symbol& symbol);
+bool getIsSdl(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has single inheritance.
 /// @param symbol The symbol of which to get the single inheritance status.
 /// @return True if the symbol has single inheritance, otherwise false.
-static bool getIsSingleInheritance(const Symbol& symbol);
+bool getIsSingleInheritance(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is split.
 /// @param symbol The symbol of which to get the split status.
 /// @return True if the symbol is split, otherwise false.
-static bool getIsSplitted(const Symbol& symbol);
+bool getIsSplitted(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is static.
 /// @param symbol The symbol of which to get the static status.
 /// @return True if the symbol is static, otherwise false.
-static bool getIsStatic(const Symbol& symbol);
+bool getIsStatic(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is stripped.
 /// @param symbol The symbol of which to get the stripped status.
 /// @return True if the symbol is stripped, otherwise false.
-static bool getIsStripped(const Symbol& symbol);
+bool getIsStripped(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a value UDT.
 /// @param symbol The symbol of which to get the value UDT status.
 /// @return True if the symbol is a value UDT, otherwise false.
-static bool getIsValueUdt(const Symbol& symbol);
+bool getIsValueUdt(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has virtual inheritance.
 /// @param symbol The symbol of which to get the virtual inheritance status.
 /// @return True if the symbol has virtual inheritance, otherwise false.
-static bool getIsVirtualInheritance(const Symbol& symbol);
+bool getIsVirtualInheritance(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a WinRT pointer.
 /// @param symbol The symbol of which to get the WinRT pointer status.
 /// @return True if the symbol is a WinRT pointer, otherwise false.
-static bool getIsWinRTPointer(const Symbol& symbol);
+bool getIsWinRTPointer(const Symbol& symbol);
 
 /// @brief Retrieves the language of the symbol.
 /// @param symbol The symbol of which to get the language.
 /// @return The language.
-static DWORD getLanguage(const Symbol& symbol);
+DWORD getLanguage(const Symbol& symbol);
 
 /// @brief Retrieves the number of bits or bytes of memory used by the
 /// object represented by this symbol.
@@ -788,268 +810,268 @@ static DWORD getLanguage(const Symbol& symbol);
 /// @note If the LocationType Enumeration of the symbol is LocIsBitField,
 /// the length returned by this method is in bits; otherwise, the length is
 /// in bytes for all other location types.
-static ULONGLONG getLength(const Symbol& symbol);
+ULONGLONG getLength(const Symbol& symbol);
 
 /// @brief Retrieves a reference to the lexical parent of the symbol.
 /// @param symbol
 /// @return An IDiaSymbol object that represents the lexical parent of the
 /// symbol.
-static const Symbol getLexicalParent(const Symbol& symbol);
+const Symbol getLexicalParent(const Symbol& symbol);
 
 /// @brief Retrieves the lexical parent ID of the symbol.
 /// @param symbol The symbol of which to get the lexical parent ID.
 /// @return The lexical parent ID.
-static DWORD getLexicalParentId(const Symbol& symbol);
+DWORD getLexicalParentId(const Symbol& symbol);
 
 /// @brief Retrieves the library name of the symbol.
 /// @param symbol The symbol of which to get the library name.
 /// @return The library name.
-static const BstrWrapper getLibraryName(const Symbol& symbol);
+const BstrWrapper getLibraryName(const Symbol& symbol);
 
 /// @brief Retrieves the live range length of the symbol.
 /// @param symbol The symbol of which to get the live range length.
 /// @return The live range length.
-static ULONGLONG getLiveRangeLength(const Symbol& symbol);
+ULONGLONG getLiveRangeLength(const Symbol& symbol);
 
 /// @brief Retrieves the start address offset of the live range.
 /// @param symbol The symbol of which to get the live range start address
 /// offset.
 /// @return The start address offset of the live range.
-static ULONG getLiveRangeStartAddressOffset(const Symbol& symbol);
+ULONG getLiveRangeStartAddressOffset(const Symbol& symbol);
 
 /// @brief Retrieves the start address section of the live range.
 /// @param symbol The symbol of which to get the live range start address
 /// section.
 /// @return The start address section of the live range.
-static DWORD getLiveRangeStartAddressSection(const Symbol& symbol);
+DWORD getLiveRangeStartAddressSection(const Symbol& symbol);
 
 /// @brief Retrieves the start relative virtual address of the live range.
 /// @param symbol The symbol of which to get the live range start relative
 /// virtual address.
 /// @return The start relative virtual address of the live range.
-static ULONG getLiveRangeStartRelativeVirtualAddress(const Symbol& symbol);
+ULONG getLiveRangeStartRelativeVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves the local base pointer register ID.
 /// @param symbol The symbol of which to get the local base pointer register ID.
 /// @return The local base pointer register ID.
-static ULONG getLocalBasePointerRegisterId(const Symbol& symbol);
+ULONG getLocalBasePointerRegisterId(const Symbol& symbol);
 
 /// @brief Retrieves the location type of a data symbol.
 /// @param symbol
 /// @return A value from the LocationType Enumeration enumeration that
 /// specifies the location type of a data symbol, such as static or local.
-static enum LocationType getLocationType(const Symbol& symbol);
+enum LocationType getLocationType(const Symbol& symbol);
 
 /// @brief Retrieves the lower bound of the symbol.
 /// @param symbol The symbol of which to get the lower bound.
 /// @return The lower bound symbol.
-static const Symbol getLowerBound(const Symbol& symbol);
+const Symbol getLowerBound(const Symbol& symbol);
 
 /// @brief Retrieves the lower bound ID of the symbol.
 /// @param symbol The symbol of which to get the lower bound ID.
 /// @return The lower bound ID.
-static DWORD getLowerBoundId(const Symbol& symbol);
+DWORD getLowerBoundId(const Symbol& symbol);
 
 /// @brief Retrieves the machine type.
 /// @param symbol The symbol of which to get the machine type.
 /// @return The machine type.
-static DWORD getMachineType(const Symbol& symbol);
+DWORD getMachineType(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is managed.
 /// @param symbol The symbol of which to get the managed status.
 /// @return True if the symbol is managed, otherwise false.
-static bool getManaged(const Symbol& symbol);
+bool getManaged(const Symbol& symbol);
 
 /// @brief Retrieves the memory space kind.
 /// @param symbol The symbol of which to get the memory space kind.
 /// @return The memory space kind.
-static ULONG getMemorySpaceKind(const Symbol& symbol);
+ULONG getMemorySpaceKind(const Symbol& symbol);
 
 /// @brief Retrieves the modifier values.
 /// @param symbol The symbol of which to get the modifier values.
 /// @return The modifier values.
-static const std::vector<ULONG> getModifierValues(const Symbol& symbol);
+const std::vector<ULONG> getModifierValues(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is MSIL.
 /// @param symbol The symbol of which to get the MSIL status.
 /// @return True if the symbol is MSIL, otherwise false.
-static bool getMsil(const Symbol& symbol);
+bool getMsil(const Symbol& symbol);
 
 /// @brief Retrieves the name of the symbol.
 /// @param symbol The symbol of which to get the name of.
 /// @return The name of the symbol.
-static const BstrWrapper getName(const Symbol& symbol);
+const BstrWrapper getName(const Symbol& symbol);
 
 /// @brief Checks if the symbol is nested.
 /// @param symbol The symbol to check for nesting.
 /// @return True if the symbol is nested, otherwise false.
-static bool getNested(const Symbol& symbol);
+bool getNested(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has the no-inline attribute.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has the no-inline attribute, otherwise false.
-static bool getNoInline(const Symbol& symbol);
+bool getNoInline(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has no name export.
 /// @param symbol The symbol of which to get the no name export status.
 /// @return True if the symbol has no name export, otherwise false.
-static bool getNoNameExport(const Symbol& symbol);
+bool getNoNameExport(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has the no-return attribute.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has the no-return attribute, otherwise false.
-static bool getNoReturn(const Symbol& symbol);
+bool getNoReturn(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has the no-stack-ordering attribute.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has the no-stack-ordering attribute, otherwise
 /// false.
-static bool getNoStackOrdering(const Symbol& symbol);
+bool getNoStackOrdering(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has the not-reached attribute.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has the not-reached attribute, otherwise false.
-static bool getNotReached(const Symbol& symbol);
+bool getNotReached(const Symbol& symbol);
 
 /// @brief Retrieves the number of accelerator pointer tags.
 /// @param symbol The symbol to check.
 /// @return The number of accelerator pointer tags.
-static ULONG getNumberOfAcceleratorPointerTags(const Symbol& symbol);
+ULONG getNumberOfAcceleratorPointerTags(const Symbol& symbol);
 
 /// @brief Retrieves the number of columns.
 /// @param symbol The symbol to check.
 /// @return The number of columns.
-static ULONG getNumberOfColumns(const Symbol& symbol);
+ULONG getNumberOfColumns(const Symbol& symbol);
 
 /// @brief Retrieves the number of modifiers.
 /// @param symbol The symbol to check.
 /// @return The number of modifiers.
-static ULONG getNumberOfModifiers(const Symbol& symbol);
+ULONG getNumberOfModifiers(const Symbol& symbol);
 
 /// @brief Retrieves the number of register indices.
 /// @param symbol The symbol to check.
 /// @return The number of register indices.
-static ULONG getNumberOfRegisterIndices(const Symbol& symbol);
+ULONG getNumberOfRegisterIndices(const Symbol& symbol);
 
 /// @brief Retrieves the number of rows.
 /// @param symbol The symbol to check.
 /// @return The number of rows.
-static ULONG getNumberOfRows(const Symbol& symbol);
+ULONG getNumberOfRows(const Symbol& symbol);
 
 /// @brief Retrieves the numeric properties.
 /// @param symbol The symbol to check.
 /// @return The numeric properties.
-static const std::vector<ULONG> getNumericProperties(const Symbol& symbol);
+const std::vector<ULONG> getNumericProperties(const Symbol& symbol);
 
 /// @brief Retrieves the object file name.
 /// @param symbol The symbol to check.
 /// @return The object file name.
-static const BstrWrapper getObjectFileName(const Symbol& symbol);
+const BstrWrapper getObjectFileName(const Symbol& symbol);
 
 /// @brief Retrieves the type of the object pointer for a class method.
 /// @param symbol The symbol to check.
 /// @return The object pointer type.
-static const Symbol getObjectPointerType(const Symbol& symbol);
+const Symbol getObjectPointerType(const Symbol& symbol);
 
 /// @brief Retrieves the OEM ID.
 /// @param symbol The symbol to check.
 /// @return The OEM ID.
-static ULONG getOemId(const Symbol& symbol);
+ULONG getOemId(const Symbol& symbol);
 
 /// @brief Retrieves the OEM symbol ID.
 /// @param symbol The symbol to check.
 /// @return The OEM symbol ID.
-static ULONG getOemSymbolId(const Symbol& symbol);
+ULONG getOemSymbolId(const Symbol& symbol);
 
 /// @brief Retrieves the offset of the symbol location. Use when the
 /// LocationType Enumeration is LocIsRegRel or LocIsBitField.
 /// @param symbol
 /// @return The offset in bytes of the symbol location.
-static LONG getOffset(const Symbol& symbol);
+LONG getOffset(const Symbol& symbol);
 
 /// @brief Retrieves the offset in UDT.
 /// @param symbol The symbol to check.
 /// @return The offset in UDT.
-static ULONG getOffsetInUdt(const Symbol& symbol);
+ULONG getOffsetInUdt(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has optimized code debug info.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has optimized code debug info, otherwise false.
-static bool getOptimizedCodeDebugInfo(const Symbol& symbol);
+bool getOptimizedCodeDebugInfo(const Symbol& symbol);
 
 /// @brief Retrieves the ordinal of the symbol.
 /// @param symbol The symbol of which to get the ordinal.
 /// @return The ordinal.
-static DWORD getOrdinal(const Symbol& symbol);
+DWORD getOrdinal(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the user-defined data type has
 /// overloaded operators.
 /// @param symbol The symbol to check.
 /// @return True if the user-defined data type has overloaded operators;
 /// otherwise, returns false.
-static bool getOverloadedOperator(const Symbol& symbol);
+bool getOverloadedOperator(const Symbol& symbol);
 
 /// @brief Retrieves the PGO dynamic instruction count of the symbol.
 /// @param symbol The symbol of which to get the PGO dynamic instruction
 /// count.
 /// @return The PGO dynamic instruction count.
-static ULONGLONG getPGODynamicInstructionCount(const Symbol& symbol);
+ULONGLONG getPGODynamicInstructionCount(const Symbol& symbol);
 
 /// @brief Retrieves the PGO edge count of the symbol.
 /// @param symbol The symbol of which to get the PGO edge count.
 /// @return The PGO edge count.
-static DWORD getPGOEdgeCount(const Symbol& symbol);
+DWORD getPGOEdgeCount(const Symbol& symbol);
 
 /// @brief Retrieves the PGO entry count of the symbol.
 /// @param symbol The symbol of which to get the PGO entry count.
 /// @return The PGO entry count.
-static DWORD getPGOEntryCount(const Symbol& symbol);
+DWORD getPGOEntryCount(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is packed.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is packed, otherwise false.
-static bool getPacked(const Symbol& symbol);
+bool getPacked(const Symbol& symbol);
 
 /// @brief Retrieves the parameter base pointer register ID.
 /// @param symbol The symbol to check.
 /// @return The parameter base pointer register ID.
-static ULONG getParamBasePointerRegisterId(const Symbol& symbol);
+ULONG getParamBasePointerRegisterId(const Symbol& symbol);
 
 /// @brief Retrieves the phase name of the symbol.
 /// @param symbol The symbol of which to get the phase name.
 /// @return The phase name.
-static const BstrWrapper getPhaseName(const Symbol& symbol);
+const BstrWrapper getPhaseName(const Symbol& symbol);
 
 /// @brief Retrieves the platform.
 /// @param symbol The symbol to check.
 /// @return The platform.
-static ULONG getPlatform(const Symbol& symbol);
+ULONG getPlatform(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a private export.
 /// @param symbol The symbol of which to get the private export status.
 /// @return True if the symbol is a private export, otherwise false.
-static bool getPrivateExport(const Symbol& symbol);
+bool getPrivateExport(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is pure.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is pure, otherwise false.
-static bool getPure(const Symbol& symbol);
+bool getPure(const Symbol& symbol);
 
 /// @brief Retrieves a flag that specifies whether a pointer type is an rvalue
 /// reference.
 /// @param symbol The symbol of which to get the rvalue reference status.
 /// @return True if the pointer is an rvalue reference, otherwise false.
-static bool getRValueReference(const Symbol& symbol);
+bool getRValueReference(const Symbol& symbol);
 
 /// @brief Retrieves the rank of the symbol.
 /// @param symbol The symbol of which to get the rank.
 /// @return The rank.
-static DWORD getRank(const Symbol& symbol);
+DWORD getRank(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether a pointer type is a reference.
 /// @param symbol The symbol to check.
 /// @return TODO
-static bool getReference(const Symbol& symbol);
+bool getReference(const Symbol& symbol);
 
 /// @brief Retrieves the register designator of the location when the
 /// LocationType Enumeration is set to LocIsEnregistered.
@@ -1059,150 +1081,150 @@ static bool getReference(const Symbol& symbol);
 /// LocationType Enumeration is set to LocIsRegRel, use the get_registerId
 /// method followed by a call to the IDiaSymbol::get_offset method to get
 /// the offset from the register where the symbol is located.
-static DWORD getRegisterId(const Symbol& symbol);
+DWORD getRegisterId(const Symbol& symbol);
 
 /// @brief Retrieves the register type.
 /// @param symbol The symbol to check.
 /// @return The register type.
-static ULONG getRegisterType(const Symbol& symbol);
+ULONG getRegisterType(const Symbol& symbol);
 
 /// @brief Retrieves the relative virtual address (RVA) of the location. Use
 /// when the LocationType Enumeration is set to LocIsStatic.
 /// @param symbol
 /// @return The relative virtual address of the location.
-static DWORD getRelativeVirtualAddress(const Symbol& symbol);
+DWORD getRelativeVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a restricted type.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is a restricted type, otherwise false.
-static bool getRestrictedType(const Symbol& symbol);
+bool getRestrictedType(const Symbol& symbol);
 
 /// @brief Retrieves the sampler slot.
 /// @param symbol The symbol to check.
 /// @return The sampler slot.
-static ULONG getSamplerSlot(const Symbol& symbol);
+ULONG getSamplerSlot(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is scoped.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is scoped, otherwise false.
-static bool getScoped(const Symbol& symbol);
+bool getScoped(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is sealed.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is sealed, otherwise false.
-static bool getSealed(const Symbol& symbol);
+bool getSealed(const Symbol& symbol);
 
 /// @brief Retrieves the signature of the symbol.
 /// @param symbol The symbol of which to get the signature.
 /// @return The signature.
-static DWORD getSignature(const Symbol& symbol);
+DWORD getSignature(const Symbol& symbol);
 
 /// @brief Retrieves the size in UDT.
 /// @param symbol The symbol to check.
 /// @return The size in UDT.
-static ULONG getSizeInUdt(const Symbol& symbol);
+ULONG getSizeInUdt(const Symbol& symbol);
 
 /// @brief Retrieves the slot.
 /// @param symbol The symbol to check.
 /// @return The slot.
-static ULONG getSlot(const Symbol& symbol);
+ULONG getSlot(const Symbol& symbol);
 
 /// @brief Retrieves the source file name.
 /// @param symbol The symbol to check.
 /// @return The source file name.
-static const BstrWrapper getSourceFileName(const Symbol& symbol);
+const BstrWrapper getSourceFileName(const Symbol& symbol);
 
 /// @brief Retrieves the source file and line number that indicate where a
 /// specified user-defined type is defined.
 /// @param symbol The symbol of which to get the source line on type definition.
 /// @return The source line on type definition.
-static const IDiaLineNumber* getSrcLineOnTypeDefn(const Symbol& symbol);
+const IDiaLineNumber* getSrcLineOnTypeDefn(const Symbol& symbol);
 
 /// @brief Retrieves the static size of the symbol.
 /// @param symbol The symbol of which to get the static size.
 /// @return The static size.
-static DWORD getStaticSize(const Symbol& symbol);
+DWORD getStaticSize(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol has strict GS check.
 /// @param symbol The symbol to check.
 /// @return True if the symbol has strict GS check, otherwise false.
-static bool getStrictGSCheck(const Symbol& symbol);
+bool getStrictGSCheck(const Symbol& symbol);
 
 /// @brief Retrieves the stride.
 /// @param symbol The symbol to check.
 /// @return The stride.
-static ULONG getStride(const Symbol& symbol);
+ULONG getStride(const Symbol& symbol);
 
 /// @brief Retrieves the sub-type.
 /// @param symbol The symbol to check.
 /// @return The sub-type.
-static const Symbol getSubType(const Symbol& symbol);
+const Symbol getSubType(const Symbol& symbol);
 
 /// @brief Retrieves the sub-type ID.
 /// @param symbol The symbol to check.
 /// @return The sub-type ID.
-static ULONG getSubTypeId(const Symbol& symbol);
+ULONG getSubTypeId(const Symbol& symbol);
 
 /// @brief Retrieves the unique symbol identifier.
 /// @param symbol The symbol of which to get the UID of.
 /// @return The symbol ID of the symbol.
-static DWORD getSymIndexId(const Symbol& symbol);
+DWORD getSymIndexId(const Symbol& symbol);
 
 /// @brief Retrieves the symbol type classifier.
 /// @param symbol The symbol of which to get the SymTag of.
 /// @return A value from the SymTagEnum Enumeration enumeration that
 /// specifies the symbol type classifier.
-static enum SymTagEnum getSymTag(const Symbol& symbol);
+enum SymTagEnum getSymTag(const Symbol& symbol);
 
 /// @brief Retrieves the symbols file name.
 /// @param symbol The symbol to check.
 /// @return The symbols file name.
-static const BstrWrapper getSymbolsFileName(const Symbol& symbol);
+const BstrWrapper getSymbolsFileName(const Symbol& symbol);
 
 /// @brief Retrieves the target offset.
 /// @param symbol The symbol to check.
 /// @return The target offset.
-static ULONG getTargetOffset(const Symbol& symbol);
+ULONG getTargetOffset(const Symbol& symbol);
 
 /// @brief Retrieves the target relative virtual address.
 /// @param symbol The symbol to check.
 /// @return The target relative virtual address.
-static ULONG getTargetRelativeVirtualAddress(const Symbol& symbol);
+ULONG getTargetRelativeVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves the target section.
 /// @param symbol The symbol to check.
 /// @return The target section.
-static DWORD getTargetSection(const Symbol& symbol);
+DWORD getTargetSection(const Symbol& symbol);
 
 /// @brief Retrieves the target virtual address.
 /// @param symbol The symbol to check.
 /// @return The target virtual address.
-static ULONGLONG getTargetVirtualAddress(const Symbol& symbol);
+ULONGLONG getTargetVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves the texture slot.
 /// @param symbol The symbol to check.
 /// @return The texture slot.
-static ULONG getTextureSlot(const Symbol& symbol);
+ULONG getTextureSlot(const Symbol& symbol);
 
 /// @brief Retrieves the this adjust.
 /// @param symbol The symbol to check.
 /// @return The this adjust.
-static LONG getThisAdjust(const Symbol& symbol);
+LONG getThisAdjust(const Symbol& symbol);
 
 /// @brief Retrieves the thunk ordinal.
 /// @param symbol The symbol to check.
 /// @return The thunk ordinal.
-static ULONG getThunkOrdinal(const Symbol& symbol);
+ULONG getThunkOrdinal(const Symbol& symbol);
 
 /// @brief Retrieves the time stamp.
 /// @param symbol The symbol to check.
 /// @return The time stamp.
-static ULONG getTimeStamp(const Symbol& symbol);
+ULONG getTimeStamp(const Symbol& symbol);
 
 /// @brief Retrieves the token.
 /// @param symbol The symbol to check.
 /// @return The token.
-static ULONG getToken(const Symbol& symbol);
+ULONG getToken(const Symbol& symbol);
 
 /// @brief Retrieves the symbol that represents the type for this symbol.
 /// @param symbol
@@ -1210,42 +1232,42 @@ static ULONG getToken(const Symbol& symbol);
 /// @note  that it is possible for a symbol to not have a type. For example,
 /// the name of a structure has no type but it might have children symbols
 /// (use the IDiaSymbol::findChildren method to examine those children).
-static const Symbol getType(const Symbol& symbol);
+const Symbol getType(const Symbol& symbol);
 
 /// @brief Retrieves the type ID of the symbol.
 /// @param symbol The symbol of which to get the type ID.
 /// @return The type ID.
-static DWORD getTypeId(const Symbol& symbol);
+DWORD getTypeId(const Symbol& symbol);
 
 /// @brief Retrieves the type IDs.
 /// @param symbol The symbol to check.
 /// @return The type IDs.
-static const std::vector<ULONG> getTypeIds(const Symbol& symbol);
+const std::vector<ULONG> getTypeIds(const Symbol& symbol);
 
 /// @brief Retrieves the types.
 /// @param symbol The symbol to check.
 /// @return The types.
-static const std::vector<ULONG> getTypes(const Symbol& symbol);
+const std::vector<ULONG> getTypes(const Symbol& symbol);
 
 /// @brief Retrieves the UAV slot.
 /// @param symbol The symbol to check.
 /// @return The UAV slot.
-static ULONG getUavSlot(const Symbol& symbol);
+ULONG getUavSlot(const Symbol& symbol);
 
 /// @brief Retrieves the UDT kind.
 /// @param symbol The symbol to check.
 /// @return The UDT kind.
-static ULONG getUdtKind(const Symbol& symbol);
+enum UdtKind getUdtKind(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is an unaligned type.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is an unaligned type, otherwise false.
-static bool getUnalignedType(const Symbol& symbol);
+bool getUnalignedType(const Symbol& symbol);
 
 /// @brief Retrieves the undecorated name of the symbol.
 /// @param symbol The symbol of which to get the undecorated name.
 /// @return The undecorated name.
-static const BstrWrapper getUndecoratedName(const Symbol& symbol);
+const BstrWrapper getUndecoratedName(const Symbol& symbol);
 
 /// @brief Retrieves part or all of an undecorated name for a C++ decorated
 /// (linkage) name.
@@ -1282,73 +1304,72 @@ static const BstrWrapper getUndecoratedName(const Symbol& symbol);
 /// check for valid identifier characters.| |UNDNAME_NO_PTR64|0x20000|Does not
 /// include ptr64 in output.|
 ///
-static const BstrWrapper getUndecoratedNameEx(const Symbol& symbol,
-                                              DWORD options);
+const BstrWrapper getUndecoratedNameEx(const Symbol& symbol, DWORD options);
 
 /// @brief Retrieves the original (unmodifed) type of this symbol.
 /// @param symbol The symbol to check.
 /// @return A dia::Symbol object that represents the original type of this
 /// symbol.
 /// @note Use when the SymTagEnum Enumeration is set to a type.
-static const Symbol getUnmodifiedType(const Symbol& symbol);
+const Symbol getUnmodifiedType(const Symbol& symbol);
 
 /// @brief Retrieves the unmodified type ID.
 /// @param symbol The symbol to check.
 /// @return The unmodified type ID.
-static ULONG getUnmodifiedTypeId(const Symbol& symbol);
+ULONG getUnmodifiedTypeId(const Symbol& symbol);
 
 /// @brief Deprecated function. ???
 /// @param symbol ???
 /// @return ???
-static const BstrWrapper getUnused(const Symbol& symbol);
+const BstrWrapper getUnused(const Symbol& symbol);
 
 /// @brief Retrieves the upper bound of the symbol.
 /// @param symbol The symbol of which to get the upper bound.
 /// @return The upper bound symbol.
-static const Symbol getUpperBound(const Symbol& symbol);
+const Symbol getUpperBound(const Symbol& symbol);
 
 /// @brief Retrieves the upper bound ID of the symbol.
 /// @param symbol The symbol of which to get the upper bound ID.
 /// @return The upper bound ID.
-static DWORD getUpperBoundId(const Symbol& symbol);
+DWORD getUpperBoundId(const Symbol& symbol);
 
 /// @brief Retrieves the value.
 /// @param symbol The symbol to check.
 /// @return The value.
-static const VARIANT getValue(const Symbol& symbol);
+const VARIANT getValue(const Symbol& symbol);
 
 /// @brief Retrieves a flag that specifies whether the function is virtual.
 /// @param symbol The symbol to check.
 /// @return True if the function is virtual; otherwise, returns false.
-static bool getVirtual(const Symbol& symbol);
+bool getVirtual(const Symbol& symbol);
 
 /// @brief Retrieves the virtual address (VA) of the location. Use when the
 /// LocationType Enumeration is set to LocIsStatic.
 /// @param symbol
 /// @return The virtual address of the location.
-static ULONGLONG getVirtualAddress(const Symbol& symbol);
+ULONGLONG getVirtualAddress(const Symbol& symbol);
 
 /// @brief Retrieves a flag indicating whether the user-defined data type is a
 /// virtual base class.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is a virtual base class, otherwise false.
-static bool getVirtualBaseClass(const Symbol& symbol);
+bool getVirtualBaseClass(const Symbol& symbol);
 
 /// @brief Retrieves the virtual base displacement index of the symbol.
 /// @param symbol The symbol of which to get the virtual base displacement
 /// index.
 /// @return The virtual base displacement index.
-static DWORD getVirtualBaseDispIndex(const Symbol& symbol);
+DWORD getVirtualBaseDispIndex(const Symbol& symbol);
 
 /// @brief Retrieves the virtual base offset.
 /// @param symbol The symbol to check.
 /// @return The virtual base offset.
-static DWORD getVirtualBaseOffset(const Symbol& symbol);
+DWORD getVirtualBaseOffset(const Symbol& symbol);
 
 /// @brief Retrieves the virtual base pointer offset.
 /// @param symbol The symbol to check.
 /// @return The virtual base pointer offset.
-static LONG getVirtualBasePointerOffset(const Symbol& symbol);
+LONG getVirtualBasePointerOffset(const Symbol& symbol);
 
 /// @brief Retrieves the type of a virtual base table pointer.
 /// @param symbol The symbol to check.
@@ -1358,21 +1379,28 @@ static LONG getVirtualBasePointerOffset(const Symbol& symbol);
 /// have different sizes depending on the inherited classes. This method returns
 /// an IDiaSymbol object that can be used to determine the size of the
 /// vbtptr.
-static const Symbol getVirtualBaseTableType(const Symbol& symbol);
+const Symbol getVirtualBaseTableType(const Symbol& symbol);
+
+/// @brief Retrieves the symbol interface of the type of the virtual table for a
+/// user-defined type.
+/// @param symbol The symbol of which to get the virtual table shape.
+/// @return A Symbol object representing the virtual table for a user-defined
+/// type.
+const Symbol getVirtualTableShape(const Symbol& symbol);
 
 /// @brief Retrieves the virtual table shape ID of the symbol.
 /// @param symbol The symbol of which to get the virtual table shape ID.
 /// @return The virtual table shape ID.
-static DWORD getVirtualTableShapeId(const Symbol& symbol);
+DWORD getVirtualTableShapeId(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is a volatile type.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is a volatile type, otherwise false.
-static bool getVolatileType(const Symbol& symbol);
+bool getVolatileType(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol was inlined.
 /// @param symbol The symbol to check.
 /// @return True if the symbol was inlined, otherwise false.
-static bool getWasInlined(const Symbol& symbol);
+bool getWasInlined(const Symbol& symbol);
 
 } // namespace dia

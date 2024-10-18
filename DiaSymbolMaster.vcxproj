@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -151,12 +151,12 @@
   <ItemGroup>
     <ClCompile Include="BstrWrapper.cpp" />
     <ClCompile Include="DataMember.cpp" />
+    <ClCompile Include="DiaHash.cpp" />
     <ClCompile Include="DiaSymbol.cpp" />
     <ClCompile Include="DiaDataSource.cpp" />
     <ClCompile Include="DiaStruct.cpp" />
     <ClCompile Include="DiaSymbolFuncs.cpp" />
     <ClCompile Include="DiaSymbolMaster.cpp" />
-    <ClCompile Include="DiaSymbolRawImplementation.cpp" />
     <ClCompile Include="TypeResolution.cpp" />
     <ClCompile Include="Union.cpp" />
     <ClCompile Include="UserDefinedType.cpp" />
@@ -164,15 +164,20 @@
   <ItemGroup>
     <ClInclude Include="Base.h" />
     <ClInclude Include="BstrWrapper.h" />
+    <ClInclude Include="DiaArray.h" />
+    <ClInclude Include="DiaData.h" />
     <ClInclude Include="DiaExe.h" />
     <ClInclude Include="DiaFunction.h" />
     <ClInclude Include="DiaNull.h" />
+    <ClInclude Include="DiaPointer.h" />
+    <ClInclude Include="DiaPrint.h" />
     <ClInclude Include="DiaSymbol.h" />
     <ClInclude Include="DiaDataSource.h" />
     <ClInclude Include="DiaStruct.h" />
     <ClInclude Include="DiaSymbolEnumerator.h" />
     <ClInclude Include="DiaSymbolFuncs.h" />
     <ClInclude Include="DiaSymbolTypes.h" />
+    <ClInclude Include="DiaUDT.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="hashing.h" />
     <ClInclude Include="DataMember.h" />
@@ -182,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

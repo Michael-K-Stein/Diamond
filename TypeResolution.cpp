@@ -1,5 +1,6 @@
 #include "TypeResolution.h"
-
+namespace dia
+{
 static const wchar_t* SYM_TAG_BASE_TYPE_NAMES[] = {
     L"NoType", // = 0,
     L"VOID",   // = 1,
@@ -88,7 +89,7 @@ static const wchar_t* SYM_TAG_TYPE_NAMES[] = {
 };
 constexpr auto SYM_TAG_TYPE_NAMES_COUNT =
     sizeof(SYM_TAG_TYPE_NAMES) / sizeof(SYM_TAG_TYPE_NAMES[0]);
-std::wstring dia::symTagToName(const enum SymTagEnum v)
+std::wstring symTagToName(const enum SymTagEnum v)
 {
     const size_t vIndex = static_cast<size_t>(v);
     if (vIndex >= SYM_TAG_TYPE_NAMES_COUNT)
@@ -108,7 +109,7 @@ constexpr const wchar_t* LOCATION_TYPE_NAMES[] = {
 constexpr const auto LOCATION_TYPE_NAMES_COUNT =
     sizeof(LOCATION_TYPE_NAMES) / sizeof(LOCATION_TYPE_NAMES[0]);
 
-std::wstring dia::locationTypeToName(const enum LocationType v)
+std::wstring locationTypeToName(const enum LocationType v)
 {
     const size_t vIndex = static_cast<size_t>(v);
     if (vIndex >= LOCATION_TYPE_NAMES_COUNT)
@@ -118,7 +119,7 @@ std::wstring dia::locationTypeToName(const enum LocationType v)
     return LOCATION_TYPE_NAMES[vIndex];
 }
 
-std::wstring dia::resolveTypeName(const Symbol& symbol)
+std::wstring resolveTypeName(const Symbol& symbol)
 {
     const auto symTag = symbol.getSymTag();
 
@@ -160,7 +161,7 @@ std::wstring dia::resolveTypeName(const Symbol& symbol)
     }
     case SymTagFunctionType:
     {
-        return L"Function : " + symbol.getName();
+        return std::wstring(L"Function : ") + std::wstring(symbol.getName());
     }
     default:
         std::wcerr << L"Unknown tag type: " << std::to_wstring(symTag)
@@ -168,3 +169,4 @@ std::wstring dia::resolveTypeName(const Symbol& symbol)
         return L"unknown";
     }
 }
+} // namespace dia

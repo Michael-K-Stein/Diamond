@@ -1,9 +1,18 @@
 #include "DiaSymbolFuncs.h"
 #include "DiaSymbol.h"
+#include "DiaSymbolEnumerator.h"
 #include "Exceptions.h"
 
 namespace dia
 {
+AccessModifier getAccess(const Symbol& symbol)
+{
+    DWORD retVal = 0;
+    const auto result = symbol.get()->get_access(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_access failed!", result);
+    return static_cast<AccessModifier>(retVal);
+}
+
 DWORD getAddressSection(const Symbol& symbol)
 {
     DWORD retVal = 0;
@@ -28,6 +37,13 @@ ULONG getAge(const Symbol& symbol)
     return retVal;
 }
 
+const Symbol getArrayIndexType(const Symbol& symbol)
+{
+    IDiaSymbol* retVal = nullptr;
+    const auto result = symbol.get()->get_arrayIndexType(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_arrayIndexTypeId failed!", result);
+    return Symbol{retVal};
+}
 ULONG getArrayIndexTypeId(const Symbol& symbol)
 {
     ULONG retVal = 0;
@@ -62,6 +78,11 @@ ULONG getBindSpace(const Symbol& symbol)
 
 ULONG getBitPosition(const Symbol& symbol)
 {
+    if (getLocationType(symbol) != LocIsBitField)
+    {
+        throw std::runtime_error(
+            "BitPosition is only valid for LocIsBitField types!");
+    }
     ULONG retVal = 0;
     const auto result = symbol.get()->get_bitPosition(&retVal);
     CHECK_DIACOM_EXCEPTION("get_bitPosition failed!", result);
@@ -499,6 +520,13 @@ DWORD getVirtualBaseDispIndex(const Symbol& symbol)
     return retVal;
 }
 
+const Symbol getVirtualTableShape(const Symbol& symbol)
+{
+    IDiaSymbol* retVal = nullptr;
+    const auto result = symbol.get()->get_virtualTableShape(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_virtualTableShapeId failed!", result);
+    return Symbol{retVal};
+}
 ULONG getVirtualTableShapeId(const Symbol& symbol)
 {
     ULONG retVal = 0;
@@ -1651,12 +1679,12 @@ DWORD getUavSlot(const Symbol& symbol)
     return retVal;
 }
 
-DWORD getUdtKind(const Symbol& symbol)
+enum UdtKind getUdtKind(const Symbol& symbol)
 {
     DWORD retVal = 0;
     const auto result = symbol.get()->get_udtKind(&retVal);
     CHECK_DIACOM_EXCEPTION("get_udtKind failed!", result);
-    return retVal;
+    return static_cast<enum UdtKind>(retVal);
 }
 
 bool getUnalignedType(const Symbol& symbol)

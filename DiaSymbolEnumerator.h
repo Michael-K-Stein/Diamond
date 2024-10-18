@@ -1,6 +1,7 @@
 #pragma once
 #include "DataMember.h"
 #include "DiaSymbol.h"
+#include "Exceptions.h"
 #include <atlbase.h>
 #include <cstddef> // For std::ptrdiff_t
 #include <dia2.h>
@@ -120,7 +121,7 @@ public:
 
             CComPtr<IDiaSymbol> symbol{nullptr};
             ULONG celt = 0;
-            HRESULT hr = m_enumSymbols->Next(1, &symbol, &celt);
+            const auto hr = m_enumSymbols->Next(1, &symbol, &celt);
             if (SUCCEEDED(hr) && celt == 1 && symbol)
             {
                 m_currentSymbol = symbol;
@@ -199,12 +200,9 @@ inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
                                         DWORD compareFlags)
 {
     CComPtr<IDiaEnumSymbols> enumSymbols{nullptr};
-    HRESULT hr = parentSymbol.get()->findChildren(symTag, name, compareFlags,
-                                                  &enumSymbols);
-    if (FAILED(hr) || !enumSymbols)
-    {
-        return {};
-    }
+    const auto result = parentSymbol.get()->findChildren(
+        symTag, name, compareFlags, &enumSymbols);
+    CHECK_DIACOM_EXCEPTION("Failed to find children!", result);
     return DiaSymbolEnumerator<T>{std::move(enumSymbols)};
 }
 

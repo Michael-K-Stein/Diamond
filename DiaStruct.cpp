@@ -16,7 +16,7 @@ struct hash<dia::Struct>
         for (const auto& member : diaStruct.enumerateMembers())
         {
             const auto memberOffset = member.getOffset();
-            const auto memberTypeName = member.getFieldCType().getTypeName();
+            const auto memberTypeName = member.getFieldCType().getName();
             const auto memberName = member.getFieldName();
             const auto memberLength = member.getLength();
             hash_combine(calculatedHash, memberOffset, memberTypeName,
@@ -44,7 +44,7 @@ std::set<UserDefinedType> Struct::queryDependsOnTypes() const
             continue;
         }
         const auto cType = member.getFieldCType();
-        const auto udt = cType.asUserDefinedType();
+        const auto udt = UserDefinedType{cType};
         types.insert(udt);
     }
     return types;
@@ -64,7 +64,7 @@ std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
         {
             continue;
         }
-        const auto udt = decayType.asUserDefinedType();
+        const auto udt = UserDefinedType{decayType};
         types.insert(udt);
     }
     return types;

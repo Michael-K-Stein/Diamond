@@ -1,32 +1,33 @@
 #pragma once
-#include "DiaSymbol.h"
+#include "DiaUDT.h"
+
 namespace dia
 {
 
+class DiaDataSource;
 // Derived Types
 class Struct;
 class Union;
 class Enum;
 
-class UserDefinedType : public Symbol
+class UserDefinedType : public Udt
 {
 public:
-    using Symbol::Symbol;
-    UserDefinedType(const Symbol& other) : Symbol{other} {}
-    UserDefinedType& operator=(const Symbol& other)
+    using Udt::Udt;
+
+    UserDefinedType(const Udt& other) : Udt{other} {}
+    UserDefinedType operator=(const Udt& other)
     {
-        UserDefinedType symbol{other};
-        symbol.get().p->AddRef();
-        return symbol;
+        UserDefinedType udt{other};
+        udt.get().p->AddRef();
+        return udt;
     }
-    UserDefinedType(Symbol&& other) : Symbol{std::move(other)} {}
-    UserDefinedType& operator=(Symbol&& other)
+    UserDefinedType(Udt&& other) : Udt{std::move(other)} {}
+    UserDefinedType operator=(Udt&& other)
     {
         UserDefinedType symbol{std::move(other)};
         return symbol;
     }
-
-    enum UdtKind getUdtKind() const;
 
     bool isUnion() const;
     Union asUnion() const;
@@ -47,9 +48,10 @@ public:
     }
 
 protected:
-    using Symbol::get;
+    using Udt::get;
 
 private:
+    friend class DiaDataSource;
 };
 } // namespace dia
 

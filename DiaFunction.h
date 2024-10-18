@@ -1,6 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
+#include "TypeResolution.h"
 
 namespace dia
 {
@@ -55,3 +56,30 @@ public:
     using Symbol::getVolatileType;
 };
 } // namespace dia
+
+namespace std
+{
+template <>
+struct hash<dia::Function>
+{
+    size_t operator()(const dia::Function& v) const
+    {
+        size_t calculatedHash = 0;
+        hash_combine(
+            calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())),
+            v.getAccess(), v.getAddressSection(), v.getClassParent(),
+            v.getConstType(), v.getCustomCallingConvention(), v.getFarReturn(),
+            v.getHasAlloca(), v.getHasEH(), v.getHasEHa(), v.getHasInlAsm(),
+            v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(),
+            v.getHasSetJump(), v.getInlSpec(), v.getInterruptReturn(),
+            v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(),
+            v.getLocationType(), v.getName(), v.getNoInline(), v.getNoReturn(),
+            v.getNoStackOrdering(), v.getNotReached(),
+            v.getOptimizedCodeDebugInfo(), v.getPure(), v.getToken(),
+            v.getType(), v.getUnalignedType(), v.getUndecoratedName(),
+            v.getVirtual(), v.getVirtualAddress(), v.getVolatileType());
+
+        return calculatedHash;
+    }
+};
+} // namespace std

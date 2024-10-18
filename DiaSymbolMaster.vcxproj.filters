@@ -42,14 +42,14 @@
     <ClCompile Include="DataMember.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaSymbolRawImplementation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BstrWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DiaSymbolFuncs.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiaHash.cpp">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +104,24 @@
     <ClInclude Include="DiaSymbolFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DiaData.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaUDT.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaPrint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaPointer.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaArray.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

@@ -1,20 +1,21 @@
 #include "DataMember.h"
+#include "DiaArray.h"
 namespace dia
 {
-DataMember::DataMember(const Symbol& other) : Symbol{other} {}
-DataMember DataMember::operator=(const Symbol& other)
+DataMember::DataMember(const Data& other) : Data{other} {}
+DataMember DataMember::operator=(const Data& other)
 {
     DataMember member{other};
     return member;
 }
-DataMember::DataMember(Symbol&& other) : Symbol{std::move(other)} {}
-DataMember DataMember::operator=(Symbol&& other)
+DataMember::DataMember(Data&& other) : Data{std::move(other)} {}
+DataMember DataMember::operator=(Data&& other)
 {
     DataMember member{other};
     return member;
 }
 std::wstring DataMember::getFieldName() const { return getName(); }
-Symbol DataMember::getFieldCType() const { return getType(); }
+const Symbol DataMember::getFieldCType() const { return getType(); }
 } // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::DataMember& member)
@@ -31,9 +32,10 @@ std::wostream& operator<<(std::wostream& os, const dia::DataMember& member)
 
     if (ctype.isArray())
     {
+        const dia::ArrayType ctypeAsArray{ctype};
         const auto elementType = ctype.getType();
         os << elementType.getTypeName() << L" " << fieldName << L"[0x"
-           << std::hex << ctype.getCount() << L"];";
+           << std::hex << ctypeAsArray.getCount() << L"];";
     }
     else
     {

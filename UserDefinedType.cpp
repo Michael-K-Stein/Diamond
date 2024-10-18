@@ -5,14 +5,6 @@
 
 namespace dia
 {
-enum UdtKind UserDefinedType::getUdtKind() const
-{
-    DWORD kind = 0;
-    const auto result = get()->get_udtKind(&kind);
-    CHECK_DIACOM_EXCEPTION("Failed to get UDT kind!", result);
-    return static_cast<enum UdtKind>(kind);
-}
-
 bool UserDefinedType::isUnion() const { return UdtUnion == getUdtKind(); }
 
 Union UserDefinedType::asUnion() const

@@ -1,112 +1,49 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "BstrWrapper.h"
+#include "DiaArray.h"
+#include "DiaData.h"
+#include "DiaFunction.h"
+#include "DiaNull.h"
+#include "DiaPointer.h"
 #include "Exceptions.h"
 #include "TypeResolution.h"
 #include "UserDefinedType.h"
 
 namespace dia
 {
-const std::wstring Symbol::getName() const
+Symbol::Symbol(const Symbol& other) : Base{other} {}
+Symbol Symbol::operator=(const Symbol& other)
 {
-    BstrWrapper bstr{};
-    const auto result = get()->get_name(bstr.makeFromRaw());
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's name!", result);
-    return bstr;
+    Base::operator=(other);
+    return *this;
+}
+Symbol::Symbol(Symbol&& other) noexcept : Base{std::move(other)} {}
+Symbol Symbol::operator=(Symbol&& other) noexcept
+{
+    Base::operator=(std::move(other));
+    return *this;
 }
 
-LONG Symbol::getOffset() const
-{
-    LONG offset = 0;
-    const auto result = get()->get_offset(&offset);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's offset!", result);
-    return offset;
-}
-
-// Update the GetType() function in the Symbol class
-Symbol Symbol::getType() const
-{
-    Symbol typeSymbol{};
-    const auto result = get()->get_type(&typeSymbol.makeFromRaw());
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's type symbol!", result);
-    return typeSymbol;
-}
-
-std::wstring Symbol::getTypeName() const { return resolveTypeName(*this); }
-
-enum SymTagEnum Symbol::getSymTag() const
-{
-    DWORD symTag = 0;
-    const auto result = get()->get_symTag(&symTag);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's SymTag!", result);
-    return static_cast<enum SymTagEnum>(symTag);
-}
-
-DWORD Symbol::getBaseType() const
-{
-    DWORD baseType = 0;
-    const auto result = get()->get_baseType(&baseType);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's base type!", result);
-    return baseType;
-}
-
-DWORD Symbol::getCount() const
-{
-    DWORD count = 0;
-    const auto result = get()->get_count(&count);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's count!", result);
-    return count;
-}
-
-enum LocationType Symbol::getLocationType() const
-{
-    DWORD locationType = 0;
-    const auto result = get()->get_locationType(&locationType);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's location type!", result);
-    return static_cast<enum LocationType>(locationType);
-}
-
-DWORD Symbol::getBitPosition() const
-{
-    if (getLocationType() != LocIsBitField)
-    {
-        throw std::runtime_error(
-            "BitPosition is only valid for LocIsBitField types!");
-    }
-    DWORD position = 0;
-    const auto result = get()->get_bitPosition(&position);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's bit position!", result);
-    return position;
-}
-
-ULONGLONG Symbol::getLength() const
-{
-    ULONGLONG length = 0;
-    const auto result = get()->get_length(&length);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's length!", result);
-    return length;
-}
-
-bool Symbol::isVolatile() const
-{
-    BOOL volatileType = 0;
-    const auto result = get()->get_volatileType(&volatileType);
-    CHECK_DIACOM_EXCEPTION("Failed to get symbol's volatility type!", result);
-    return (FALSE != volatileType) ? true : false;
-}
-
+bool Symbol::isVolatile() const { return getVolatileType(); }
 bool Symbol::isArray() const { return SymTagArrayType == getSymTag(); }
-
 bool Symbol::isPointer() const { return SymTagPointerType == getSymTag(); }
-
-UserDefinedType Symbol::asUserDefinedType() const
+bool Symbol::isUserDefinedType() const
 {
-    UserDefinedType udt(*this);
-    return udt;
+    return SymTagUDT == getSymTag() || SymTagEnum == getSymTag() ||
+           SymTagTypedef == getSymTag();
 }
-
+size_t Symbol::calcHash() const
+{
+#define __RETURN_HASH_SYMBOL(x) return std::hash<T>()(x);
+    size_t calculatedHash = 0;
+    hash_combine(calculatedHash, std::wstring(dia::symTagToName(getSymTag())),
+                 std::hash<std::wstring>()(getName()));
+    XBY_SYMBOL_TYPE_T((*this), T, __RETURN_HASH_SYMBOL);
+}
 } // namespace dia
 
+#if 0
 std::wostream& operator<<(std::wostream& os, const dia::Symbol& v)
 {
     os << L"/* " << v.getType().getSymTag() << L", " << v.getLocationType()
@@ -134,15 +71,4 @@ std::wostream& operator<<(std::wostream& os, const dia::Symbol& v)
 
     return os;
 }
-
-std::wostream& operator<<(std::wostream& os, const enum SymTagEnum& v)
-{
-    os << dia::symTagToName(v);
-    return os;
-}
-
-std::wostream& operator<<(std::wostream& os, const enum LocationType& v)
-{
-    os << dia::locationTypeToName(v);
-    return os;
-}
+#endif

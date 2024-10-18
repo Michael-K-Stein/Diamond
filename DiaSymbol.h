@@ -2,6 +2,7 @@
 #include "Base.h"
 #include "BstrWrapper.h"
 #include "DiaSymbolFuncs.h"
+#include "hashing.h"
 #include <atlbase.h>
 #include <dia2.h>
 #include <iostream>
@@ -13,6 +14,7 @@ namespace dia
 // Forward decleration
 class Symbol;
 class DataMember;
+class DiaDataSource;
 
 template <typename T>
 class DiaSymbolEnumerator;
@@ -29,12 +31,30 @@ class Symbol : public Base<IDiaSymbol>
 {
 public:
     using Base::Base;
+    Symbol(const Symbol& other);
+    Symbol operator=(const Symbol& other);
+    Symbol(Symbol&& other) noexcept;
+    Symbol operator=(Symbol&& other) noexcept;
 
     using Base::makeFromRaw;
     using Base::operator!;
     using Base::operator=;
 
     using Base::get;
+
+    std::wstring getTypeName() const { return resolveTypeName(*this); }
+
+    // Functions which are valid for ALL symbol types
+    auto getSymTag() const { return dia::getSymTag(*this); }
+    auto getType() const { return dia::getType(*this); }
+    auto getName() const { return dia::getName(*this); }
+
+    bool isVolatile() const;
+    bool isArray() const;
+    bool isPointer() const;
+    bool isUserDefinedType() const;
+
+    size_t calcHash() const;
 
 #if 0
     const std::wstring getName() const;
@@ -47,35 +67,32 @@ public:
     enum LocationType getLocationType() const;
     DWORD getBitPosition() const;
     ULONGLONG getLength() const;
-    bool isVolatile() const;
 
-    bool isArray() const;
-    bool isPointer() const;
-
-    bool isUserDefinedType() const
-    {
-        return SymTagUDT == getSymTag() || SymTagEnum == getSymTag() ||
-               SymTagTypedef == getSymTag();
-    }
     UserDefinedType asUserDefinedType() const;
 #endif
 
 protected:
+#if 0
+    // Not yet implemented!
     auto findChildren() const { return dia::findChildren(*this); }
     auto findChildrenEx() const { return dia::findChildrenEx(*this); }
+#endif
     auto findInputAssemblyFile() const
     {
         return dia::findInputAssemblyFile(*this);
     }
+#if 0
     auto getAcceleratorPointerTags() const
     {
         return dia::getAcceleratorPointerTags(*this);
     }
+#endif
     auto getAccess() const { return dia::getAccess(*this); }
     auto getAddressOffset() const { return dia::getAddressOffset(*this); }
     auto getAddressSection() const { return dia::getAddressSection(*this); }
     auto getAddressTaken() const { return dia::getAddressTaken(*this); }
     auto getAge() const { return dia::getAge(*this); }
+    auto getArrayIndexType() const { return dia::getArrayIndexType(*this); }
     auto getArrayIndexTypeId() const { return dia::getArrayIndexTypeId(*this); }
     auto getBaseSymbol() const { return dia::getBaseSymbol(*this); }
     auto getBaseSymbolId() const { return dia::getBaseSymbolId(*this); }
@@ -149,7 +166,6 @@ protected:
     auto getLowerBoundId() const { return dia::getLowerBoundId(*this); }
     auto getManaged() const { return dia::getManaged(*this); }
     auto getMsil() const { return dia::getMsil(*this); }
-    auto getName() const { return dia::getName(*this); }
     auto getNoNameExport() const { return dia::getNoNameExport(*this); }
     auto getOffset() const { return dia::getOffset(*this); }
     auto getOrdinal() const { return dia::getOrdinal(*this); }
@@ -170,8 +186,6 @@ protected:
     auto getSignature() const { return dia::getSignature(*this); }
     auto getStaticSize() const { return dia::getStaticSize(*this); }
     auto getSymIndexId() const { return dia::getSymIndexId(*this); }
-    auto getSymTag() const { return dia::getSymTag(*this); }
-    auto getType() const { return dia::getType(*this); }
     auto getTypeId() const { return dia::getTypeId(*this); }
     auto getUndecoratedName() const { return dia::getUndecoratedName(*this); }
     auto getUpperBound() const { return dia::getUpperBound(*this); }
@@ -180,6 +194,10 @@ protected:
     auto getVirtualBaseDispIndex() const
     {
         return dia::getVirtualBaseDispIndex(*this);
+    }
+    auto getVirtualTableShape() const
+    {
+        return dia::getVirtualTableShape(*this);
     }
     auto getVirtualTableShapeId() const
     {
@@ -210,7 +228,7 @@ protected:
     {
         return dia::getCustomCallingConvention(*this);
     }
-    auto getDataBytes() const { return dia::getDataBytes(*this); }
+    // auto getDataBytes() const { return dia::getDataBytes(*this); }
     auto getEditAndContinueEnabled() const
     {
         return dia::getEditAndContinueEnabled(*this);
@@ -449,8 +467,6 @@ protected:
     auto getWasInlined() const { return dia::getWasInlined(*this); }
 
 private:
-    using Base::get;
-
     using SymbolEnum = DiaSymbolEnumerator<Symbol>;
     using LineEnum =
         DiaSymbolEnumerator<Symbol>; // TODO: Should be
@@ -462,9 +478,23 @@ private:
     friend DiaSymbolEnumerator<DataMember>
     enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag,
                           LPCOLESTR name, DWORD compareFlags);
+    friend ::std::wstring resolveTypeName(const Symbol& symbol);
+    friend class DiaDataSource;
 };
 } // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Symbol& v);
 std::wostream& operator<<(std::wostream& os, const enum SymTagEnum& v);
 std::wostream& operator<<(std::wostream& os, const enum LocationType& v);
+
+namespace std
+{
+template <>
+struct hash<dia::Symbol>
+{
+    size_t operator()(const dia::Symbol& diaSymbol) const
+    {
+        return diaSymbol.calcHash();
+    }
+};
+} // namespace std

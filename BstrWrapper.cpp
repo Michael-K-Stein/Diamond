@@ -74,6 +74,16 @@ BstrWrapper::operator std::wstring() const
     return v;
 }
 
+std::wstring BstrWrapper::operator+(const std::wstring& s) const
+{
+    return s + std::wstring(*this);
+}
+
+std::wstring BstrWrapper::operator+(const wchar_t* s) const
+{
+    return std::wstring{s, wcslen(s)} + std::wstring{*this};
+}
+
 void BstrWrapper::move(BstrWrapper&& other) noexcept
 {
     m_data = std::move(other.m_data);

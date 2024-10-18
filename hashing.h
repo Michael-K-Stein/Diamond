@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cstdlib>
+#include <type_traits>
 
 inline void hash_combine(std::size_t& seed) {}
 
