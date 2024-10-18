@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\DiaSymbolTypes">
+      <UniqueIdentifier>{099eeecc-afca-4e71-bbe3-a1977558adf9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaSymbolMaster.cpp">
@@ -37,6 +40,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataMember.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiaSymbolRawImplementation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BstrWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiaSymbolFuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,6 +87,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataMember.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaSymbolTypes.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaNull.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaExe.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaFunction.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaSymbolFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

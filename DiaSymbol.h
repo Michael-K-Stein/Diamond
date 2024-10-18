@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "BstrWrapper.h"
 #include <atlbase.h>
 #include <dia2.h>
 #include <iostream>
@@ -28,6 +29,13 @@ class Symbol : public Base<IDiaSymbol>
 public:
     using Base::Base;
 
+    using Base::makeFromRaw;
+    using Base::operator!;
+    using Base::operator=;
+
+    using Base::get;
+
+#if 0
     const std::wstring getName() const;
     LONG getOffset() const;
     Symbol getType() const;
@@ -40,10 +48,6 @@ public:
     ULONGLONG getLength() const;
     bool isVolatile() const;
 
-    using Base::makeFromRaw;
-    using Base::operator!;
-    using Base::operator=;
-
     bool isArray() const;
     bool isPointer() const;
 
@@ -53,11 +57,37 @@ public:
                SymTagTypedef == getSymTag();
     }
     UserDefinedType asUserDefinedType() const;
+#endif
 
 protected:
-    using Base::get;
+    auto getSymIndexId() const { return getSymIndexId(*this); }
+    auto getSymTag() const { return getSymTag(*this); }
+    auto getName() const { return getName(*this); }
+    auto getLexicalParent() const { return getLexicalParent(*this); }
+    auto getClassParent() const { return getClassParent(*this); }
+    auto getType() const { return getType(*this); }
+    auto getDataKind() const { return getDataKind(*this); }
+    auto getLocationType() const { return getLocationType(*this); }
+    auto getAddressSection() const { return getAddressSection(*this); }
+    auto getAddressOffset() const { return getAddressOffset(*this); }
+    auto getRelativeVirtualAddress() const
+    {
+        return getRelativeVirtualAddress(*this);
+    }
+    auto getVirtualAddress() const { return getVirtualAddress(*this); }
+    auto getAddressOffset() const { return getAddressOffset(*this); }
+    auto getRegisterId() const { return getRegisterId(*this); }
+    auto getOffset() const { return getOffset(*this); }
+    auto getLength() const { return getLength(*this); }
 
 private:
+    using Base::get;
+
+    using SymbolEnum = DiaSymbolEnumerator<Symbol>;
+    using LineEnum =
+        DiaSymbolEnumerator<Symbol>; // TODO: Should be
+                                     // DiaSymbolEnumerator<dia::Line>
+
     friend DiaSymbolEnumerator<Symbol>
     enumerate<Symbol>(const Symbol& parentSymbol, enum SymTagEnum symTag,
                       LPCOLESTR name, DWORD compareFlags);
@@ -67,17 +97,6 @@ private:
 };
 } // namespace dia
 
-// namespace std
-//{
-// template <>
-// struct hash<dia::Symbol>
-//{
-//    size_t operator()(const dia::Symbol& diaSymbol) const
-//    {
-//        static_assert(false, "Hashing of arbitrary symbol is unimplemented!");
-//    }
-//};
-//} // namespace std
 std::wostream& operator<<(std::wostream& os, const dia::Symbol& v);
 std::wostream& operator<<(std::wostream& os, const enum SymTagEnum& v);
 std::wostream& operator<<(std::wostream& os, const enum LocationType& v);

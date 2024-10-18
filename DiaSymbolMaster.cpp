@@ -42,8 +42,7 @@ int main()
         DiaDataSource dia{};
         // dia.loadDataFromPdb(L"C:\\Windows\\SYMBOLS\\ntkrnlmp.pdb\\EA046425240DE177323859123B166FAC1\\ntkrnlmp.pdb");
         dia.loadDataFromPdb(
-            L"C:\\Windows\\SYMBOLS\\ntkrnlmp."
-            L"pdb\\BC9E67554B228F3E5C46B0D1622B6E321\\ntkrnlmp.pdb");
+            L"C:\\Windows\\SYMBOLS\\ntkrnlmp.pdb\\BC9E67554B228F3E5C46B0D1622B6E321\\ntkrnlmp.pdb");
 
         // DiaDataSource dia2{};
         // dia2.loadDataFromPdb(L"C:\\Windows\\SYMBOLS\\ntkrnlmp.pdb\\9074FC2B82ED2B7E1CB3366B64BE62F91\\ntkrnlmp.pdb");

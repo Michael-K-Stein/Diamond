@@ -1,0 +1,51 @@
+#pragma once
+
+namespace dia
+{
+class Symbol;
+class Null;
+class Exe;
+class Compiland;
+class CompilandDetails;
+class CompilandEnv;
+class Function;
+class Block;
+class Data;
+class Annotation;
+class Label;
+class PublicSymbol;
+class UDT;
+using UserDefinedType = UDT;
+class Enum;
+class FunctionType;
+class PointerType;
+class ArrayType;
+class BaseType;
+class Typedef;
+class BaseClass;
+class Friend;
+class FunctionArgType;
+class FuncDebugStart;
+class FuncDebugEnd;
+class UsingNamespace;
+class VTableShape;
+class VTable;
+class Custom;
+class Thunk;
+class CustomType;
+class ManagedType;
+class Dimension;
+class CallSite;
+class InlineSite;
+class BaseInterface;
+class VectorType;
+class MatrixType;
+class HLSLType;
+class Caller;
+class Callee;
+class Export;
+class HeapAllocationSite;
+class CoffGroup;
+class Inlinee;
+class TaggedUnionCase;
+} // namespace dia

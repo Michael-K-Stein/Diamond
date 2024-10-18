@@ -5,38 +5,31 @@
 #include <memory>
 #include <string>
 
-class BstrWrapper
+class BstrWrapper final
 {
 public:
     BstrWrapper() = default;
-    BstrWrapper(BSTR&& data) : m_data{std::move(data)} {}
-    ~BstrWrapper() noexcept { SysFreeString(m_data); }
 
-    BSTR& get() { return m_data; }
-    const BSTR& get() const { return m_data; }
+    BstrWrapper(const BstrWrapper& other);
+    BstrWrapper operator=(const BstrWrapper& other);
+    BstrWrapper(BstrWrapper&& other) noexcept;
+    BstrWrapper operator=(BstrWrapper&& other) noexcept;
 
-    BSTR* makeFromRaw()
-    {
-        if (nullptr != m_data)
-        {
-            throw std::exception("Cannot re-makeFromRaw BstrWrapper!");
-        }
-        return &m_data;
-    }
+    BstrWrapper(const BSTR& data);
+    BstrWrapper(BSTR&& data);
+    ~BstrWrapper() noexcept;
 
-    operator std::wstring() const
-    {
-        std::wstring v(m_data, SysStringLen(m_data));
-        return v;
-    }
+    BSTR& get();
+    const BSTR& get() const;
+
+    BSTR* makeFromRaw();
+
+    operator std::wstring() const;
 
 private:
+    void move(BstrWrapper&& other) noexcept;
+
     BSTR m_data{nullptr};
 };
 
-static inline std::wostream& operator<<(std::wostream& os,
-                                        const BstrWrapper& bstr)
-{
-    os << bstr.get();
-    return os;
-}
+std::wostream& operator<<(std::wostream& os, const BstrWrapper& bstr);

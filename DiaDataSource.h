@@ -86,7 +86,12 @@ private:
     Symbol& getGlobalScope();
     const Symbol& getGlobalScope() const
     {
-        ATLASSERT(!!m_globalScope);
+        if (!!!m_globalScope)
+        {
+            throw std::runtime_error(
+                "A DIA session must be openned and a global "
+                "scope must be identified before using this API!");
+        }
         return m_globalScope;
     }
     void openSession();
