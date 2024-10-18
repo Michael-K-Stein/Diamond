@@ -821,7 +821,7 @@ static ULONG getLiveRangeStartAddressOffset(const Symbol& symbol);
 /// @param symbol The symbol of which to get the live range start address
 /// section.
 /// @return The start address section of the live range.
-static USHORT getLiveRangeStartAddressSection(const Symbol& symbol);
+static DWORD getLiveRangeStartAddressSection(const Symbol& symbol);
 
 /// @brief Retrieves the start relative virtual address of the live range.
 /// @param symbol The symbol of which to get the live range start relative
@@ -946,10 +946,10 @@ static const std::vector<ULONG> getNumericProperties(const Symbol& symbol);
 /// @return The object file name.
 static const BstrWrapper getObjectFileName(const Symbol& symbol);
 
-/// @brief Retrieves the object pointer type.
+/// @brief Retrieves the type of the object pointer for a class method.
 /// @param symbol The symbol to check.
 /// @return The object pointer type.
-static ULONG getObjectPointerType(const Symbol& symbol);
+static const Symbol getObjectPointerType(const Symbol& symbol);
 
 /// @brief Retrieves the OEM ID.
 /// @param symbol The symbol to check.
@@ -982,9 +982,11 @@ static bool getOptimizedCodeDebugInfo(const Symbol& symbol);
 /// @return The ordinal.
 static DWORD getOrdinal(const Symbol& symbol);
 
-/// @brief Retrieves whether the symbol is an overloaded operator.
+/// @brief Retrieves a flag indicating whether the user-defined data type has
+/// overloaded operators.
 /// @param symbol The symbol to check.
-/// @return True if the symbol is an overloaded operator, otherwise false.
+/// @return True if the user-defined data type has overloaded operators;
+/// otherwise, returns false.
 static bool getOverloadedOperator(const Symbol& symbol);
 
 /// @brief Retrieves the PGO dynamic instruction count of the symbol.
@@ -1134,7 +1136,7 @@ static ULONG getStride(const Symbol& symbol);
 /// @brief Retrieves the sub-type.
 /// @param symbol The symbol to check.
 /// @return The sub-type.
-static ULONG getSubType(const Symbol& symbol);
+static const Symbol getSubType(const Symbol& symbol);
 
 /// @brief Retrieves the sub-type ID.
 /// @param symbol The symbol to check.
@@ -1170,7 +1172,7 @@ static ULONG getTargetRelativeVirtualAddress(const Symbol& symbol);
 /// @brief Retrieves the target section.
 /// @param symbol The symbol to check.
 /// @return The target section.
-static USHORT getTargetSection(const Symbol& symbol);
+static DWORD getTargetSection(const Symbol& symbol);
 
 /// @brief Retrieves the target virtual address.
 /// @param symbol The symbol to check.
@@ -1245,25 +1247,60 @@ static bool getUnalignedType(const Symbol& symbol);
 /// @return The undecorated name.
 static const BstrWrapper getUndecoratedName(const Symbol& symbol);
 
-/// @brief Retrieves the undecorated name.
+/// @brief Retrieves part or all of an undecorated name for a C++ decorated
+/// (linkage) name.
 /// @param symbol The symbol to check.
+/// @param options Specifies a combination of flags that control what is
+/// returned. See the Remarks section for the specific values and what they do.
 /// @return The undecorated name.
-static const BstrWrapper getUndecoratedNameEx(const Symbol& symbol);
+/// https://learn.microsoft.com/en-us/visualstudio/debugger/debug-interface-access/idiasymbol-get-undecoratednameex?view=vs-2022
+/// |Flag|Value|Description|
+/// |----------|-----------|-----------------|
+/// |UNDNAME_COMPLETE|0x0000|Enables full undecoration.|
+/// |UNDNAME_NO_LEADING_UNDERSCORES|0x0001|Removes leading underscores from
+/// Microsoft extended keywords.| |UNDNAME_NO_MS_KEYWORDS|0x0002|Disables
+/// expansion of Microsoft extended keywords.|
+/// |UNDNAME_NO_FUNCTION_RETURNS|0x0004|Disables expansion of return type for
+/// primary declaration.| |UNDNAME_NO_ALLOCATION_MODEL|0x0008|Disables expansion
+/// of the declaration model.| |UNDNAME_NO_ALLOCATION_LANGUAGE|0x0010|Disables
+/// expansion of the declaration language specifier.|
+/// |UNDNAME_RESERVED1|0x0020|RESERVED.|
+/// |UNDNAME_RESERVED2|0x0040|RESERVED.|
+/// |UNDNAME_NO_THISTYPE|0x0060|Disables all modifiers on the `this` type.|
+/// |UNDNAME_NO_ACCESS_SPECIFIERS|0x0080|Disables expansion of access specifiers
+/// for members.| |UNDNAME_NO_THROW_SIGNATURES|0x0100|Disables expansion of
+/// "throw-signatures" for functions and pointers to functions.|
+/// |UNDNAME_NO_MEMBER_TYPE|0x0200|Disables expansion of `static` or `virtual`
+/// members.| |UNDNAME_NO_RETURN_UDT_MODEL|0x0400|Disables expansion of the
+/// Microsoft model for UDT returns.| |UNDNAME_32_BIT_DECODE|0x0800|Undecorates
+/// 32-bit decorated names.| |UNDNAME_NAME_ONLY|0x1000|Gets only the name for
+/// primary declaration; returns just [scope::]name.  Expands template params.|
+/// |UNDNAME_TYPE_ONLY|0x2000|Input is just a type encoding; composes an
+/// abstract declarator.| |UNDNAME_HAVE_PARAMETERS|0x4000|The real template
+/// parameters are available.| |UNDNAME_NO_ECSU|0x8000|Suppresses
+/// enum/class/struct/union.| |UNDNAME_NO_IDENT_CHAR_CHECK|0x10000|Suppresses
+/// check for valid identifier characters.| |UNDNAME_NO_PTR64|0x20000|Does not
+/// include ptr64 in output.|
+///
+static const BstrWrapper getUndecoratedNameEx(const Symbol& symbol,
+                                              DWORD options);
 
-/// @brief Retrieves the unmodified type.
+/// @brief Retrieves the original (unmodifed) type of this symbol.
 /// @param symbol The symbol to check.
-/// @return The unmodified type.
-static ULONG getUnmodifiedType(const Symbol& symbol);
+/// @return A dia::Symbol object that represents the original type of this
+/// symbol.
+/// @note Use when the SymTagEnum Enumeration is set to a type.
+static const Symbol getUnmodifiedType(const Symbol& symbol);
 
 /// @brief Retrieves the unmodified type ID.
 /// @param symbol The symbol to check.
 /// @return The unmodified type ID.
 static ULONG getUnmodifiedTypeId(const Symbol& symbol);
 
-/// @brief Retrieves whether the symbol is unused.
-/// @param symbol The symbol to check.
-/// @return True if the symbol is unused, otherwise false.
-static bool getUnused(const Symbol& symbol);
+/// @brief Deprecated function. ???
+/// @param symbol ???
+/// @return ???
+static const BstrWrapper getUnused(const Symbol& symbol);
 
 /// @brief Retrieves the upper bound of the symbol.
 /// @param symbol The symbol of which to get the upper bound.
@@ -1280,13 +1317,19 @@ static DWORD getUpperBoundId(const Symbol& symbol);
 /// @return The value.
 static const VARIANT getValue(const Symbol& symbol);
 
+/// @brief Retrieves a flag that specifies whether the function is virtual.
+/// @param symbol The symbol to check.
+/// @return True if the function is virtual; otherwise, returns false.
+static bool getVirtual(const Symbol& symbol);
+
 /// @brief Retrieves the virtual address (VA) of the location. Use when the
 /// LocationType Enumeration is set to LocIsStatic.
 /// @param symbol
 /// @return The virtual address of the location.
 static ULONGLONG getVirtualAddress(const Symbol& symbol);
 
-/// @brief Retrieves whether the symbol is a virtual base class.
+/// @brief Retrieves a flag indicating whether the user-defined data type is a
+/// virtual base class.
 /// @param symbol The symbol to check.
 /// @return True if the symbol is a virtual base class, otherwise false.
 static bool getVirtualBaseClass(const Symbol& symbol);
@@ -1300,17 +1343,22 @@ static DWORD getVirtualBaseDispIndex(const Symbol& symbol);
 /// @brief Retrieves the virtual base offset.
 /// @param symbol The symbol to check.
 /// @return The virtual base offset.
-static LONG getVirtualBaseOffset(const Symbol& symbol);
+static DWORD getVirtualBaseOffset(const Symbol& symbol);
 
 /// @brief Retrieves the virtual base pointer offset.
 /// @param symbol The symbol to check.
 /// @return The virtual base pointer offset.
 static LONG getVirtualBasePointerOffset(const Symbol& symbol);
 
-/// @brief Retrieves the virtual base table type.
+/// @brief Retrieves the type of a virtual base table pointer.
 /// @param symbol The symbol to check.
 /// @return The virtual base table type.
-static ULONG getVirtualBaseTableType(const Symbol& symbol);
+/// @note A virtual base table pointer (vbtptr) is a hidden pointer in a Visual
+/// C++ vtable that handles inheritance from virtual base classes. A vbtptr can
+/// have different sizes depending on the inherited classes. This method returns
+/// an IDiaSymbol object that can be used to determine the size of the
+/// vbtptr.
+static const Symbol getVirtualBaseTableType(const Symbol& symbol);
 
 /// @brief Retrieves the virtual table shape ID of the symbol.
 /// @param symbol The symbol of which to get the virtual table shape ID.

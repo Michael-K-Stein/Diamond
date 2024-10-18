@@ -1343,6 +1343,7 @@ DWORD getNumberOfRows(const Symbol& symbol)
     return retVal;
 }
 
+#if 0
 const Symbol getNumericProperties(const Symbol& symbol)
 {
     IDiaSymbol* retVal = nullptr;
@@ -1350,6 +1351,7 @@ const Symbol getNumericProperties(const Symbol& symbol)
     CHECK_DIACOM_EXCEPTION("get_numericProperties failed!", result);
     return Symbol{retVal};
 }
+#endif
 
 const BstrWrapper getObjectFileName(const Symbol& symbol)
 {
@@ -1399,12 +1401,12 @@ bool getOptimizedCodeDebugInfo(const Symbol& symbol)
     return FALSE != retVal;
 }
 
-DWORD getOverloadedOperator(const Symbol& symbol)
+bool getOverloadedOperator(const Symbol& symbol)
 {
-    DWORD retVal = 0;
+    BOOL retVal = 0;
     const auto result = symbol.get()->get_overloadedOperator(&retVal);
     CHECK_DIACOM_EXCEPTION("get_overloadedOperator failed!", result);
-    return retVal;
+    return FALSE != retVal;
 }
 
 bool getPacked(const Symbol& symbol)
@@ -1454,12 +1456,12 @@ DWORD getRegisterType(const Symbol& symbol)
     CHECK_DIACOM_EXCEPTION("get_registerType failed!", result);
     return retVal;
 }
-const Symbol getRestrictedType(const Symbol& symbol)
+bool getRestrictedType(const Symbol& symbol)
 {
-    IDiaSymbol* retVal = nullptr;
+    BOOL retVal = 0;
     const auto result = symbol.get()->get_restrictedType(&retVal);
     CHECK_DIACOM_EXCEPTION("get_restrictedType failed!", result);
-    return Symbol{retVal};
+    return FALSE != retVal;
 }
 
 DWORD getSamplerSlot(const Symbol& symbol)
@@ -1621,6 +1623,7 @@ DWORD getToken(const Symbol& symbol)
     return retVal;
 }
 
+#if 0
 const Symbol getTypeIds(const Symbol& symbol)
 {
     IDiaSymbol* retVal = nullptr;
@@ -1628,7 +1631,9 @@ const Symbol getTypeIds(const Symbol& symbol)
     CHECK_DIACOM_EXCEPTION("get_typeIds failed!", result);
     return Symbol{retVal};
 }
+#endif
 
+#if 0
 const Symbol getTypes(const Symbol& symbol)
 {
     IDiaSymbol* retVal = nullptr;
@@ -1636,6 +1641,7 @@ const Symbol getTypes(const Symbol& symbol)
     CHECK_DIACOM_EXCEPTION("get_types failed!", result);
     return Symbol{retVal};
 }
+#endif
 
 DWORD getUavSlot(const Symbol& symbol)
 {
@@ -1661,10 +1667,10 @@ bool getUnalignedType(const Symbol& symbol)
     return FALSE != retVal;
 }
 
-const BstrWrapper getUndecoratedNameEx(const Symbol& symbol)
+const BstrWrapper getUndecoratedNameEx(const Symbol& symbol, DWORD options)
 {
     BSTR retVal = nullptr;
-    const auto result = symbol.get()->get_undecoratedNameEx(&retVal);
+    const auto result = symbol.get()->get_undecoratedNameEx(options, &retVal);
     CHECK_DIACOM_EXCEPTION("get_undecoratedNameEx failed!", result);
     return retVal;
 }
@@ -1685,15 +1691,15 @@ DWORD getUnmodifiedTypeId(const Symbol& symbol)
     return retVal;
 }
 
-DWORD getUnused(const Symbol& symbol)
+const BstrWrapper getUnused(const Symbol& symbol)
 {
-    DWORD retVal = 0;
+    BSTR retVal = nullptr;
     const auto result = symbol.get()->get_unused(&retVal);
     CHECK_DIACOM_EXCEPTION("get_unused failed!", result);
     return retVal;
 }
 
-VARIANT getValue(const Symbol& symbol)
+const VARIANT getValue(const Symbol& symbol)
 {
     VARIANT retVal;
     VariantInit(&retVal);
@@ -1702,17 +1708,25 @@ VARIANT getValue(const Symbol& symbol)
     return retVal;
 }
 
-const Symbol getVirtualBaseClass(const Symbol& symbol)
+bool getVirtual(const Symbol& symbol)
 {
-    IDiaSymbol* retVal = nullptr;
-    const auto result = symbol.get()->get_virtualBaseClass(&retVal);
-    CHECK_DIACOM_EXCEPTION("get_virtualBaseClass failed!", result);
-    return Symbol{retVal};
+    BOOL retVal = FALSE;
+    const auto result = symbol.get()->get_virtual(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_virtual failed!", result);
+    return FALSE != retVal;
 }
 
-LONG getVirtualBaseOffset(const Symbol& symbol)
+bool getVirtualBaseClass(const Symbol& symbol)
 {
-    LONG retVal = 0;
+    BOOL retVal = FALSE;
+    const auto result = symbol.get()->get_virtualBaseClass(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_virtualBaseClass failed!", result);
+    return FALSE != retVal;
+}
+
+DWORD getVirtualBaseOffset(const Symbol& symbol)
+{
+    DWORD retVal = 0;
     const auto result = symbol.get()->get_virtualBaseOffset(&retVal);
     CHECK_DIACOM_EXCEPTION("get_virtualBaseOffset failed!", result);
     return retVal;
