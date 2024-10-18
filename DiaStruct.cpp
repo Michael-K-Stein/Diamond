@@ -16,7 +16,7 @@ struct hash<dia::Struct>
         for (const auto& member : diaStruct.enumerateMembers())
         {
             const auto memberOffset = member.getOffset();
-            const auto memberTypeName = member.getFieldCType().getName();
+            const auto memberTypeName = member.getFieldCType().getTypeName();
             const auto memberName = member.getFieldName();
             const auto memberLength = member.getLength();
             hash_combine(calculatedHash, memberOffset, memberTypeName,

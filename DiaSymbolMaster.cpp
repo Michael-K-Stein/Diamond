@@ -116,12 +116,12 @@ int main()
     {
         std::cerr << e << std::endl;
     }
-    catch (const std::exception& e)
+  /*  catch (const std::exception& e)
     {
         std::cerr << e.what() << std::endl;
     }
     catch (...)
     {
         std::cerr << "Unexpected error!" << std::endl;
-    }
+    }*/
 }
