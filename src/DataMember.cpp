@@ -1,5 +1,6 @@
 #include "DataMember.h"
 #include "DiaArray.h"
+
 namespace dia
 {
 DataMember::DataMember(const Data& other) : Data{other} {}

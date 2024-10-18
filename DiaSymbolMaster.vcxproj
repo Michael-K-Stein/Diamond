@@ -79,7 +79,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\DiaSymbolTypes;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\DiaSymbolTypes;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\DiaSymbolTypes;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\DiaSymbolTypes;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -149,41 +149,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BstrWrapper.cpp" />
-    <ClCompile Include="DataMember.cpp" />
-    <ClCompile Include="DiaHash.cpp" />
-    <ClCompile Include="DiaSymbol.cpp" />
-    <ClCompile Include="DiaDataSource.cpp" />
-    <ClCompile Include="DiaStruct.cpp" />
-    <ClCompile Include="DiaSymbolFuncs.cpp" />
+    <ClCompile Include="src/BstrWrapper.cpp" />
+    <ClCompile Include="src/DataMember.cpp" />
+    <ClCompile Include="src/DiaSymbolTypes/DiaHash.cpp" />
+    <ClCompile Include="src/DiaSymbol.cpp" />
+    <ClCompile Include="src/DiaDataSource.cpp" />
+    <ClCompile Include="src/DiaStruct.cpp" />
+    <ClCompile Include="src/DiaSymbolFuncs.cpp" />
     <ClCompile Include="DiaSymbolMaster.cpp" />
-    <ClCompile Include="TypeResolution.cpp" />
-    <ClCompile Include="Union.cpp" />
-    <ClCompile Include="UserDefinedType.cpp" />
+    <ClCompile Include="src/TypeResolution.cpp" />
+    <ClCompile Include="src/Union.cpp" />
+    <ClCompile Include="src/UserDefinedType.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Base.h" />
-    <ClInclude Include="BstrWrapper.h" />
-    <ClInclude Include="DiaArray.h" />
-    <ClInclude Include="DiaData.h" />
-    <ClInclude Include="DiaExe.h" />
-    <ClInclude Include="DiaFunction.h" />
-    <ClInclude Include="DiaNull.h" />
-    <ClInclude Include="DiaPointer.h" />
-    <ClInclude Include="DiaPrint.h" />
-    <ClInclude Include="DiaSymbol.h" />
-    <ClInclude Include="DiaDataSource.h" />
-    <ClInclude Include="DiaStruct.h" />
-    <ClInclude Include="DiaSymbolEnumerator.h" />
-    <ClInclude Include="DiaSymbolFuncs.h" />
-    <ClInclude Include="DiaSymbolTypes.h" />
-    <ClInclude Include="DiaUDT.h" />
-    <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="hashing.h" />
-    <ClInclude Include="DataMember.h" />
-    <ClInclude Include="TypeResolution.h" />
-    <ClInclude Include="Union.h" />
-    <ClInclude Include="UserDefinedType.h" />
+    <ClInclude Include="src/Base.h" />
+    <ClInclude Include="src/BstrWrapper.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaArray.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaData.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaExe.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaFunction.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaNull.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaPointer.h" />
+    <ClInclude Include="src/DiaPrint.h" />
+    <ClInclude Include="src/DiaSymbol.h" />
+    <ClInclude Include="src/DiaDataSource.h" />
+    <ClInclude Include="src/DiaStruct.h" />
+    <ClInclude Include="src/DiaSymbolEnumerator.h" />
+    <ClInclude Include="src/DiaSymbolFuncs.h" />
+    <ClInclude Include="src/DiaSymbolTypes/DiaSymbolTypes.h" />
+    <ClInclude Include="src/DiaUDT.h" />
+    <ClInclude Include="src/Exceptions.h" />
+    <ClInclude Include="src/hashing.h" />
+    <ClInclude Include="src/DataMember.h" />
+    <ClInclude Include="src/TypeResolution.h" />
+    <ClInclude Include="src/Union.h" />
+    <ClInclude Include="src/UserDefinedType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

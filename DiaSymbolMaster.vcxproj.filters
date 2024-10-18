@@ -21,103 +21,103 @@
     <ClCompile Include="DiaSymbolMaster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaDataSource.cpp">
+    <ClCompile Include="src/DiaDataSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaStruct.cpp">
+    <ClCompile Include="src/DiaStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaSymbol.cpp">
+    <ClCompile Include="src/DiaSymbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TypeResolution.cpp">
+    <ClCompile Include="src/TypeResolution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserDefinedType.cpp">
+    <ClCompile Include="src/UserDefinedType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Union.cpp">
+    <ClCompile Include="src/Union.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataMember.cpp">
+    <ClCompile Include="src/DataMember.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BstrWrapper.cpp">
+    <ClCompile Include="src/BstrWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaSymbolFuncs.cpp">
+    <ClCompile Include="src/DiaSymbolFuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiaHash.cpp">
+    <ClCompile Include="src/DiaSymbolTypes/DiaHash.cpp">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DiaDataSource.h">
+    <ClInclude Include="src/DiaDataSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Exceptions.h">
+    <ClInclude Include="src/Exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaStruct.h">
+    <ClInclude Include="src/DiaStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaSymbol.h">
+    <ClInclude Include="src/DiaSymbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BstrWrapper.h">
+    <ClInclude Include="src/BstrWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaSymbolEnumerator.h">
+    <ClInclude Include="src/DiaSymbolEnumerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Base.h">
+    <ClInclude Include="src/Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hashing.h">
+    <ClInclude Include="src/hashing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UserDefinedType.h">
+    <ClInclude Include="src/UserDefinedType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TypeResolution.h">
+    <ClInclude Include="src/TypeResolution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Union.h">
+    <ClInclude Include="src/Union.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataMember.h">
+    <ClInclude Include="src/DataMember.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaSymbolTypes.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaSymbolTypes.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaNull.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaNull.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaExe.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaExe.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaFunction.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaFunction.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaSymbolFuncs.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaData.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="src/DiaPrint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaData.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaPointer.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaUDT.h">
+    <ClInclude Include="src/DiaSymbolTypes/DiaArray.h">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClInclude>
-    <ClInclude Include="DiaPrint.h">
+    <ClInclude Include="src/DiaSymbolFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiaPointer.h">
-      <Filter>Header Files\DiaSymbolTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="DiaArray.h">
-      <Filter>Header Files\DiaSymbolTypes</Filter>
+    <ClInclude Include="src/DiaUDT.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

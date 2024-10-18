@@ -2,8 +2,8 @@
 // execution begins and ends there.
 //
 
-#include "DiaDataSource.h"
-#include "Exceptions.h"
+#include "src/DiaDataSource.h"
+#include "src/Exceptions.h"
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -116,12 +116,12 @@ int main()
     {
         std::cerr << e << std::endl;
     }
-  /*  catch (const std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
-    catch (...)
-    {
-        std::cerr << "Unexpected error!" << std::endl;
-    }*/
+    /*  catch (const std::exception& e)
+      {
+          std::cerr << e.what() << std::endl;
+      }
+      catch (...)
+      {
+          std::cerr << "Unexpected error!" << std::endl;
+      }*/
 }

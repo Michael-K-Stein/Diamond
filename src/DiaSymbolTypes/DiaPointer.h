@@ -1,7 +1,7 @@
 #pragma once
-#include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
 #include "TypeResolution.h"
+#include <string>
 
 namespace dia
 {
