@@ -40,73 +40,26 @@ int main()
     {
 
         DiaDataSource dia{};
-        // dia.loadDataFromPdb(L"C:\\Windows\\SYMBOLS\\ntkrnlmp.pdb\\EA046425240DE177323859123B166FAC1\\ntkrnlmp.pdb");
         dia.loadDataFromPdb(
             L"C:\\Windows\\SYMBOLS\\ntkrnlmp."
             L"pdb\\BC9E67554B228F3E5C46B0D1622B6E321\\ntkrnlmp.pdb");
 
-        // DiaDataSource dia2{};
-        // dia2.loadDataFromPdb(L"C:\\Windows\\SYMBOLS\\ntkrnlmp.pdb\\9074FC2B82ED2B7E1CB3366B64BE62F91\\ntkrnlmp.pdb");
-        // dia2.loadDataFromPdb(
-        //     L"C:\\Windows\\SYMBOLS\\ntkrnlmp."
-        //     L"pdb\\36D4EAA48F7E03C46A5F0FDE2A8F78301\\ntkrnlmp.pdb");
-        // // dia.loadDataForExe(L"C:\\Windows\\System32\\ntoskrnl.exe");
-
-        const auto& kthread = dia.getExportedStruct(L"_KTHREAD");
-        std::wcout << kthread << std::endl;
+        const auto& sym = dia.getExportedStruct(L"_ETHREAD");
+        std::wcout << sym << std::endl;
 
         std::wcout << L"Depends on: " << std::endl;
-        for (const auto& type : kthread.queryDependsOnTypes())
+        for (const auto& type : sym.queryDependsOnTypes())
         {
             std::wcout << type.getName() << std::endl;
         }
 
         std::wcout << L"Depends on (as pointers): " << std::endl;
-        for (const auto& type : kthread.queryDependsOnForwardTypes())
+        for (const auto& type : sym.queryDependsOnForwardTypes())
         {
             std::wcout << type.getName() << std::endl;
         }
 
         return 0;
-
-        // std::map<std::wstring, size_t> foundHashes{};
-        // for (const auto& exportedStruct : dia.getExportedStructs())
-        //{
-        //    if (exportedStruct.getName() == L"<unnamed-tag>")
-        //    {
-        //        continue;
-        //    }
-        //    const auto hash = std::hash<Struct>()(exportedStruct);
-        //    if (foundHashes.find(exportedStruct.getName()) !=
-        //    foundHashes.end())
-        //    {
-        //        if (foundHashes[exportedStruct.getName()] == hash)
-        //        {
-        //            continue;
-        //        }
-        //        std::wcout << L"!!! HASH COLLISION !!! "
-        //                   << exportedStruct.getName() << L" " << hash
-        //                   << L" != " << foundHashes[exportedStruct.getName()]
-        //                   << std::endl;
-        //        std::wcout << exportedStruct << std::endl;
-        //    }
-        //    foundHashes.emplace(exportedStruct.getName(), hash);
-        //}
-
-        // for (const auto& exportedStruct : dia2.getExportedStructs())
-        //{
-        //    if (exportedStruct.getName() == L"<unnamed-tag>")
-        //    {
-        //        continue;
-        //    }
-        //    const auto hash = std::hash<Struct>()(exportedStruct);
-        //    const auto otherHash = foundHashes[exportedStruct.getName()];
-        //    if (hash != otherHash)
-        //    {
-        //        std::wcout << exportedStruct.getName() << L" changed!"
-        //                   << std::endl;
-        //    }
-        //}
     }
     catch (const DiaComException& e)
     {
@@ -116,12 +69,14 @@ int main()
     {
         std::cerr << e << std::endl;
     }
-    /*  catch (const std::exception& e)
-      {
-          std::cerr << e.what() << std::endl;
-      }
-      catch (...)
-      {
-          std::cerr << "Unexpected error!" << std::endl;
-      }*/
+#ifndef _DEBUG
+    catch (const std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unexpected error!" << std::endl;
+    }
+#endif
 }
