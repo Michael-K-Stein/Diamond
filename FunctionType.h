@@ -5,69 +5,41 @@
 
 namespace dia
 {
-/// @brief Indicates that the symbol is a function.
-class Function : protected Symbol
+/// @brief Each unique function signature is identified by a SymTagFunctionType
+/// symbol. Each parameter is identified as a class child symbol with a
+/// SymTagFunctionArgType tag.
+class FunctionType : protected Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Function);
+    TRIVIAL_CONVERT(Symbol, FunctionType);
 
-    using Symbol::getAccess;
-    using Symbol::getAddressOffset;
-    using Symbol::getAddressSection;
+    using Symbol::getCallingConvention;
     using Symbol::getClassParent;
     using Symbol::getClassParentId;
     using Symbol::getConstType;
-    using Symbol::getCustomCallingConvention;
-    using Symbol::getFarReturn;
-    using Symbol::getHasAlloca;
-    using Symbol::getHasEH;
-    using Symbol::getHasEHa;
-    using Symbol::getHasInlAsm;
-    using Symbol::getHasLongJump;
-    using Symbol::getHasSecurityChecks;
-    using Symbol::getHasSEH;
-    using Symbol::getHasSetJump;
-    using Symbol::getInlSpec;
-    using Symbol::getInterruptReturn;
-    using Symbol::getIntro;
-    using Symbol::getIsNaked;
-    using Symbol::getIsStatic;
-    using Symbol::getLength;
+    using Symbol::getCount;
     using Symbol::getLexicalParent;
     using Symbol::getLexicalParentId;
-    using Symbol::getLocationType;
-    using Symbol::getName;
-    using Symbol::getNoInline;
-    using Symbol::getNoReturn;
-    using Symbol::getNoStackOrdering;
-    using Symbol::getNotReached;
-    using Symbol::getOptimizedCodeDebugInfo;
-    using Symbol::getPure;
-    using Symbol::getRelativeVirtualAddress;
+    using Symbol::getObjectPointerType;
     using Symbol::getSymIndexId;
     using Symbol::getSymTag;
-    using Symbol::getToken;
+    using Symbol::getThisAdjust;
     using Symbol::getType;
     using Symbol::getTypeId;
     using Symbol::getUnalignedType;
-    using Symbol::getUndecoratedName;
-    using Symbol::getUndecoratedNameEx;
-    using Symbol::getVirtual;
-    using Symbol::getVirtualAddress;
-    using Symbol::getVirtualBaseOffset;
     using Symbol::getVolatileType;
 };
 } // namespace dia
 
-std::wostream& operator<<(std::wostream& os, const dia::Function& func);
+std::wostream& operator<<(std::wostream& os, const dia::FunctionType& func);
 
 namespace std
 {
 template <>
-struct hash<dia::Function>
+struct hash<dia::FunctionType>
 {
-    size_t operator()(const dia::Function& v) const
+    size_t operator()(const dia::FunctionType& v) const
     {
         size_t calculatedHash = 0;
         hash_combine(

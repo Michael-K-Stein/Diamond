@@ -43,7 +43,7 @@ std::set<UserDefinedType> Struct::queryDependsOnTypes() const
         {
             continue;
         }
-        const auto cType = member.getFieldCType();
+        const auto& cType = member.getFieldCType();
         const auto udt = UserDefinedType{cType};
         types.insert(udt);
     }
@@ -54,7 +54,7 @@ std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
     std::set<UserDefinedType> types{};
     for (const auto& member : enumerateMembers())
     {
-        const auto cType = member.getFieldCType();
+        const auto& cType = member.getFieldCType();
         if (!cType.isPointer())
         {
             continue;

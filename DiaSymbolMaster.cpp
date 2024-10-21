@@ -38,13 +38,16 @@ int main()
 
     try
     {
+        DiaDataSource dia{
+            L"C:\\ProgramData\\dbg\\sym\\ntkrnlmp."
+            L"pdb\\C688AAF2BB4DE0FE26E41A66F7E016D21\\ntkrnlmp.pdb"};
 
-        DiaDataSource dia{};
-        dia.loadDataFromPdb(
-            L"C:\\Windows\\SYMBOLS\\ntkrnlmp."
-            L"pdb\\BC9E67554B228F3E5C46B0D1622B6E321\\ntkrnlmp.pdb");
+        for (const auto& func : dia.getExportedFunctions())
+        {
+            std::wcout << func.getName() << std::endl;
+        }
 
-        const auto& sym = dia.getExportedStruct(L"_ETHREAD");
+        const auto& sym = dia.getExportedStruct(L"_PEB");
         std::wcout << sym << std::endl;
 
         std::wcout << L"Depends on: " << std::endl;
