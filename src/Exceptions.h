@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 #define CHECK_DIACOM_EXCEPTION(message, hResult)                               \
     do                                                                         \
@@ -27,6 +28,73 @@ public:
 
 private:
     HRESULT m_result{S_OK};
+};
+
+class WinApiException : public std::exception
+{
+public:
+    WinApiException(const std::string& fuck, int errorCode = GetLastError())
+        : WinApiException{fuck.c_str(), errorCode}
+    {
+    }
+
+    WinApiException(const char* fuck, int errorCode = GetLastError())
+        : std::exception(fuck), m_errorCode(errorCode)
+    {
+    }
+
+    virtual const char* what() const
+    {
+        if (0 == m_fullErrorDescription.size())
+        {
+            const std::string baseDescrption = std::exception::what();
+            const auto winapiErrorDescription = formatMessage(m_errorCode);
+            m_fullErrorDescription = {"[" + std::to_string(m_errorCode) + "] " +
+                                      baseDescrption + " : " +
+                                      winapiErrorDescription};
+        }
+        return m_fullErrorDescription.c_str();
+    }
+
+private:
+    static std::string formatMessage(int errorCode)
+    {
+        LPSTR messageBuffer = nullptr;
+
+        // Ask Win32 to give us the string version of the errorCode.
+        // The parameters we pass in, tell Win32 to create the buffer that
+        // holds the message for us (because we don't yet know how long the
+        // message string will be).
+        size_t size = FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                FORMAT_MESSAGE_IGNORE_INSERTS,         // dwFlags
+            NULL,                                      // lpSource
+            errorCode,                                 // dwMessageId
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // dwLanguageId
+            reinterpret_cast<LPSTR>(&messageBuffer),   // lpBuffer
+            0,                                         // nSize
+            NULL                                       // Arguments
+        );
+        if (0 == size)
+        {
+            throw WinApiException("Failed to format error message!");
+        }
+        if (nullptr == messageBuffer)
+        {
+            throw std::bad_alloc();
+        }
+
+        // Copy the error message into a std::string.
+        std::string message(messageBuffer, size);
+
+        // Free the Win32's string's buffer.
+        LocalFree(messageBuffer);
+
+        return message;
+    }
+
+    const int m_errorCode = 0;
+    mutable std::string m_fullErrorDescription{};
 };
 
 static inline std::ostream&

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DiaSymbolPrint.cpp" />
     <ClCompile Include="src/BstrWrapper.cpp" />
     <ClCompile Include="src/DataMember.cpp" />
     <ClCompile Include="src/DiaSymbolTypes/DiaHash.cpp" />
@@ -160,8 +161,12 @@
     <ClCompile Include="src/TypeResolution.cpp" />
     <ClCompile Include="src/Union.cpp" />
     <ClCompile Include="src/UserDefinedType.cpp" />
+    <ClCompile Include="SymbolPathHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DiaFunctionArgType.h" />
+    <ClInclude Include="DiaFunctionType.h" />
+    <ClInclude Include="DiaSymbolPrint.h" />
     <ClInclude Include="src/Base.h" />
     <ClInclude Include="src/BstrWrapper.h" />
     <ClInclude Include="src/DiaSymbolTypes/DiaArray.h" />
@@ -184,6 +189,7 @@
     <ClInclude Include="src/TypeResolution.h" />
     <ClInclude Include="src/Union.h" />
     <ClInclude Include="src/UserDefinedType.h" />
+    <ClInclude Include="SymbolPathHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

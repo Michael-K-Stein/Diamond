@@ -1,5 +1,6 @@
 #include "DiaStruct.h"
 #include "DataMember.h"
+#include "DiaPointer.h"
 #include <sstream>
 
 namespace std
@@ -59,7 +60,9 @@ std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
         {
             continue;
         }
-        const auto decayType = cType.getType();
+        const PointerType cTypeAsPointer{cType};
+        // Get the pointed-to type
+        const auto decayType = cTypeAsPointer.getType();
         if (!decayType.isUserDefinedType())
         {
             continue;

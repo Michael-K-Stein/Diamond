@@ -67,3 +67,5 @@ struct hash<dia::Data>
     }
 };
 } // namespace std
+
+std::wostream& operator<<(std::wostream& os, const dia::Data& data);

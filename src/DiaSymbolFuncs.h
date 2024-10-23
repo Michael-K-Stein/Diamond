@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "BstrWrapper.h"
+#include "DiaSymbolTypes/DiaSymbolTypes.h"
 #include <dia2.h>
 #include <vector>
 
@@ -11,10 +12,10 @@
 // such!
 
 #define DEFINE_TRIVIAL_DIA_WRAPPER(wrapperName, diaInterface)                  \
-    class wrapperName : public Base<diaInterface>                              \
+    class wrapperName : public ComWrapper<diaInterface>                              \
     {                                                                          \
     public:                                                                    \
-        using Base<diaInterface>::Base;                                        \
+        using ComWrapper<diaInterface>::ComWrapper;                                        \
     };
 
 namespace dia
@@ -299,7 +300,7 @@ DWORD getBuiltInKind(const Symbol& symbol);
 /// @brief Returns an indicator of a method's calling convention.
 /// @param symbol The symbol of which to get the calling convention.
 /// @return The calling convention.
-DWORD getCallingConvention(const Symbol& symbol);
+CvCall getCallingConvention(const Symbol& symbol);
 
 /// @brief Retrieves the characteristics of this COFF section.
 /// @param symbol The symbol of which to get the characteristics.

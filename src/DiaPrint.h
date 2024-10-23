@@ -1,6 +1,7 @@
 #pragma once
 #include "TypeResolution.h"
 #include <ostream>
+#include <type_traits>
 
 static std::wostream& operator<<(std::wostream& os, const enum SymTagEnum& v)
 {

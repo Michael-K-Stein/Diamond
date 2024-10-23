@@ -24,54 +24,73 @@ DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol,
                                  enum SymTagEnum symTag, LPCOLESTR name,
                                  DWORD compareFlags);
 
+// General template declaration (forward declaration)
+template <typename T>
+/// @brief Stream to os the modifiers "const", "volatile", etc... if relevant.
+/// @param os The stream to work on.
+/// @param v The symbol to check.
+/// @return The stream, with modifiers written as needed.
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const T& v);
+
 // Derived Types
 class UserDefinedType;
 
-class Symbol : public Base<IDiaSymbol>
+class Symbol : public ComWrapper<IDiaSymbol>
 {
 public:
-    using Base::Base;
+    // Copy semantics
     Symbol(const Symbol& other);
     Symbol operator=(const Symbol& other);
+    // Move semantics
     Symbol(Symbol&& other) noexcept;
     Symbol operator=(Symbol&& other) noexcept;
 
-    using Base::makeFromRaw;
-    using Base::operator!;
-    using Base::operator=;
+    using ComWrapper::ComWrapper;
+    using ComWrapper::makeFromRaw;
+    using ComWrapper::operator!;
+    using ComWrapper::operator=;
 
-    using Base::get;
+    using ComWrapper::get;
 
+    /// @brief Get a human readable representation of this symbol and its type -
+    /// stiving to be as similar to the original source code as possible.
+    /// @return A string as closely resembling the source code this symbol
+    /// refers to as possible.
     std::wstring getTypeName() const { return resolveTypeName(*this); }
 
-    // Functions which are valid for ALL symbol types
+    // DIA functions which are valid for ALL symbol types
     auto getSymTag() const { return dia::getSymTag(*this); }
-    auto getType() const { return dia::getType(*this); }
-    auto getName() const { return dia::getName(*this); }
+    auto getSymIndexId() const { return dia::getSymIndexId(*this); }
 
+    // Quick type checking functions
     bool isVolatile() const;
     bool isArray() const;
     bool isPointer() const;
     bool isUserDefinedType() const;
 
+    // Utility functions
+    /// @brief Returns a unique identifier for this symbol's instance
+    /// @return A unique identifier.
+    /// @note Multiple instance of dia::Symbol referencing the same underlyind
+    /// Debug Symbol (IDiaSymbol) will have the same UID.
+    auto getUid() const { return getSymIndexId(); }
+    /// @brief Calculate a hash representing the content of the symbol. The hash
+    /// of a symbol is independant from its UID, and will be identical across
+    /// versions of the same binary - given that the symbol has not changed.
+    /// @return 64-bit hash value.
     size_t calcHash() const;
 
-#if 0
-    const std::wstring getName() const;
-    LONG getOffset() const;
-    Symbol getType() const;
-    std::wstring getTypeName() const;
-    enum SymTagEnum getSymTag() const;
-    DWORD getBaseType() const;
-    DWORD getCount() const;
-    enum LocationType getLocationType() const;
-    DWORD getBitPosition() const;
-    ULONGLONG getLength() const;
-
-    UserDefinedType asUserDefinedType() const;
-#endif
+    bool operator==(const Symbol& other) const;
+    bool operator!=(const Symbol& other) const;
+    bool operator<(const Symbol& other) const;
+    bool operator<=(const Symbol& other) const;
+    bool operator>(const Symbol& other) const;
+    bool operator>=(const Symbol& other) const;
 
 protected:
+    auto getType() const { return dia::getType(*this); }
+    auto getName() const { return dia::getName(*this); }
+
 #if 0
     // Not yet implemented!
     auto findChildren() const { return dia::findChildren(*this); }
@@ -185,7 +204,6 @@ protected:
     }
     auto getSignature() const { return dia::getSignature(*this); }
     auto getStaticSize() const { return dia::getStaticSize(*this); }
-    auto getSymIndexId() const { return dia::getSymIndexId(*this); }
     auto getTypeId() const { return dia::getTypeId(*this); }
     auto getUndecoratedName() const { return dia::getUndecoratedName(*this); }
     auto getUpperBound() const { return dia::getUpperBound(*this); }
@@ -480,7 +498,28 @@ private:
                           LPCOLESTR name, DWORD compareFlags);
     friend ::std::wstring resolveTypeName(const Symbol& symbol);
     friend class DiaDataSource;
+
+    template <typename T>
+    friend std::wostream& streamSymbolTypeModifiers(std::wostream& os,
+                                                    const T& v);
 };
+
+// Specialized template for types derived from Symbol
+template <typename T>
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const T& v)
+{
+    static_assert(std::is_base_of<Symbol, T>::value,
+                  "T must be a class derived from dia::Symbol !");
+    return streamSymbolTypeModifiers(os, reinterpret_cast<const Symbol&>(v));
+}
+
+template <>
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Symbol& v);
+
+class ArrayType;
+template <>
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const ArrayType& v);
+
 } // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Symbol& v);

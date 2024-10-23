@@ -4,24 +4,27 @@
 #include "DiaSymbolTypes/DiaArray.h"
 #include "DiaSymbolTypes/DiaData.h"
 #include "DiaSymbolTypes/DiaFunction.h"
+#include "DiaSymbolTypes/DiaFunctionArgType.h"
+#include "DiaSymbolTypes/DiaFunctionType.h"
 #include "DiaSymbolTypes/DiaNull.h"
 #include "DiaSymbolTypes/DiaPointer.h"
+#include "DiaSymbolTypes/DiaUdt.h"
 #include "Exceptions.h"
 #include "TypeResolution.h"
 #include "UserDefinedType.h"
 
 namespace dia
 {
-Symbol::Symbol(const Symbol& other) : Base{other} {}
+Symbol::Symbol(const Symbol& other) : ComWrapper{other} {}
 Symbol Symbol::operator=(const Symbol& other)
 {
-    Base::operator=(other);
+    ComWrapper::operator=(other);
     return *this;
 }
-Symbol::Symbol(Symbol&& other) noexcept : Base{std::move(other)} {}
+Symbol::Symbol(Symbol&& other) noexcept : ComWrapper{std::move(other)} {}
 Symbol Symbol::operator=(Symbol&& other) noexcept
 {
-    Base::operator=(std::move(other));
+    ComWrapper::operator=(std::move(other));
     return *this;
 }
 
@@ -41,34 +44,56 @@ size_t Symbol::calcHash() const
                  std::hash<std::wstring>()(getName()));
     XBY_SYMBOL_TYPE_T((*this), T, __RETURN_HASH_SYMBOL);
 }
-} // namespace dia
 
-#if 0
-std::wostream& operator<<(std::wostream& os, const dia::Symbol& v)
+bool Symbol::operator==(const Symbol& other) const
 {
-    os << L"/* " << v.getType().getSymTag() << L", " << v.getLocationType()
-       << " */ \t ";
-    if (v.getType().isVolatile())
+    return getUid() == other.getUid();
+}
+
+bool Symbol::operator!=(const Symbol& other) const { return !(*this == other); }
+
+bool Symbol::operator<(const Symbol& other) const
+{
+    return getUid() < other.getUid();
+}
+
+bool Symbol::operator<=(const Symbol& other) const { return !(*this > other); }
+
+bool Symbol::operator>(const Symbol& other) const
+{
+    return getUid() > other.getUid();
+}
+
+bool Symbol::operator>=(const Symbol& other) const { return !(*this < other); }
+
+// Explicit specialization for Symbol
+template <>
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Symbol& v)
+{
+    if (v.getVolatileType())
     {
         os << L"volatile ";
     }
-    if (v.isUserDefinedType())
+    if (v.getConstType())
     {
-        const auto& udt = v.asUserDefinedType();
-        os << udt;
+        os << L"const ";
     }
-    else if (v.getType().isArray())
-    {
-        const auto arrayField = v.getType();
-        const auto elementType = arrayField.getType();
-        os << elementType.getTypeName() << L" " << v.getName() << L"[0x"
-           << std::hex << arrayField.getCount() << L"]";
-    }
-    else
-    {
-        os << v.getType().getTypeName() << L" " << v.getName();
-    }
-
     return os;
 }
-#endif
+
+template <>
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const ArrayType& v)
+{
+    return streamSymbolTypeModifiers<Symbol>(
+        os,
+        *reinterpret_cast<const Symbol*>(reinterpret_cast<const void*>(&v)));
+}
+
+} // namespace dia
+
+std::wostream& operator<<(std::wostream& os, const dia::Symbol& v)
+{
+#define __OS_STREAM_SYMBOL(x) os << x;
+    XBY_SYMBOL_TYPE_T((v), T, __OS_STREAM_SYMBOL);
+    return os;
+}

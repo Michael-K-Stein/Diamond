@@ -51,6 +51,12 @@
     <ClCompile Include="src/DiaSymbolTypes/DiaHash.cpp">
       <Filter>Header Files\DiaSymbolTypes</Filter>
     </ClCompile>
+    <ClCompile Include="DiaSymbolPrint.cpp">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolPathHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/DiaDataSource.h">
@@ -116,7 +122,19 @@
     <ClInclude Include="src/DiaSymbolFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DiaFunctionType.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaSymbolPrint.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DiaFunctionArgType.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
     <ClInclude Include="src/DiaUDT.h">
+      <Filter>Header Files\DiaSymbolTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolPathHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

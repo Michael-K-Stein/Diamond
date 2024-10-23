@@ -59,3 +59,5 @@ struct hash<dia::Udt>
     }
 };
 } // namespace std
+
+std::wostream& operator<<(std::wostream& os, const dia::Udt& udt);

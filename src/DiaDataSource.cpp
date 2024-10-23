@@ -1,4 +1,5 @@
 #include "DiaDataSource.h"
+#include "../SymbolPathHelper.h"
 #include "BstrWrapper.h"
 #include "DiaStruct.h"
 #include "DiaSymbolEnumerator.h"
@@ -18,29 +19,6 @@ unsigned char PDB_FILE_MAGIC[29] = { // Microsft C/C++ MSF 7.00...DS
     0x37, 0x2E, 0x30, 0x30, 0x0D, 0x0A, 0x1A, 0x44, 0x53};
 
 unsigned char PE_FILE_MAGIC[2] = {0x4D, 0x5A}; // MZ
-
-static const std::wstring getSymbolSearchPath()
-{
-    static std::wstring s_symbolSearchPath{};
-    if (s_symbolSearchPath.empty())
-    {
-        // Return value is size in `count of characters`
-        const auto requiredBufferSize =
-            GetEnvironmentVariableW(L"_NT_SYMBOL_PATH", nullptr, 0);
-        auto buffer = std::make_unique<wchar_t[]>(requiredBufferSize);
-        memset(buffer.get(), 0, requiredBufferSize);
-        if (0 == GetEnvironmentVariableW(L"_NT_SYMBOL_PATH", buffer.get(),
-                                         requiredBufferSize))
-        {
-            s_symbolSearchPath = std::wstring{L"TODO: This?"};
-        }
-        else
-        {
-            s_symbolSearchPath = std::wstring{buffer.get(), requiredBufferSize};
-        }
-    }
-    return s_symbolSearchPath;
-}
 
 static const std::wstring convertToWstring(const std::string& str)
 {
@@ -96,16 +74,41 @@ void DiaDataSource::loadDataForExe(const std::wstring& exePath)
     {
         throw DiaSymbolMasterException{"Session already openned!"};
     }
-    const auto& symbolSearchPath = getSymbolSearchPath();
-    std::wcout << symbolSearchPath << std::endl;
+
+    const auto& symbolSearchPath = getSymbolSearchPathForExecutable(exePath);
     const auto result = m_comPtr->loadDataForExe(
-        exePath.c_str(), getSymbolSearchPath().c_str(), nullptr);
+        exePath.c_str(), symbolSearchPath.c_str(), nullptr);
     CHECK_DIACOM_EXCEPTION("Failed to load data from executable!", result);
     openSession();
 }
 
-std::vector<Symbol> DiaDataSource::getExports(enum SymTagEnum symTag) const
+const std::wstring DiaDataSource::getLoadedPdbFile() const
 {
+    return getGlobalScope().getSymbolsFileName();
+}
+
+const std::vector<Symbol> DiaDataSource::getExports() const
+{
+    CComPtr<IDiaEnumSymbols> rawExportEnum = nullptr;
+    const auto result = m_sessionComPtr->getExports(&rawExportEnum);
+    CHECK_DIACOM_EXCEPTION("Failed to get session exports!", result);
+    DiaSymbolEnumerator<Symbol> exports{std::move(rawExportEnum)};
+    std::vector<Symbol> items{};
+    for (const auto& item : exports)
+    {
+        items.push_back(item);
+    }
+    return items;
+}
+
+const std::vector<Symbol>
+DiaDataSource::getSymbols(enum SymTagEnum symTag) const
+{
+    if (SymTagExport == symTag)
+    {
+        throw std::runtime_error(
+            "You probably meant to use DiaDataSource::getExports()");
+    }
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), symTag);
     for (const auto& item : exports)
@@ -115,64 +118,64 @@ std::vector<Symbol> DiaDataSource::getExports(enum SymTagEnum symTag) const
     return items;
 }
 
-std::vector<Symbol> DiaDataSource::getUntypedExports() const
+const std::vector<Symbol> DiaDataSource::getUntypedSymbols() const
 {
-    return getExports(SymTagNull);
+    return getSymbols(SymTagNull);
 }
-std::vector<Symbol> DiaDataSource::getExportedCompilands() const
+const std::vector<Symbol> DiaDataSource::getCompilands() const
 {
-    return getExports(SymTagCompiland);
+    return getSymbols(SymTagCompiland);
 }
-std::vector<Symbol> DiaDataSource::getExportedCompilandDetails() const
+const std::vector<Symbol> DiaDataSource::getCompilandDetails() const
 {
-    return getExports(SymTagCompilandDetails);
+    return getSymbols(SymTagCompilandDetails);
 }
-std::vector<Symbol> DiaDataSource::getExportedCompilandEnvs() const
+const std::vector<Symbol> DiaDataSource::getCompilandEnvs() const
 {
-    return getExports(SymTagCompilandEnv);
+    return getSymbols(SymTagCompilandEnv);
 }
-std::vector<Function> DiaDataSource::getExportedFunctions() const
+const std::vector<Function> DiaDataSource::getFunctions() const
 {
-    const auto functionSymbols = getExports(SymTagFunction);
+    const auto functionSymbols = getSymbols(SymTagFunction);
     std::vector<Function> functions{functionSymbols.begin(),
                                     functionSymbols.end()};
     return functions;
 }
-std::vector<UserDefinedType> DiaDataSource::getExportedUserDefinedTypes() const
+const std::vector<UserDefinedType> DiaDataSource::getUserDefinedTypes() const
 {
-    const auto exports = getExports(SymTagUDT);
+    const auto exports = getSymbols(SymTagUDT);
     std::vector<UserDefinedType> types{exports.begin(), exports.end()};
     return types;
 }
-std::vector<Struct> DiaDataSource::getExportedStructs() const
+const std::vector<Struct> DiaDataSource::getStructs() const
 {
-    const auto userDefinedStructs = getExportedUserDefinedTypes(UdtStruct);
+    const auto userDefinedStructs = getUserDefinedTypes(UdtStruct);
     std::vector<Struct> structs{userDefinedStructs.begin(),
                                 userDefinedStructs.end()};
     return structs;
 }
-std::vector<Symbol> DiaDataSource::getExportedClasses() const
+const std::vector<Symbol> DiaDataSource::getClasses() const
 {
-    return getExportedUserDefinedTypes(UdtClass);
+    return getUserDefinedTypes(UdtClass);
 }
-std::vector<Symbol> DiaDataSource::getExportedInterfaces() const
+const std::vector<Symbol> DiaDataSource::getInterfaces() const
 {
-    return getExportedUserDefinedTypes(UdtInterface);
+    return getUserDefinedTypes(UdtInterface);
 }
-std::vector<Symbol> DiaDataSource::getExportedUnions() const
+const std::vector<Symbol> DiaDataSource::getUnions() const
 {
-    return getExportedUserDefinedTypes(UdtUnion);
+    return getUserDefinedTypes(UdtUnion);
 }
-std::vector<Symbol> DiaDataSource::getExportedTaggedUnions() const
+const std::vector<Symbol> DiaDataSource::getTaggedUnions() const
 {
-    return getExportedUserDefinedTypes(UdtTaggedUnion);
+    return getUserDefinedTypes(UdtTaggedUnion);
 }
 
-std::vector<Symbol>
-DiaDataSource::getExportedUserDefinedTypes(enum UdtKind kind) const
+const std::vector<Symbol>
+DiaDataSource::getUserDefinedTypes(enum UdtKind kind) const
 {
     std::vector<Symbol> items{};
-    const auto userDefinedTypes = getExportedUserDefinedTypes();
+    const auto userDefinedTypes = getUserDefinedTypes();
     for (const auto& type : userDefinedTypes)
     {
         if (type.getUdtKind() != kind)
@@ -184,7 +187,7 @@ DiaDataSource::getExportedUserDefinedTypes(enum UdtKind kind) const
     return items;
 }
 
-Struct DiaDataSource::getExportedStruct(const std::wstring& structName) const
+const Struct DiaDataSource::getStruct(const std::wstring& structName) const
 {
     std::vector<Symbol> items{};
     auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(),

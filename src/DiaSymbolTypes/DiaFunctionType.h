@@ -1,5 +1,7 @@
 #pragma once
+#include "DiaFunctionArgType.h"
 #include "DiaSymbol.h"
+#include "DiaSymbolEnumerator.h"
 #include "DiaSymbolTypes.h"
 #include "TypeResolution.h"
 
@@ -29,6 +31,17 @@ public:
     using Symbol::getTypeId;
     using Symbol::getUnalignedType;
     using Symbol::getVolatileType;
+
+    DiaSymbolEnumerator<FunctionArgType> enumerateParameters() const
+    {
+        return DiaSymbolEnumerator<FunctionArgType>::enumerate(
+            *this, SymTagFunctionArgType);
+    };
+
+    // Iterator-related methods
+    auto begin() const { return enumerateParameters().begin(); }
+
+    auto end() const { return enumerateParameters().end(); }
 };
 } // namespace dia
 
@@ -42,19 +55,15 @@ struct hash<dia::FunctionType>
     size_t operator()(const dia::FunctionType& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(
-            calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())),
-            v.getAccess(), v.getAddressSection(), v.getClassParent(),
-            v.getConstType(), v.getCustomCallingConvention(), v.getFarReturn(),
-            v.getHasAlloca(), v.getHasEH(), v.getHasEHa(), v.getHasInlAsm(),
-            v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(),
-            v.getHasSetJump(), v.getInlSpec(), v.getInterruptReturn(),
-            v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(),
-            v.getLocationType(), v.getName(), v.getNoInline(), v.getNoReturn(),
-            v.getNoStackOrdering(), v.getNotReached(),
-            v.getOptimizedCodeDebugInfo(), v.getPure(), v.getToken(),
-            v.getType(), v.getUnalignedType(), v.getUndecoratedName(),
-            v.getVirtual(), v.getVirtualAddress(), v.getVolatileType());
+        hash_combine(calculatedHash,
+                     std::wstring(dia::symTagToName(v.getSymTag())),
+                     v.getCallingConvention(), v.getConstType(), v.getCount(),
+                     v.getObjectPointerType(), v.getThisAdjust(),
+                     v.getUnalignedType(), v.getVolatileType());
+        for (const auto& param : v)
+        {
+            hash_combine(calculatedHash, hash<dia::FunctionArgType>()(param));
+        }
 
         return calculatedHash;
     }

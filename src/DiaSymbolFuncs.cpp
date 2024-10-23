@@ -1,6 +1,7 @@
 #include "DiaSymbolFuncs.h"
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
+#include "DiaSymbolTypes/DiaSymbolTypes.h"
 #include "Exceptions.h"
 
 namespace dia
@@ -97,12 +98,12 @@ ULONG getBuiltInKind(const Symbol& symbol)
     return retVal;
 }
 
-ULONG getCallingConvention(const Symbol& symbol)
+CvCall getCallingConvention(const Symbol& symbol)
 {
-    ULONG retVal = 0;
+    DWORD retVal = 0;
     const auto result = symbol.get()->get_callingConvention(&retVal);
     CHECK_DIACOM_EXCEPTION("get_callingConvention failed!", result);
-    return retVal;
+    return static_cast<CvCall>(retVal);
 }
 
 ULONG getCharacteristics(const Symbol& symbol)

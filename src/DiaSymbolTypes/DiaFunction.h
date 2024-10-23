@@ -1,16 +1,23 @@
 #pragma once
+#include "DiaFunctionArgType.h"
 #include "DiaSymbol.h"
+#include "DiaSymbolEnumerator.h"
 #include "DiaSymbolTypes.h"
 #include "TypeResolution.h"
 
+std::wostream& operator<<(std::wostream& os, const dia::Function& func);
+
 namespace dia
 {
+
 /// @brief Indicates that the symbol is a function.
 class Function : protected Symbol
 {
 public:
     using Symbol::Symbol;
     TRIVIAL_CONVERT(Symbol, Function);
+
+    explicit operator const Symbol&() const { return *this; }
 
     using Symbol::getAccess;
     using Symbol::getAddressOffset;
@@ -57,6 +64,21 @@ public:
     using Symbol::getVirtualAddress;
     using Symbol::getVirtualBaseOffset;
     using Symbol::getVolatileType;
+
+    DiaSymbolEnumerator<FunctionArgType> enumerateParameters() const
+    {
+        return DiaSymbolEnumerator<FunctionArgType>::enumerate(
+            static_cast<const Symbol&>(*this), SymTagData);
+    };
+
+    // Iterator-related methods
+    auto begin() const { return enumerateParameters().begin(); }
+
+    auto end() const { return enumerateParameters().end(); }
+
+private:
+    friend std::wostream& ::operator<<(std::wostream& os,
+                                       const dia::Function& func);
 };
 } // namespace dia
 

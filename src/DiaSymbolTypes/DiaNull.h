@@ -25,3 +25,5 @@ struct hash<dia::Null>
     }
 };
 } // namespace std
+
+std::wostream& operator<<(std::wostream& os, const dia::Null& null);

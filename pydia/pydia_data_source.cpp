@@ -53,10 +53,10 @@ static PyMethodDef PyDiaDataSource_methods[] = {
     {"loadDataFromPdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb,
      METH_VARARGS, "Load data from a PDB file"},
 
-    {"getExportedFunctions", (PyCFunction)PyDiaDataSource_getExportedFunctions,
+    {"getFunctions", (PyCFunction)PyDiaDataSource_getExportedFunctions,
      METH_NOARGS, "Get exported functions"},
 
-    {"getExports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS,
+    {"getSymbols", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS,
      "Get all exports"},
 
     {NULL, NULL, 0, NULL}};
@@ -201,7 +201,7 @@ static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
     std::vector<dia::Symbol> functions{};
     try
     {
-        functions = self->diaDataSource->getExportedFunctions();
+        functions = self->diaDataSource->getFunctions();
     }
     catch (const std::exception& e)
     {
@@ -240,7 +240,7 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self,
     }
 
     enum SymTagEnum symTag = static_cast<enum SymTagEnum>(symTagInt);
-    std::vector<dia::Symbol> exports = self->diaDataSource->getExports(symTag);
+    std::vector<dia::Symbol> exports = self->diaDataSource->getSymbols(symTag);
 
     PyObject* resultList = PyList_New(exports.size());
     if (!resultList)

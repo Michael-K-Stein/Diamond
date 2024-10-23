@@ -4,6 +4,7 @@
 #include "DiaFunction.h"
 #include "DiaStruct.h"
 #include "DiaSymbol.h"
+#include "DiaSymbolEnumerator.h"
 #include <atlbase.h>
 #include <memory>
 #include <string>
@@ -25,25 +26,31 @@ public:
     void loadDataForExe(const std::string& exePath);
     void loadDataForExe(const std::wstring& exePath);
 
+    // TODO: Implement
     void loadAndValidateDataFromPdb();
     void loadDataFromIStream();
     void loadDataFromCodeViewInfo();
     void loadDataFromMiscInfo();
 
-    std::vector<Symbol> getExports(enum SymTagEnum symTag) const;
-    std::vector<Symbol> getUntypedExports() const;
-    std::vector<Symbol> getExportedCompilands() const;
-    std::vector<Symbol> getExportedCompilandDetails() const;
-    std::vector<Symbol> getExportedCompilandEnvs() const;
-    std::vector<Function> getExportedFunctions() const;
-    std::vector<UserDefinedType> getExportedUserDefinedTypes() const;
-    std::vector<Symbol> getExportedUserDefinedTypes(enum UdtKind kind) const;
-    std::vector<Struct> getExportedStructs() const;
-    std::vector<Symbol> getExportedClasses() const;
-    std::vector<Symbol> getExportedInterfaces() const;
-    std::vector<Symbol> getExportedUnions() const;
-    std::vector<Symbol> getExportedTaggedUnions() const;
-    Struct getExportedStruct(const std::wstring& structName) const;
+    const std::wstring getLoadedPdbFile() const;
+
+    const std::vector<Symbol> getExports() const;
+
+    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag) const;
+    const std::vector<Symbol> getUntypedSymbols() const;
+    const std::vector<Symbol> getCompilands() const;
+    const std::vector<Symbol> getCompilandDetails() const;
+    const std::vector<Symbol> getCompilandEnvs() const;
+    const std::vector<Function> getFunctions() const;
+    const std::vector<UserDefinedType> getUserDefinedTypes() const;
+    const std::vector<Symbol> getUserDefinedTypes(enum UdtKind kind) const;
+    const std::vector<Struct> getStructs() const;
+    const std::vector<Symbol> getClasses() const;
+    const std::vector<Symbol> getInterfaces() const;
+    const std::vector<Symbol> getUnions() const;
+    const std::vector<Symbol> getTaggedUnions() const;
+
+    const Struct getStruct(const std::wstring& structName) const;
 
     bool sessionOpened() const { return m_sessionOpenned; }
 

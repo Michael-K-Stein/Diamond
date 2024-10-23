@@ -34,7 +34,7 @@ std::wostream& operator<<(std::wostream& os, const dia::DataMember& member)
     if (ctype.isArray())
     {
         const dia::ArrayType ctypeAsArray{ctype};
-        const auto elementType = ctype.getType();
+        const auto elementType = ctypeAsArray.getType();
         os << elementType.getTypeName() << L" " << fieldName << L"[0x"
            << std::hex << ctypeAsArray.getCount() << L"];";
     }

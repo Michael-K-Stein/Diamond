@@ -26,6 +26,8 @@ public:
 };
 } // namespace dia
 
+std::wostream& operator<<(std::wostream& os, const dia::PointerType& pointer);
+
 namespace std
 {
 template <>

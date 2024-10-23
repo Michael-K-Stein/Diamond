@@ -39,15 +39,21 @@ int main()
     try
     {
         DiaDataSource dia{
-            L"C:\\ProgramData\\dbg\\sym\\ntkrnlmp."
-            L"pdb\\C688AAF2BB4DE0FE26E41A66F7E016D21\\ntkrnlmp.pdb"};
+            "C:\\Users\\mkupe\\AppData\\Local\\Temp\\ntdll\\ntdll.dll"};
 
-        for (const auto& func : dia.getExportedFunctions())
+        std::wcout << L"Using PDB: " << dia.getLoadedPdbFile() << std::endl;
+
+        // DiaDataSource dia{
+        //    "C:"
+        //    "\\Users\\mkupe\\source\\repos\\DiaSymbolMaster\\x64\\Debug\\DiaSym"
+        //    "bols.exe"};
+
+        for (const auto& func : dia.getExports())
         {
-            std::wcout << func.getName() << std::endl;
+            std::wcout << func << std::endl;
         }
-
-        const auto& sym = dia.getExportedStruct(L"_PEB");
+        return 0;
+        const auto& sym = dia.getStruct(L"_PEB");
         std::wcout << sym << std::endl;
 
         std::wcout << L"Depends on: " << std::endl;

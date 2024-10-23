@@ -46,3 +46,5 @@ struct hash<dia::ArrayType>
     }
 };
 } // namespace std
+
+std::wostream& operator<<(std::wostream& os, const dia::ArrayType& arr);
