@@ -1,6 +1,6 @@
 #include "DiaStruct.h"
 #include "DataMember.h"
-#include "DiaPointer.h"
+#include "DiaSymbolTypes/DiaPointer.h"
 #include <sstream>
 
 namespace std

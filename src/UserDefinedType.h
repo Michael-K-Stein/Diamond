@@ -1,10 +1,10 @@
 #pragma once
-#include "DiaUDT.h"
+#include "DiaSymbolTypes/DiaUDT.h"
 
 namespace dia
 {
 
-class DiaDataSource;
+class DataSource;
 // Derived Types
 class Struct;
 class Union;
@@ -51,7 +51,7 @@ protected:
     using Udt::get;
 
 private:
-    friend class DiaDataSource;
+    friend class DataSource;
 };
 } // namespace dia
 

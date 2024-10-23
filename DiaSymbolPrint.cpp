@@ -1,10 +1,10 @@
 #include "DiaSymbolPrint.h"
-#include "DiaArray.h"
-#include "DiaFunction.h"
-#include "DiaFunctionArgType.h"
-#include "DiaFunctionType.h"
-#include "DiaPointer.h"
-#include "DiaSymbolTypes.h"
+#include "DiaSymbolTypes/DiaArray.h"
+#include "DiaSymbolTypes/DiaFunction.h"
+#include "DiaSymbolTypes/DiaFunctionArgType.h"
+#include "DiaSymbolTypes/DiaFunctionType.h"
+#include "DiaSymbolTypes/DiaPointer.h"
+#include "DiaSymbolTypes/DiaSymbolTypes.h"
 #include "UserDefinedType.h"
 #include <ostream>
 

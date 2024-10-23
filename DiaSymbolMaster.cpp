@@ -38,7 +38,7 @@ int main()
 
     try
     {
-        DiaDataSource dia{
+        DataSource dia{
             "C:\\Users\\mkupe\\AppData\\Local\\Temp\\ntdll\\ntdll.dll"};
 
         std::wcout << L"Using PDB: " << dia.getLoadedPdbFile() << std::endl;

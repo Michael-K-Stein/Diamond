@@ -1,10 +1,10 @@
 #pragma once
 #include <Dia2.h>
 #pragma comment(lib, "diaguids")
-#include "DiaFunction.h"
 #include "DiaStruct.h"
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
+#include "DiaSymbolTypes/DiaFunction.h"
 #include <atlbase.h>
 #include <memory>
 #include <string>
@@ -13,13 +13,13 @@
 namespace dia
 {
 
-class DiaDataSource final
+class DataSource final
 {
 public:
-    DiaDataSource();
-    DiaDataSource(const std::string& filePath);
-    DiaDataSource(const std::wstring& filePath);
-    ~DiaDataSource() noexcept;
+    DataSource();
+    DataSource(const std::string& filePath);
+    DataSource(const std::wstring& filePath);
+    ~DataSource() noexcept;
 
     void loadDataFromPdb(const std::string& pdbFilePath);
     void loadDataFromPdb(const std::wstring& pdbFilePath);

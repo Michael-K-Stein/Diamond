@@ -68,6 +68,11 @@ BSTR* BstrWrapper::makeFromRaw()
     return &m_data;
 }
 
+size_t BstrWrapper::length() const
+{
+    _ASSERT(nullptr != m_data);
+    return SysStringLen(m_data);
+}
 BstrWrapper::operator std::wstring() const
 {
     std::wstring v(m_data, SysStringLen(m_data));

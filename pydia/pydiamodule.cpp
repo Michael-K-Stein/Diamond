@@ -5,6 +5,7 @@
 // Further PyDia headers
 #include "pydia.h"
 #include "pydia_exceptions.h"
+#include "pydia_register_classes.h"
 
 typedef struct
 {
@@ -96,22 +97,10 @@ PyMODINIT_FUNC PyInit_pydia(void)
         return NULL;
     }
 
-    // Add the DiaDataSource type to the module
-    if (PyType_Ready(&PyDiaDataSourceType) < 0)
+    if (NULL == registerPydiaClasses(module))
     {
         return NULL;
     }
-    Py_INCREF(&PyDiaDataSourceType);
-    PyModule_AddObject(module, "DiaDataSource",
-                       (PyObject*)&PyDiaDataSourceType);
-
-    // Add the DiaSymbol type to the module
-    if (PyType_Ready(&PyDiaSymbolType) < 0)
-    {
-        return NULL;
-    }
-    Py_INCREF(&PyDiaSymbolType);
-    PyModule_AddObject(module, "Symbol", (PyObject*)&PyDiaSymbolType);
 
     // Mark the module as initialized
     moduleState->Initialized = 1;

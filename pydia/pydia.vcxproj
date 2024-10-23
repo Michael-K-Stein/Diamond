@@ -84,7 +84,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\src;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\src;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;$(CPythonPath)\PCbuild\amd64;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\src;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;$(CPythonPath)\PCbuild\amd64</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,7 +151,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\src;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include;$(CPythonPath)\Include;C:\Python312\include;C:\Users\mkupe\source\repos\DiaSymbolMaster;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -168,12 +168,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="pydiamodule.cpp" />
+    <ClCompile Include="pydia_datasource.h" />
     <ClCompile Include="pydia_data_source.cpp" />
     <ClCompile Include="pydia_symbol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia.h" />
     <ClInclude Include="pydia_exceptions.h" />
+    <ClInclude Include="pydia_register_classes.h" />
     <ClInclude Include="pydia_symbol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

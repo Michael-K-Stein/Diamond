@@ -14,7 +14,7 @@ namespace dia
 // Forward decleration
 class Symbol;
 class DataMember;
-class DiaDataSource;
+class DataSource;
 
 template <typename T>
 class DiaSymbolEnumerator;
@@ -497,7 +497,7 @@ private:
     enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag,
                           LPCOLESTR name, DWORD compareFlags);
     friend ::std::wstring resolveTypeName(const Symbol& symbol);
-    friend class DiaDataSource;
+    friend class DataSource;
 
     template <typename T>
     friend std::wostream& streamSymbolTypeModifiers(std::wostream& os,

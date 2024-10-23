@@ -5,18 +5,12 @@
 #include <objbase.h>
 
 // C pydia imports
+#include "pydia_datasource.h"
 #include "pydia_exceptions.h"
 #include "pydia_symbol.h"
 
 // C++ DiaSymbolMaster imports
 #include "DiaDataSource.h"
-
-// Define the Python DiaDataSource object
-typedef struct
-{
-    PyObject_HEAD dia::DiaDataSource*
-        diaDataSource; // Pointer to the C++ DiaDataSource object
-} PyDiaDataSource;
 
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
                                                  PyObject* args);
@@ -38,11 +32,11 @@ static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
 static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args,
                                 PyObject* kwds)
 {
-    self->diaDataSource = new dia::DiaDataSource();
+    self->diaDataSource = new dia::DataSource();
     if (!self->diaDataSource)
     {
         PyErr_SetString(PyExc_MemoryError,
-                        "Failed to create DiaDataSource object.");
+                        "Failed to create DataSource object.");
         return -1;
     }
     return 0;
@@ -63,43 +57,43 @@ static PyMethodDef PyDiaDataSource_methods[] = {
 
 // Define the Python DiaDataSource type object
 PyTypeObject PyDiaDataSourceType = {
-    PyVarObject_HEAD_INIT(NULL, 0) "pydia.DiaDataSource", /* tp_name */
-    sizeof(PyDiaDataSource),                              /* tp_basicsize */
-    0,                                                    /* tp_itemsize */
-    (destructor)PyDiaDataSource_dealloc,                  /* tp_dealloc */
-    0,                                                    /* tp_print */
-    0,                                                    /* tp_getattr */
-    0,                                                    /* tp_setattr */
-    0,                                                    /* tp_as_async */
-    0,                                                    /* tp_repr */
-    0,                                                    /* tp_as_number */
-    0,                                                    /* tp_as_sequence */
-    0,                                                    /* tp_as_mapping */
-    0,                                                    /* tp_hash  */
-    0,                                                    /* tp_call */
-    0,                                                    /* tp_str */
-    0,                                                    /* tp_getattro */
-    0,                                                    /* tp_setattro */
-    0,                                                    /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,                                   /* tp_flags */
-    "DiaDataSource object",                               /* tp_doc */
-    0,                                                    /* tp_traverse */
-    0,                                                    /* tp_clear */
-    0,                                                    /* tp_richcompare */
-    0,                              /* tp_weaklistoffset */
-    0,                              /* tp_iter */
-    0,                              /* tp_iternext */
-    PyDiaDataSource_methods,        /* tp_methods */
-    0,                              /* tp_members */
-    0,                              /* tp_getset */
-    0,                              /* tp_base */
-    0,                              /* tp_dict */
-    0,                              /* tp_descr_get */
-    0,                              /* tp_descr_set */
-    0,                              /* tp_dictoffset */
-    (initproc)PyDiaDataSource_init, /* tp_init */
-    0,                              /* tp_alloc */
-    PyType_GenericNew,              /* tp_new */
+    PyVarObject_HEAD_INIT(NULL, 0) "pydia.DataSource", /* tp_name */
+    sizeof(PyDiaDataSource),                           /* tp_basicsize */
+    0,                                                 /* tp_itemsize */
+    (destructor)PyDiaDataSource_dealloc,               /* tp_dealloc */
+    0,                                                 /* tp_print */
+    0,                                                 /* tp_getattr */
+    0,                                                 /* tp_setattr */
+    0,                                                 /* tp_as_async */
+    0,                                                 /* tp_repr */
+    0,                                                 /* tp_as_number */
+    0,                                                 /* tp_as_sequence */
+    0,                                                 /* tp_as_mapping */
+    0,                                                 /* tp_hash  */
+    0,                                                 /* tp_call */
+    0,                                                 /* tp_str */
+    0,                                                 /* tp_getattro */
+    0,                                                 /* tp_setattro */
+    0,                                                 /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                                /* tp_flags */
+    "DataSource object",                               /* tp_doc */
+    0,                                                 /* tp_traverse */
+    0,                                                 /* tp_clear */
+    0,                                                 /* tp_richcompare */
+    0,                                                 /* tp_weaklistoffset */
+    0,                                                 /* tp_iter */
+    0,                                                 /* tp_iternext */
+    PyDiaDataSource_methods,                           /* tp_methods */
+    0,                                                 /* tp_members */
+    0,                                                 /* tp_getset */
+    0,                                                 /* tp_base */
+    0,                                                 /* tp_dict */
+    0,                                                 /* tp_descr_get */
+    0,                                                 /* tp_descr_set */
+    0,                                                 /* tp_dictoffset */
+    (initproc)PyDiaDataSource_init,                    /* tp_init */
+    0,                                                 /* tp_alloc */
+    PyType_GenericNew,                                 /* tp_new */
 };
 
 // Method: loadDataFromPdb
@@ -198,7 +192,7 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
 // Method: getExportedFunctions
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
 {
-    std::vector<dia::Symbol> functions{};
+    std::vector<dia::Function> functions{};
     try
     {
         functions = self->diaDataSource->getFunctions();

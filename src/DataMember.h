@@ -1,5 +1,5 @@
 #pragma once
-#include "DiaData.h"
+#include "DiaSymbolTypes/DiaData.h"
 namespace dia
 {
 class DataMember : public Data

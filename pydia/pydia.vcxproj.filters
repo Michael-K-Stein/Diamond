@@ -24,6 +24,9 @@
     <ClCompile Include="pydia_symbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pydia_datasource.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia_exceptions.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pydia_symbol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_register_classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

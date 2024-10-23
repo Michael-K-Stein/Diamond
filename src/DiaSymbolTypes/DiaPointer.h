@@ -1,5 +1,5 @@
 #pragma once
-#include "DiaSymbolTypes.h"
+#include "DiaSymbolTypes/DiaSymbolTypes.h"
 #include "TypeResolution.h"
 #include <string>
 

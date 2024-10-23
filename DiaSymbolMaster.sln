@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiaSymbolMaster", "DiaSymbolMaster.vcxproj", "{DB556020-A4F2-4045-B3BA-F2DAB492184D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pydia", ".\pydia\pydia.vcxproj", "{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pydia", "pydia\pydia.vcxproj", "{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D} = {DB556020-A4F2-4045-B3BA-F2DAB492184D}
 	EndProjectSection
@@ -27,6 +27,7 @@ Global
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x86.ActiveCfg = Release|Win32
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x86.Build.0 = Release|Win32
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x64.ActiveCfg = Debug|x64
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x64.Build.0 = Debug|x64
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x86.ActiveCfg = Debug|Win32
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x86.Build.0 = Debug|Win32
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Release|x64.ActiveCfg = Release|x64

@@ -12,10 +12,10 @@
 // such!
 
 #define DEFINE_TRIVIAL_DIA_WRAPPER(wrapperName, diaInterface)                  \
-    class wrapperName : public ComWrapper<diaInterface>                              \
+    class wrapperName : public ComWrapper<diaInterface>                        \
     {                                                                          \
     public:                                                                    \
-        using ComWrapper<diaInterface>::ComWrapper;                                        \
+        using ComWrapper<diaInterface>::ComWrapper;                            \
     };
 
 namespace dia
@@ -46,8 +46,14 @@ using VA = DWORD;
 
 /// @brief Retrieves all children of the symbol.
 /// @param symbol The symbol of which to get the children.
-/// @return An enumeration of the children symbols.
-const SymbolEnum findChildren(const Symbol& symbol);
+/// @return An vector of the children symbols.
+const std::vector<Symbol> findChildren(const Symbol& symbol);
+
+/// @brief Retrieves all children of the symbol.
+/// @param symbol The symbol of which to get the children.
+/// @return An vector of the children symbols.
+const std::vector<Symbol> findChildren(const Symbol& symbol,
+                                       enum SymTagEnum symTag);
 
 /// @brief Retrieves the children of the symbol. This method is the extended
 /// version of findChildren.

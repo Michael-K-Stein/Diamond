@@ -28,6 +28,8 @@ public:
     wchar_t* c_str() { return m_data; }
     const wchar_t* c_str() const { return m_data; }
 
+    size_t length() const;
+
     std::wstring operator+(const std::wstring& s) const;
 
     template <size_t N>
