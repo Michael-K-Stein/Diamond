@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+
 namespace dia
 {
 
@@ -12,8 +13,17 @@ class ComWrapper
 {
 public:
     ComWrapper() = default;
-    ComWrapper(const CComPtr<InterfaceT>& item) : m_itemRef{item} {}
-    ComWrapper(CComPtr<InterfaceT>&& item) : m_itemRef{std::move(item)} {}
+
+    ComWrapper(const CComPtr<InterfaceT>& item)
+        : m_itemRef{item}
+    {
+    }
+
+    ComWrapper(CComPtr<InterfaceT>&& item)
+        : m_itemRef{std::move(item)}
+    {
+    }
+
     ComWrapper(ComWrapper&& other);
     ComWrapper operator=(ComWrapper&& other) noexcept;
     ComWrapper(const ComWrapper& other);
@@ -63,8 +73,7 @@ inline ComWrapper<InterfaceT>::ComWrapper(ComWrapper&& other)
 }
 
 template <typename InterfaceT>
-inline ComWrapper<InterfaceT>
-ComWrapper<InterfaceT>::operator=(ComWrapper<InterfaceT>&& other) noexcept
+inline ComWrapper<InterfaceT> ComWrapper<InterfaceT>::operator=(ComWrapper<InterfaceT>&& other) noexcept
 {
     move(std::move(other));
     return *this;
@@ -78,8 +87,7 @@ inline ComWrapper<InterfaceT>::ComWrapper(const ComWrapper& other)
 }
 
 template <typename InterfaceT>
-inline ComWrapper<InterfaceT>
-ComWrapper<InterfaceT>::operator=(const ComWrapper<InterfaceT>& other) noexcept
+inline ComWrapper<InterfaceT> ComWrapper<InterfaceT>::operator=(const ComWrapper<InterfaceT>& other) noexcept
 {
     ComWrapper base{other.m_itemRef};
     return base;
@@ -103,8 +111,8 @@ inline void ComWrapper<InterfaceT>::move(ComWrapper&& other)
     {
         return;
     }
-    m_itemRef = std::move(other.m_itemRef);
+    m_itemRef       = std::move(other.m_itemRef);
     other.m_itemRef = nullptr;
 }
 
-} // namespace dia
+}  // namespace dia

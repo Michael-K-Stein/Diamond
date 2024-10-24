@@ -1,7 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 namespace dia
 {
@@ -27,7 +27,7 @@ public:
     using Symbol::getUnalignedType;
     using Symbol::getVolatileType;
 };
-} // namespace dia
+}  // namespace dia
 
 namespace std
 {
@@ -37,14 +37,11 @@ struct hash<dia::ArrayType>
     size_t operator()(const dia::ArrayType& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash,
-                     std::wstring(dia::symTagToName(v.getSymTag())),
-                     v.getArrayIndexType(), v.getConstType(), v.getCount(),
-                     v.getLength(), v.getLexicalParent(), v.getRank(),
-                     v.getUnalignedType(), v.getVolatileType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getArrayIndexType(), v.getConstType(), v.getCount(),
+                     v.getLength(), v.getLexicalParent(), v.getRank(), v.getUnalignedType(), v.getVolatileType());
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::ArrayType& arr);

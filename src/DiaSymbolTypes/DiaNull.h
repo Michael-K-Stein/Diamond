@@ -11,19 +11,15 @@ public:
     using Symbol::Symbol;
     TRIVIAL_CONVERT(Symbol, Null);
 };
-} // namespace dia
+}  // namespace dia
 
 namespace std
 {
 template <>
 struct hash<dia::Null>
 {
-    size_t operator()(const dia::Null& diaNull) const
-    {
-        throw std::runtime_error(
-            "Hashing for type dia::Null has not yet been implemented!");
-    }
+    size_t operator()(const dia::Null& diaNull) const { throw std::runtime_error("Hashing for type dia::Null has not yet been implemented!"); }
 };
-} // namespace std
+}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::Null& null);

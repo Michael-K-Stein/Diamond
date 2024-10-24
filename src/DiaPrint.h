@@ -1,5 +1,5 @@
 #pragma once
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 #include <ostream>
 #include <type_traits>
 

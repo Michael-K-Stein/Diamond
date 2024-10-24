@@ -13,6 +13,6 @@ public:
     using Symbol::Symbol;
     TRIVIAL_CONVERT(Symbol, Exe);
 };
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Exe& exe);

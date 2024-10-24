@@ -1,7 +1,7 @@
-#include "UserDefinedType.h"
+#include "DiaUserDefinedTypeWrapper.h"
 #include "DiaStruct.h"
-#include "Exceptions.h"
-#include "Union.h"
+#include "DiaUnion.h"
+#include "Utils/Exceptions.h"
 
 namespace dia
 {
@@ -34,7 +34,7 @@ size_t UserDefinedType::calcHash() const
     throw std::runtime_error("Invalid UDT kind!");
 }
 
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::UserDefinedType& udt)
 {

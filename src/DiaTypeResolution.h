@@ -1,6 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include <string>
+
 namespace dia
 {
 /// @brief Resolves a symbol to its full type name
@@ -12,4 +13,4 @@ std::wstring resolveTypeName(const Symbol& symbol);
 std::wstring symTagToName(const enum SymTagEnum v);
 std::wstring locationTypeToName(const enum LocationType v);
 
-} // namespace dia
+}  // namespace dia

@@ -16,25 +16,22 @@ struct hash<dia::Struct>
 
         for (const auto& member : diaStruct.enumerateMembers())
         {
-            const auto memberOffset = member.getOffset();
+            const auto memberOffset   = member.getOffset();
             const auto memberTypeName = member.getFieldCType().getTypeName();
-            const auto memberName = member.getFieldName();
-            const auto memberLength = member.getLength();
-            hash_combine(calculatedHash, memberOffset, memberTypeName,
-                         memberName, memberLength);
+            const auto memberName     = member.getFieldName();
+            const auto memberLength   = member.getLength();
+            hash_combine(calculatedHash, memberOffset, memberTypeName, memberName, memberLength);
         }
 
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
 
 namespace dia
 {
-DiaSymbolEnumerator<DataMember> Struct::enumerateMembers() const
-{
-    return enumerate<DataMember>(*this, SymTagData);
-}
+DiaSymbolEnumerator<DataMember> Struct::enumerateMembers() const { return enumerate<DataMember>(*this, SymTagData); }
+
 std::set<UserDefinedType> Struct::queryDependsOnTypes() const
 {
     std::set<UserDefinedType> types{};
@@ -45,11 +42,12 @@ std::set<UserDefinedType> Struct::queryDependsOnTypes() const
             continue;
         }
         const auto& cType = member.getFieldCType();
-        const auto udt = UserDefinedType{cType};
+        const auto udt    = UserDefinedType{cType};
         types.insert(udt);
     }
     return types;
 }
+
 std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
 {
     std::set<UserDefinedType> types{};
@@ -72,22 +70,23 @@ std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
     }
     return types;
 }
+
 size_t Struct::calcHash() const { return std::hash<Struct>()(*this); }
 
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)
 {
-    const auto& structName = diaStruct.getName();
+    const auto& structName     = diaStruct.getName();
     const auto& structPureName = structName.c_str() + 1;
     os << L"typedef struct " << structName << L" {\n";
 
     std::wstringstream tmpUnionStream{};
 
-    bool processingBitfield = false;
-    LONG previousMemberOffset = -1;
+    bool processingBitfield      = false;
+    LONG previousMemberOffset    = -1;
     size_t membersInStringStream = 0;
-    size_t indentationLevel = 1;
+    size_t indentationLevel      = 1;
 
     for (const dia::DataMember& member : diaStruct.enumerateMembers())
     {
@@ -108,7 +107,7 @@ std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)
             {
                 os << tmpUnionStream.str();
             }
-            tmpUnionStream = std::wstringstream{}; // New stringstream
+            tmpUnionStream        = std::wstringstream{};  // New stringstream
             membersInStringStream = 0;
         }
         previousMemberOffset = currentOffset;
@@ -120,9 +119,7 @@ std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct)
                 {
                     tmpUnionStream << L"\t";
                 }
-                tmpUnionStream << L"/* " << " 0x" << std::hex
-                               << member.getOffset() << L" */ \t "
-                               << L"struct {\n";
+                tmpUnionStream << L"/* " << " 0x" << std::hex << member.getOffset() << L" */ \t " << L"struct {\n";
                 // Now inside an inner struct
                 ++indentationLevel;
             }

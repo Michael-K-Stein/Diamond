@@ -1,11 +1,12 @@
-#include "DiaSymbolPrint.h"
-#include "DiaFunction.h"
-#include "DiaFunctionType.h"
-#include <DiaSymbolTypes.h>
+#include "DiaSymbolTypes/DiaSymbolPrint.h"
+#include "DiaSymbolTypes/DiaArray.h"
+#include "DiaSymbolTypes/DiaFunction.h"
+#include "DiaSymbolTypes/DiaFunctionType.h"
+#include "DiaSymbolTypes/DiaPointer.h"
+#include "DiaSymbolTypes/DiaSymbolTypes.h"
 #include <ostream>
 
-std::wstring
-dia::callingConventionToString(const dia::CvCall& callingConvention)
+std::wstring dia::callingConventionToString(const dia::CvCall& callingConvention)
 {
     switch (callingConvention)
     {
@@ -68,8 +69,7 @@ dia::callingConventionToString(const dia::CvCall& callingConvention)
     }
 }
 
-std::wostream& operator<<(std::wostream& os,
-                          const dia::CvCall& callingConvention)
+std::wostream& operator<<(std::wostream& os, const dia::CvCall& callingConvention)
 {
     os << callingConventionToString(callingConvention);
     return os;
@@ -92,3 +92,22 @@ std::wostream& operator<<(std::wostream& os, const dia::FunctionArgType& param)
     os << param.getType();
     return os;
 }
+
+std::wostream& operator<<(std::wostream& os, const dia::PointerType& pointer)
+{
+    os << pointer.getType() << "*";
+    return os;
+}
+
+std::wostream& operator<<(std::wostream& os, const dia::ArrayType& arr)
+{
+    dia::streamSymbolTypeModifiers(os, arr);
+    os << arr.getType() << L"[" << arr.getCount() << L"]";
+    return os;
+}
+
+std::wostream& operator<<(std::wostream& os, const dia::Null& null) { throw std::runtime_error("Cannot stream dia::Null !"); }
+
+std::wostream& operator<<(std::wostream& os, const dia::Data& null) { throw std::runtime_error("Stream of dia::Data has not been implemented!"); }
+
+std::wostream& operator<<(std::wostream& os, const dia::Udt& null) { throw std::runtime_error("Stream of dia::Udt has not been implemented!"); }

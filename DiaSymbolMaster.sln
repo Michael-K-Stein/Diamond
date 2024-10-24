@@ -10,30 +10,62 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pydia", "pydia\pydia.vcxpro
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D} = {DB556020-A4F2-4045-B3BA-F2DAB492184D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTests", "CTests\CTests.vcxproj", "{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CTest|x64 = CTest|x64
+		CTest|x86 = CTest|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		pydia_d|x64 = pydia_d|x64
+		pydia_d|x86 = pydia_d|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.CTest|x64.ActiveCfg = CTest|x64
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.CTest|x64.Build.0 = CTest|x64
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.CTest|x86.ActiveCfg = CTest|Win32
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.CTest|x86.Build.0 = CTest|Win32
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Debug|x64.ActiveCfg = Debug|x64
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Debug|x64.Build.0 = Debug|x64
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Debug|x86.ActiveCfg = Debug|Win32
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Debug|x86.Build.0 = Debug|Win32
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.pydia_d|x64.ActiveCfg = pydia_d|x64
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.pydia_d|x64.Build.0 = pydia_d|x64
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.pydia_d|x86.ActiveCfg = pydia_d|Win32
+		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.pydia_d|x86.Build.0 = pydia_d|Win32
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x64.ActiveCfg = Release|x64
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x64.Build.0 = Release|x64
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x86.ActiveCfg = Release|Win32
 		{DB556020-A4F2-4045-B3BA-F2DAB492184D}.Release|x86.Build.0 = Release|Win32
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.CTest|x64.ActiveCfg = CTest|x64
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.CTest|x86.ActiveCfg = CTest|Win32
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x64.ActiveCfg = Debug|x64
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x64.Build.0 = Debug|x64
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x86.ActiveCfg = Debug|Win32
-		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Debug|x86.Build.0 = Debug|Win32
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.pydia_d|x64.ActiveCfg = pydia_d|x64
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.pydia_d|x64.Build.0 = pydia_d|x64
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.pydia_d|x86.ActiveCfg = pydia_d|Win32
+		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.pydia_d|x86.Build.0 = pydia_d|Win32
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Release|x64.ActiveCfg = Release|x64
-		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Release|x64.Build.0 = Release|x64
 		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Release|x86.ActiveCfg = Release|Win32
-		{14B2E126-1D85-4944-98DE-D0D4BAAFBFD0}.Release|x86.Build.0 = Release|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.CTest|x64.ActiveCfg = CTest|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.CTest|x64.Build.0 = CTest|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.CTest|x86.ActiveCfg = CTest|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.CTest|x86.Build.0 = CTest|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Debug|x64.ActiveCfg = Debug|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Debug|x64.Build.0 = Debug|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Debug|x86.ActiveCfg = Debug|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Debug|x86.Build.0 = Debug|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.pydia_d|x64.ActiveCfg = pydia_d|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.pydia_d|x86.ActiveCfg = pydia_d|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.pydia_d|x86.Build.0 = pydia_d|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Release|x64.ActiveCfg = Release|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Release|x64.Build.0 = Release|x64
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Release|x86.ActiveCfg = Release|Win32
+		{E9E9AC5D-AB1C-4059-A8B0-A8831FC3D02B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

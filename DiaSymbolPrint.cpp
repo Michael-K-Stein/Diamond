@@ -5,11 +5,10 @@
 #include "DiaSymbolTypes/DiaFunctionType.h"
 #include "DiaSymbolTypes/DiaPointer.h"
 #include "DiaSymbolTypes/DiaSymbolTypes.h"
-#include "UserDefinedType.h"
+#include "DiaUserDefinedTypeWrapper.h"
 #include <ostream>
 
-std::wstring
-dia::callingConventionToString(const dia::CvCall& callingConvention)
+std::wstring dia::callingConventionToString(const dia::CvCall& callingConvention)
 {
     switch (callingConvention)
     {
@@ -72,8 +71,7 @@ dia::callingConventionToString(const dia::CvCall& callingConvention)
     }
 }
 
-std::wostream& operator<<(std::wostream& os,
-                          const dia::CvCall& callingConvention)
+std::wostream& operator<<(std::wostream& os, const dia::CvCall& callingConvention)
 {
     os << callingConventionToString(callingConvention);
     return os;
@@ -132,33 +130,25 @@ std::wostream& operator<<(std::wostream& os, const dia::FunctionArgType& param)
     os << param.getType();
     return os;
 }
+
 std::wostream& operator<<(std::wostream& os, const dia::PointerType& pointer)
 {
     os << pointer.getType() << L"*";
     return os;
 }
+
 std::wostream& operator<<(std::wostream& os, const dia::ArrayType& arr)
 {
     streamSymbolTypeModifiers(os, arr);
-    os << arr.getType() << L" " << arr.getType() << L"[" << arr.getCount()
-       << L"]";
+    os << arr.getType() << L" " << arr.getType() << L"[" << arr.getCount() << L"]";
     return os;
 }
 
-std::wostream& operator<<(std::wostream& os, const dia::Null& null)
-{
-    throw std::runtime_error("Cannot stream dia::Null type!");
-}
+std::wostream& operator<<(std::wostream& os, const dia::Null& null) { throw std::runtime_error("Cannot stream dia::Null type!"); }
 
-std::wostream& operator<<(std::wostream& os, const dia::Data& data)
-{
-    throw std::runtime_error("Calling unimplemented operator<<(Data) !");
-}
+std::wostream& operator<<(std::wostream& os, const dia::Data& data) { throw std::runtime_error("Calling unimplemented operator<<(Data) !"); }
 
-std::wostream& operator<<(std::wostream& os, const dia::Exe& exe)
-{
-    throw std::runtime_error("Calling unimplemented operator<<(Exe) !");
-}
+std::wostream& operator<<(std::wostream& os, const dia::Exe& exe) { throw std::runtime_error("Calling unimplemented operator<<(Exe) !"); }
 
 std::wostream& operator<<(std::wostream& os, const dia::Udt& udt)
 {

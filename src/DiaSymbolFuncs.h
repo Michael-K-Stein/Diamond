@@ -1,7 +1,7 @@
 #pragma once
-#include "Base.h"
-#include "BstrWrapper.h"
 #include "DiaSymbolTypes/DiaSymbolTypes.h"
+#include "Utils/BstrWrapper.h"
+#include "Utils/ComWrapper.h"
 #include <dia2.h>
 #include <vector>
 
@@ -11,11 +11,11 @@
 // Notice that all the functions are alphabetically sorted, and should remain as
 // such!
 
-#define DEFINE_TRIVIAL_DIA_WRAPPER(wrapperName, diaInterface)                  \
-    class wrapperName : public ComWrapper<diaInterface>                        \
-    {                                                                          \
-    public:                                                                    \
-        using ComWrapper<diaInterface>::ComWrapper;                            \
+#define DEFINE_TRIVIAL_DIA_WRAPPER(wrapperName, diaInterface)                                                                                        \
+    class wrapperName : public ComWrapper<diaInterface>                                                                                              \
+    {                                                                                                                                                \
+    public:                                                                                                                                          \
+        using ComWrapper<diaInterface>::ComWrapper;                                                                                                  \
     };
 
 namespace dia
@@ -29,20 +29,20 @@ using SymbolEnum = DiaSymbolEnumerator<Symbol>;
 DEFINE_TRIVIAL_DIA_WRAPPER(Frame, IDiaFrameData);
 DEFINE_TRIVIAL_DIA_WRAPPER(LineNumber, IDiaLineNumber);
 using FrameEnum = DiaSymbolEnumerator<Frame>;
-using LineEnum = DiaSymbolEnumerator<LineNumber>;
+using LineEnum  = DiaSymbolEnumerator<LineNumber>;
 DEFINE_TRIVIAL_DIA_WRAPPER(InputAssemblyFile, IDiaInputAssemblyFile);
-using Tag = DWORD;
+using Tag      = DWORD;
 using TagArray = std::vector<Tag>;
-using Address = IDiaEnumLineNumbers; // ???
+using Address  = IDiaEnumLineNumbers;  // ???
 enum class AccessModifier : DWORD
 {
-    Private = CV_private,
+    Private   = CV_private,
     Protected = CV_protected,
-    Public = CV_public,
+    Public    = CV_public,
 };
 using DataBytes = std::vector<BYTE>;
-using RVA = DWORD;
-using VA = DWORD;
+using RVA       = DWORD;
+using VA        = DWORD;
 
 /// @brief Retrieves all children of the symbol.
 /// @param symbol The symbol of which to get the children.
@@ -52,8 +52,7 @@ const std::vector<Symbol> findChildren(const Symbol& symbol);
 /// @brief Retrieves all children of the symbol.
 /// @param symbol The symbol of which to get the children.
 /// @return An vector of the children symbols.
-const std::vector<Symbol> findChildren(const Symbol& symbol,
-                                       enum SymTagEnum symTag);
+const std::vector<Symbol> findChildren(const Symbol& symbol, enum SymTagEnum symTag);
 
 /// @brief Retrieves the children of the symbol. This method is the extended
 /// version of findChildren.
@@ -66,8 +65,7 @@ const SymbolEnum findChildrenEx(const Symbol& symbol);
 /// @param symbol The symbol of which to get the children.
 /// @param address The address to filter the children.
 /// @return An enumeration of the children symbols.
-const SymbolEnum findChildrenExByAddr(const Symbol& symbol,
-                                      const Address& address);
+const SymbolEnum findChildrenExByAddr(const Symbol& symbol, const Address& address);
 
 /// @brief Retrieves the children of the symbol that are valid at a
 /// specified relative virtual address (RVA).
@@ -88,8 +86,7 @@ const SymbolEnum findChildrenExByVA(const Symbol& symbol, const VA& va);
 /// @param symbol The symbol of which to get the inline frames.
 /// @param address The address to filter the inline frames.
 /// @return An enumeration of the inline frames.
-const FrameEnum findInlineFramesByAddr(const Symbol& symbol,
-                                       const Address& address);
+const FrameEnum findInlineFramesByAddr(const Symbol& symbol, const Address& address);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// all of the inline frames on a specified relative virtual address (RVA).
@@ -118,8 +115,7 @@ const LineEnum findInlineeLines(const Symbol& symbol);
 /// @param symbol The symbol of which to get the inlinee lines.
 /// @param address The address range to filter the inlinee lines.
 /// @return An enumeration of the inlinee lines.
-const LineEnum findInlineeLinesByAddr(const Symbol& symbol,
-                                      const Address& address);
+const LineEnum findInlineeLinesByAddr(const Symbol& symbol, const Address& address);
 
 /// @brief Retrieves an enumeration that allows a client to iterate through
 /// the line number information of all functions that are inlined, directly
@@ -151,9 +147,7 @@ const InputAssemblyFile findInputAssemblyFile(const Symbol& symbol);
 /// @param rva The relative virtual address to filter the symbols.
 /// @param tag The tag value to filter the symbols.
 /// @return An enumeration of the symbols.
-const SymbolEnum findSymbolsByRVAForAcceleratorPointerTag(const Symbol& symbol,
-                                                          const RVA& rva,
-                                                          const Tag& tag);
+const SymbolEnum findSymbolsByRVAForAcceleratorPointerTag(const Symbol& symbol, const RVA& rva, const Tag& tag);
 
 #if 0
 /// @brief Returns the number of accelerator pointer tags in a C++ AMP stub
@@ -167,8 +161,7 @@ const int findSymbolsForAcceleratorPointerTag(const Symbol& symbol);
 /// C++ AMP accelerator stub function.
 /// @param symbol The symbol of which to get the accelerator pointer tags.
 /// @return An array of accelerator pointer tag values.
-const TagArray
-getAcceleratorPointerTags(const Symbol& symbol); // TODO: Imlement
+const TagArray getAcceleratorPointerTags(const Symbol& symbol);  // TODO: Imlement
 
 /// @brief Retrieves the access modifier of a class member.
 /// @param symbol The symbol of which to get the access modifier.
@@ -266,7 +259,7 @@ DWORD getBaseSymbolId(const Symbol& symbol);
 /// @brief Retrieves the base type of the symbol.
 /// @param symbol The symbol of which to get the base type.
 /// @return The base type.
-DWORD getBaseType(const Symbol& symbol);
+enum BasicType getBaseType(const Symbol& symbol);
 
 /// @brief Retrieves the binding ID of the symbol.
 /// @param symbol The symbol of which to get the binding ID.
@@ -1410,4 +1403,4 @@ bool getVolatileType(const Symbol& symbol);
 /// @return True if the symbol was inlined, otherwise false.
 bool getWasInlined(const Symbol& symbol);
 
-} // namespace dia
+}  // namespace dia

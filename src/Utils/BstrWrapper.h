@@ -25,7 +25,9 @@ public:
     BSTR* makeFromRaw();
 
     operator std::wstring() const;
+
     wchar_t* c_str() { return m_data; }
+
     const wchar_t* c_str() const { return m_data; }
 
     size_t length() const;
@@ -63,4 +65,4 @@ struct hash<BstrWrapper>
         return hash<std::wstring>()(str);
     }
 };
-} // namespace std
+}  // namespace std

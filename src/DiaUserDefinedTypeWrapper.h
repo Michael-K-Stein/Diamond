@@ -15,14 +15,23 @@ class UserDefinedType : public Udt
 public:
     using Udt::Udt;
 
-    UserDefinedType(const Udt& other) : Udt{other} {}
+    UserDefinedType(const Udt& other)
+        : Udt{other}
+    {
+    }
+
     UserDefinedType operator=(const Udt& other)
     {
         UserDefinedType udt{other};
         udt.get().p->AddRef();
         return udt;
     }
-    UserDefinedType(Udt&& other) : Udt{std::move(other)} {}
+
+    UserDefinedType(Udt&& other)
+        : Udt{std::move(other)}
+    {
+    }
+
     UserDefinedType operator=(Udt&& other)
     {
         UserDefinedType symbol{std::move(other)};
@@ -37,15 +46,9 @@ public:
 
     virtual size_t calcHash() const;
 
-    bool operator==(const UserDefinedType& other) const
-    {
-        return calcHash() == other.calcHash();
-    }
+    bool operator==(const UserDefinedType& other) const { return calcHash() == other.calcHash(); }
 
-    bool operator<(const UserDefinedType& other) const
-    {
-        return calcHash() < other.calcHash();
-    }
+    bool operator<(const UserDefinedType& other) const { return calcHash() < other.calcHash(); }
 
 protected:
     using Udt::get;
@@ -53,6 +56,6 @@ protected:
 private:
     friend class DataSource;
 };
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::UserDefinedType& udt);

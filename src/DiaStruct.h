@@ -1,12 +1,12 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
-#include "UserDefinedType.h"
-#include "hashing.h"
+#include "DiaUserDefinedTypeWrapper.h"
+#include "Utils/Hashing.h"
 #include <atlbase.h>
-#include <cstddef> // For std::ptrdiff_t
+#include <cstddef>  // For std::ptrdiff_t
 #include <dia2.h>
-#include <iterator> // For std::forward_iterator_tag
+#include <iterator>  // For std::forward_iterator_tag
 #include <set>
 #include <string>
 
@@ -14,7 +14,7 @@ namespace std
 {
 template <>
 struct hash<dia::Struct>;
-} // namespace std
+}  // namespace std
 
 namespace dia
 {
@@ -24,14 +24,24 @@ class Struct : public UserDefinedType
 {
 public:
     using UserDefinedType::UserDefinedType;
-    Struct(const UserDefinedType& other) : UserDefinedType{other} {}
+
+    Struct(const UserDefinedType& other)
+        : UserDefinedType{other}
+    {
+    }
+
     Struct& operator=(const UserDefinedType& other)
     {
         Struct symbol{other};
         symbol.get().p->AddRef();
         return symbol;
     }
-    Struct(UserDefinedType&& other) : UserDefinedType{std::move(other)} {}
+
+    Struct(UserDefinedType&& other)
+        : UserDefinedType{std::move(other)}
+    {
+    }
+
     Struct& operator=(UserDefinedType&& other)
     {
         Struct symbol{std::move(other)};
@@ -56,10 +66,9 @@ protected:
     using UserDefinedType::get;
 
     friend DiaSymbolEnumerator<DataMember>
-    enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag,
-                          LPCOLESTR name, DWORD compareFlags);
+    enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag, LPCOLESTR name, DWORD compareFlags);
 };
 
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Struct& diaStruct);

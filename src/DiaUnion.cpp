@@ -1,4 +1,4 @@
-#include "Union.h"
+#include "DiaUnion.h"
 #include "DataMember.h"
 #include "DiaSymbolEnumerator.h"
 
@@ -15,31 +15,28 @@ struct hash<dia::Union>
 
         for (const auto& member : diaUnion.enumerateMembers())
         {
-            const auto memberOffset = member.getOffset();
+            const auto memberOffset   = member.getOffset();
             const auto memberTypeName = member.getFieldCType().getTypeName();
-            const auto memberName = member.getFieldName();
-            const auto memberLength = member.getLength();
-            hash_combine(calculatedHash, memberOffset, memberTypeName,
-                         memberName, memberLength);
+            const auto memberName     = member.getFieldName();
+            const auto memberLength   = member.getLength();
+            hash_combine(calculatedHash, memberOffset, memberTypeName, memberName, memberLength);
         }
 
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
 
 namespace dia
 {
-DiaSymbolEnumerator<DataMember> Union::enumerateMembers() const
-{
-    return enumerate<DataMember>(*this, SymTagData);
-}
+DiaSymbolEnumerator<DataMember> Union::enumerateMembers() const { return enumerate<DataMember>(*this, SymTagData); }
+
 size_t Union::calcHash() const { return std::hash<Union>()(*this); }
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Union& v)
 {
-    const auto& unionName = v.getName();
+    const auto& unionName      = v.getName();
     const auto& structPureName = unionName.c_str() + 1;
     os << L"typedef union " << unionName << L" {\n";
     for (const auto& member : v.enumerateMembers())

@@ -2,8 +2,8 @@
 // execution begins and ends there.
 //
 
+#include "Utils/Exceptions.h"
 #include "src/DiaDataSource.h"
-#include "src/Exceptions.h"
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -23,23 +23,20 @@ int main()
     HRESULT hr = CoInitialize(nullptr);
     if (FAILED(hr))
     {
-        std::cerr << "Failed to initialize COM library. HRESULT: " << hr
-                  << std::endl;
+        std::cerr << "Failed to initialize COM library. HRESULT: " << hr << std::endl;
         return -1;
     }
 
     // Use unique_ptr with a custom deleter to ensure CoUninitialize is called
     // at the end
-    std::unique_ptr<void, CoUninitializeDeleter> comGuard(
-        (void*)1); // Use a dummy pointer as unique_ptr cannot be null
+    std::unique_ptr<void, CoUninitializeDeleter> comGuard((void*)1);  // Use a dummy pointer as unique_ptr cannot be null
 
     // Program logic here
     std::cout << "COM library initialized successfully." << std::endl;
 
     try
     {
-        DataSource dia{
-            "C:\\Users\\mkupe\\AppData\\Local\\Temp\\ntdll\\ntdll.dll"};
+        DataSource dia{"C:\\Users\\mkupe\\AppData\\Local\\Temp\\ntdll\\ntdll.dll"};
 
         std::wcout << L"Using PDB: " << dia.getLoadedPdbFile() << std::endl;
 

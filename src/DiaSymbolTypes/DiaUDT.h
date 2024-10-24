@@ -1,7 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 namespace dia
 {
@@ -37,7 +37,7 @@ public:
     using Symbol::getVirtualTableShapeId;
     using Symbol::getVolatileType;
 };
-} // namespace dia
+}  // namespace dia
 
 namespace std
 {
@@ -47,17 +47,13 @@ struct hash<dia::Udt>
     size_t operator()(const dia::Udt& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash,
-                     std::wstring(dia::symTagToName(v.getSymTag())),
-                     v.getClassParent(), v.getConstructor(), v.getConstType(),
-                     v.getHasAssignmentOperator(), v.getHasCastOperator(),
-                     v.getHasNestedTypes(), v.getLength(), v.getName(),
-                     v.getNested(), v.getOverloadedOperator(), v.getPacked(),
-                     v.getScoped(), v.getUdtKind(), v.getUnalignedType(),
-                     v.getVirtualTableShape(), v.getVolatileType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getClassParent(), v.getConstructor(), v.getConstType(),
+                     v.getHasAssignmentOperator(), v.getHasCastOperator(), v.getHasNestedTypes(), v.getLength(), v.getName(), v.getNested(),
+                     v.getOverloadedOperator(), v.getPacked(), v.getScoped(), v.getUdtKind(), v.getUnalignedType(), v.getVirtualTableShape(),
+                     v.getVolatileType());
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::Udt& udt);

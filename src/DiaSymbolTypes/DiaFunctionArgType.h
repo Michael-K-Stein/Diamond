@@ -1,7 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 namespace dia
 {
@@ -10,6 +10,7 @@ namespace dia
 class FunctionArgType : protected Symbol
 {
 public:
+    FunctionArgType() = default;
     using Symbol::Symbol;
     TRIVIAL_CONVERT(Symbol, FunctionArgType);
 
@@ -22,7 +23,7 @@ public:
     using Symbol::getType;
     using Symbol::getTypeId;
 };
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::FunctionArgType& param);
 
@@ -34,11 +35,9 @@ struct hash<dia::FunctionArgType>
     size_t operator()(const dia::FunctionArgType& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash,
-                     std::wstring(dia::symTagToName(v.getSymTag())),
-                     v.getType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getType());
 
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std

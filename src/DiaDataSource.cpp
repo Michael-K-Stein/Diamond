@@ -1,9 +1,9 @@
 #include "DiaDataSource.h"
-#include "../SymbolPathHelper.h"
-#include "BstrWrapper.h"
 #include "DiaStruct.h"
 #include "DiaSymbolEnumerator.h"
-#include "Exceptions.h"
+#include "Utils/BstrWrapper.h"
+#include "Utils/Exceptions.h"
+#include "Utils/SymbolPathHelper.h"
 #include <codecvt>
 #include <fstream>
 #include <iostream>
@@ -13,12 +13,11 @@
 
 namespace dia
 {
-unsigned char PDB_FILE_MAGIC[29] = { // Microsft C/C++ MSF 7.00...DS
-    0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20,
-    0x43, 0x2F, 0x43, 0x2B, 0x2B, 0x20, 0x4D, 0x53, 0x46, 0x20,
-    0x37, 0x2E, 0x30, 0x30, 0x0D, 0x0A, 0x1A, 0x44, 0x53};
+unsigned char PDB_FILE_MAGIC[29] = {  // Microsft C/C++ MSF 7.00...DS
+    0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x2F, 0x43, 0x2B, 0x2B,
+    0x20, 0x4D, 0x53, 0x46, 0x20, 0x37, 0x2E, 0x30, 0x30, 0x0D, 0x0A, 0x1A, 0x44, 0x53};
 
-unsigned char PE_FILE_MAGIC[2] = {0x4D, 0x5A}; // MZ
+unsigned char PE_FILE_MAGIC[2]   = {0x4D, 0x5A};  // MZ
 
 static const std::wstring convertToWstring(const std::string& str)
 {
@@ -29,9 +28,7 @@ static const std::wstring convertToWstring(const std::string& str)
 
 DataSource::DataSource()
 {
-    const auto result = CoCreateInstance(
-        CLSID_DiaSource, NULL, CLSCTX_INPROC_SERVER, __uuidof(IDiaDataSource),
-        reinterpret_cast<void**>(&m_comPtr));
+    const auto result = CoCreateInstance(CLSID_DiaSource, NULL, CLSCTX_INPROC_SERVER, __uuidof(IDiaDataSource), reinterpret_cast<void**>(&m_comPtr));
     CHECK_DIACOM_EXCEPTION("DiaSource creation failed!", result);
 }
 
@@ -40,17 +37,19 @@ DataSource::DataSource(const std::string& filePath)
 {
 }
 
-DataSource::DataSource(const std::wstring& filePath) : DataSource{}
+DataSource::DataSource(const std::wstring& filePath)
+    : DataSource{}
 {
     loadDataFromArbitraryFile(filePath);
 }
 
 DataSource::~DataSource() {}
 
-void DataSource::loadDataFromPdb(const std::string& pdbFilePath)
-{
-    loadDataFromPdb(convertToWstring(pdbFilePath));
-}
+void DataSource::addSymtoreDirectory(const std::string& symstoreDirectory) { addSymtoreDirectory(convertToWstring(symstoreDirectory)); }
+
+void DataSource::addSymtoreDirectory(const std::wstring& symstoreDirectory) { m_additionalSymstoreDirectories.push_back(symstoreDirectory); }
+
+void DataSource::loadDataFromPdb(const std::string& pdbFilePath) { loadDataFromPdb(convertToWstring(pdbFilePath)); }
 
 void DataSource::loadDataFromPdb(const std::wstring& pdbFilePath)
 {
@@ -63,10 +62,7 @@ void DataSource::loadDataFromPdb(const std::wstring& pdbFilePath)
     openSession();
 }
 
-void DataSource::loadDataForExe(const std::string& exePath)
-{
-    loadDataForExe(convertToWstring(exePath));
-}
+void DataSource::loadDataForExe(const std::string& exePath) { loadDataForExe(convertToWstring(exePath)); }
 
 void DataSource::loadDataForExe(const std::wstring& exePath)
 {
@@ -75,22 +71,18 @@ void DataSource::loadDataForExe(const std::wstring& exePath)
         throw DiaSymbolMasterException{"Session already openned!"};
     }
 
-    const auto& symbolSearchPath = getSymbolSearchPathForExecutable(exePath);
-    const auto result = m_comPtr->loadDataForExe(
-        exePath.c_str(), symbolSearchPath.c_str(), nullptr);
+    const auto& symbolSearchPath = buildSymbolSearchPath(exePath);
+    const auto result            = m_comPtr->loadDataForExe(exePath.c_str(), symbolSearchPath.c_str(), nullptr);
     CHECK_DIACOM_EXCEPTION("Failed to load data from executable!", result);
     openSession();
 }
 
-const std::wstring DataSource::getLoadedPdbFile() const
-{
-    return getGlobalScope().getSymbolsFileName();
-}
+const std::wstring DataSource::getLoadedPdbFile() const { return getGlobalScope().getSymbolsFileName(); }
 
 const std::vector<Symbol> DataSource::getExports() const
 {
     CComPtr<IDiaEnumSymbols> rawExportEnum = nullptr;
-    const auto result = m_sessionComPtr->getExports(&rawExportEnum);
+    const auto result                      = m_sessionComPtr->getExports(&rawExportEnum);
     CHECK_DIACOM_EXCEPTION("Failed to get session exports!", result);
     DiaSymbolEnumerator<Symbol> exports{std::move(rawExportEnum)};
     std::vector<Symbol> items{};
@@ -101,13 +93,11 @@ const std::vector<Symbol> DataSource::getExports() const
     return items;
 }
 
-const std::vector<Symbol>
-DataSource::getSymbols(enum SymTagEnum symTag) const
+const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
 {
     if (SymTagExport == symTag)
     {
-        throw std::runtime_error(
-            "You probably meant to use DataSource::getExports()");
+        throw std::runtime_error("You probably meant to use DataSource::getExports()");
     }
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), symTag);
@@ -118,61 +108,44 @@ DataSource::getSymbols(enum SymTagEnum symTag) const
     return items;
 }
 
-const std::vector<Symbol> DataSource::getUntypedSymbols() const
-{
-    return getSymbols(SymTagNull);
-}
-const std::vector<Symbol> DataSource::getCompilands() const
-{
-    return getSymbols(SymTagCompiland);
-}
-const std::vector<Symbol> DataSource::getCompilandDetails() const
-{
-    return getSymbols(SymTagCompilandDetails);
-}
-const std::vector<Symbol> DataSource::getCompilandEnvs() const
-{
-    return getSymbols(SymTagCompilandEnv);
-}
+const std::vector<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
+
+const std::vector<Symbol> DataSource::getCompilands() const { return getSymbols(SymTagCompiland); }
+
+const std::vector<Symbol> DataSource::getCompilandDetails() const { return getSymbols(SymTagCompilandDetails); }
+
+const std::vector<Symbol> DataSource::getCompilandEnvs() const { return getSymbols(SymTagCompilandEnv); }
+
 const std::vector<Function> DataSource::getFunctions() const
 {
     const auto functionSymbols = getSymbols(SymTagFunction);
-    std::vector<Function> functions{functionSymbols.begin(),
-                                    functionSymbols.end()};
+    std::vector<Function> functions{functionSymbols.begin(), functionSymbols.end()};
     return functions;
 }
+
 const std::vector<UserDefinedType> DataSource::getUserDefinedTypes() const
 {
     const auto exports = getSymbols(SymTagUDT);
     std::vector<UserDefinedType> types{exports.begin(), exports.end()};
     return types;
 }
+
 const std::vector<Struct> DataSource::getStructs() const
 {
     const auto userDefinedStructs = getUserDefinedTypes(UdtStruct);
-    std::vector<Struct> structs{userDefinedStructs.begin(),
-                                userDefinedStructs.end()};
+    std::vector<Struct> structs{userDefinedStructs.begin(), userDefinedStructs.end()};
     return structs;
 }
-const std::vector<Symbol> DataSource::getClasses() const
-{
-    return getUserDefinedTypes(UdtClass);
-}
-const std::vector<Symbol> DataSource::getInterfaces() const
-{
-    return getUserDefinedTypes(UdtInterface);
-}
-const std::vector<Symbol> DataSource::getUnions() const
-{
-    return getUserDefinedTypes(UdtUnion);
-}
-const std::vector<Symbol> DataSource::getTaggedUnions() const
-{
-    return getUserDefinedTypes(UdtTaggedUnion);
-}
 
-const std::vector<Symbol>
-DataSource::getUserDefinedTypes(enum UdtKind kind) const
+const std::vector<Symbol> DataSource::getClasses() const { return getUserDefinedTypes(UdtClass); }
+
+const std::vector<Symbol> DataSource::getInterfaces() const { return getUserDefinedTypes(UdtInterface); }
+
+const std::vector<Symbol> DataSource::getUnions() const { return getUserDefinedTypes(UdtUnion); }
+
+const std::vector<Symbol> DataSource::getTaggedUnions() const { return getUserDefinedTypes(UdtTaggedUnion); }
+
+const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
 {
     std::vector<Symbol> items{};
     const auto userDefinedTypes = getUserDefinedTypes();
@@ -190,15 +163,14 @@ DataSource::getUserDefinedTypes(enum UdtKind kind) const
 const Struct DataSource::getStruct(const std::wstring& structName) const
 {
     std::vector<Symbol> items{};
-    auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(),
-                             nsfCaseSensitive);
+    auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(), nsfCaseSensitive);
     for (const auto& item : exports)
     {
         items.push_back(item);
     }
     if (items.size() < 1)
     {
-        throw std::runtime_error("Struct by name not found!");
+        throw StructNotFound("Struct by name not found!");
     }
     if (items.size() > 1)
     {
@@ -211,8 +183,7 @@ Symbol& DataSource::getGlobalScope()
 {
     if (!m_globalScope)
     {
-        const auto result =
-            m_sessionComPtr->get_globalScope(&m_globalScope.makeFromRaw());
+        const auto result = m_sessionComPtr->get_globalScope(&m_globalScope.makeFromRaw());
         CHECK_DIACOM_EXCEPTION("Failed to get global scope!", result);
     }
 
@@ -226,6 +197,7 @@ void DataSource::openSession()
     m_sessionOpenned = true;
     getGlobalScope();
 }
+
 void DataSource::loadDataFromArbitraryFile(const std::wstring& filePath)
 {
     const auto fileExtension = filePath.substr(filePath.find_last_of(L".") + 1);
@@ -239,8 +211,7 @@ void DataSource::loadDataFromArbitraryFile(const std::wstring& filePath)
         for (const auto& executableExtension :
              // List taken from
              // https://en.wikipedia.org/wiki/Portable_Executable
-             {L"acm", L"ax", L"cpl", L"drv", L"efi", L"mui", L"ocx", L"scr",
-              L"tsp", L"mun", L"exe", L"dll", L"sys"})
+             {L"acm", L"ax", L"cpl", L"drv", L"efi", L"mui", L"ocx", L"scr", L"tsp", L"mun", L"exe", L"dll", L"sys"})
         {
             if (0 != lstrcmpiW(executableExtension, fileExtension.c_str()))
             {
@@ -273,4 +244,16 @@ void DataSource::loadDataFromArbitraryFile(const std::wstring& filePath)
 
     throw std::runtime_error("Failed to deduce file format!");
 }
-} // namespace dia
+
+std::wstring DataSource::buildSymbolSearchPath(const std::wstring& exePath) const
+{
+    std::wstring searchPath = L"srv*";
+    for (const auto& dir : m_additionalSymstoreDirectories)
+    {
+        searchPath += dir + L"*";
+    }
+    searchPath += getSymbolSearchPathForExecutable(exePath, false);
+    return searchPath;
+}
+
+}  // namespace dia

@@ -19,7 +19,12 @@ public:
     DataSource();
     DataSource(const std::string& filePath);
     DataSource(const std::wstring& filePath);
+    DataSource(const std::string& filePath, const std::string& symstoreDirectory);
+    DataSource(const std::wstring& filePath, const std::wstring& symstoreDirectory);
     ~DataSource() noexcept;
+
+    void addSymtoreDirectory(const std::string& symstoreDirectory);
+    void addSymtoreDirectory(const std::wstring& symstoreDirectory);
 
     void loadDataFromPdb(const std::string& pdbFilePath);
     void loadDataFromPdb(const std::wstring& pdbFilePath);
@@ -56,23 +61,27 @@ public:
 
 private:
     Symbol& getGlobalScope();
+
     const Symbol& getGlobalScope() const
     {
         if (!!!m_globalScope)
         {
-            throw std::runtime_error(
-                "A DIA session must be openned and a global "
-                "scope must be identified before using this API!");
+            throw std::runtime_error("A DIA session must be openned and a global "
+                                     "scope must be identified before using this API!");
         }
         return m_globalScope;
     }
+
     void openSession();
     void loadDataFromArbitraryFile(const std::wstring& filePath);
+
+    std::wstring buildSymbolSearchPath(const std::wstring& exePath) const;
 
     CComPtr<IDiaDataSource> m_comPtr{nullptr};
     CComPtr<IDiaSession> m_sessionComPtr{nullptr};
     Symbol m_globalScope{};
     bool m_sessionOpenned{false};
+    std::vector<std::wstring> m_additionalSymstoreDirectories{};
 };
 
-} // namespace dia
+}  // namespace dia

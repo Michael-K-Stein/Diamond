@@ -1,7 +1,7 @@
 #pragma once
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 namespace dia
 {
@@ -11,6 +11,7 @@ namespace dia
 class Data : protected Symbol
 {
 public:
+    Data() = default;
     using Symbol::Symbol;
     TRIVIAL_CONVERT(Symbol, Data);
 
@@ -45,7 +46,7 @@ public:
     using Symbol::getVirtualAddress;
     using Symbol::getVolatileType;
 };
-} // namespace dia
+}  // namespace dia
 
 namespace std
 {
@@ -55,17 +56,13 @@ struct hash<dia::Data>
     size_t operator()(const dia::Data& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash,
-                     std::wstring(dia::symTagToName(v.getSymTag())),
-                     v.getAccess(), v.getBitPosition(), v.getClassParent(),
-                     v.getCompilerGenerated(), v.getConstType(),
-                     v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(),
-                     v.getLength(), v.getLocationType(), v.getName(),
-                     v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(),
-                     v.getType(), v.getUnalignedType(), v.getVolatileType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), v.getClassParent(),
+                     v.getCompilerGenerated(), v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(),
+                     v.getLocationType(), v.getName(), v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(),
+                     v.getVolatileType());
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::Data& data);

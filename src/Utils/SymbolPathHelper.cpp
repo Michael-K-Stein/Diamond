@@ -11,8 +11,7 @@ namespace dia
 static std::wstring getEnvironmentVariableW(const std::wstring& variableName)
 {
     // Return value is size in `count of characters`
-    const auto requiredBufferSize =
-        GetEnvironmentVariableW(variableName.c_str(), nullptr, 0);
+    const auto requiredBufferSize = GetEnvironmentVariableW(variableName.c_str(), nullptr, 0);
     if (0 == requiredBufferSize)
     {
         throw WinApiException("Failed to get value of environment variable!");
@@ -21,16 +20,14 @@ static std::wstring getEnvironmentVariableW(const std::wstring& variableName)
     // Initialize wstring of requiredBufferSize characters, all nullified
     std::wstring environmentVariableValue(requiredBufferSize, L'\x00');
 
-    if (0 == GetEnvironmentVariableW(variableName.c_str(),
-                                     environmentVariableValue.data(),
-                                     requiredBufferSize))
+    if (0 == GetEnvironmentVariableW(variableName.c_str(), const_cast<wchar_t*>(environmentVariableValue.data()), requiredBufferSize))
     {
         throw WinApiException("Failed to get value of environment variable!");
     }
     return environmentVariableValue;
 }
 
-const std::wstring getBasicSymbolSearchPath()
+const std::wstring getBasicSymbolSearchPath(bool withSrv)
 {
     constexpr auto SYMBOL_PATH_ENVIRONMENT_VARIABLE_NAME = L"_NT_SYMBOL_PATH";
     // This should really not change throught the life-time of this program
@@ -41,8 +38,7 @@ const std::wstring getBasicSymbolSearchPath()
         // explicitly set
         try
         {
-            s_symbolSearchPath =
-                getEnvironmentVariableW(SYMBOL_PATH_ENVIRONMENT_VARIABLE_NAME);
+            s_symbolSearchPath = getEnvironmentVariableW(SYMBOL_PATH_ENVIRONMENT_VARIABLE_NAME);
         }
         catch (const WinApiException& e)
         {
@@ -51,8 +47,14 @@ const std::wstring getBasicSymbolSearchPath()
 #else
             UNREFERENCED_PARAMETER(e);
 #endif
-            s_symbolSearchPath =
-                L"srv*C:\\Symbols*https://msdl.microsoft.com/download/symbols";
+            if (withSrv)
+            {
+                s_symbolSearchPath = L"srv*C:\\Symbols*https://msdl.microsoft.com/download/symbols";
+            }
+            else
+            {
+                s_symbolSearchPath = L"C:\\Symbols*https://msdl.microsoft.com/download/symbols";
+            }
         }
     }
     return s_symbolSearchPath;
@@ -60,8 +62,7 @@ const std::wstring getBasicSymbolSearchPath()
 
 // Function to split a string into tokens based on a
 // delimiter
-static std::vector<std::wstring> splitString(const std::wstring& input,
-                                             wchar_t delimiter)
+static std::vector<std::wstring> splitString(const std::wstring& input, wchar_t delimiter)
 {
     // Creating an input wstring stream from the input wstring
     std::wistringstream stream(input);
@@ -84,12 +85,11 @@ static std::vector<std::wstring> splitString(const std::wstring& input,
     return tokens;
 }
 
-const std::wstring
-getSymbolSearchPathForExecutable(const std::wstring& executableFilePath)
+const std::wstring getSymbolSearchPathForExecutable(const std::wstring& executableFilePath, bool withSrv)
 {
     std::wstring baseSearchPath{};
 
-    baseSearchPath = getBasicSymbolSearchPath();
+    baseSearchPath = getBasicSymbolSearchPath(withSrv);
 
 #if 0
     // Remove filename from the path to get the directory it is in.
@@ -110,4 +110,4 @@ getSymbolSearchPathForExecutable(const std::wstring& executableFilePath)
 
     return baseSearchPath;
 }
-} // namespace dia
+}  // namespace dia

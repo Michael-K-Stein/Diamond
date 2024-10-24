@@ -3,7 +3,7 @@
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 namespace dia
 {
@@ -34,8 +34,7 @@ public:
 
     DiaSymbolEnumerator<FunctionArgType> enumerateParameters() const
     {
-        return DiaSymbolEnumerator<FunctionArgType>::enumerate(
-            *this, SymTagFunctionArgType);
+        return DiaSymbolEnumerator<FunctionArgType>::enumerate(*this, SymTagFunctionArgType);
     };
 
     // Iterator-related methods
@@ -43,7 +42,7 @@ public:
 
     auto end() const { return enumerateParameters().end(); }
 };
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::FunctionType& func);
 
@@ -55,11 +54,8 @@ struct hash<dia::FunctionType>
     size_t operator()(const dia::FunctionType& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash,
-                     std::wstring(dia::symTagToName(v.getSymTag())),
-                     v.getCallingConvention(), v.getConstType(), v.getCount(),
-                     v.getObjectPointerType(), v.getThisAdjust(),
-                     v.getUnalignedType(), v.getVolatileType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getCallingConvention(), v.getConstType(), v.getCount(),
+                     v.getObjectPointerType(), v.getThisAdjust(), v.getUnalignedType(), v.getVolatileType());
         for (const auto& param : v)
         {
             hash_combine(calculatedHash, hash<dia::FunctionArgType>()(param));
@@ -68,4 +64,4 @@ struct hash<dia::FunctionType>
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std

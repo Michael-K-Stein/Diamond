@@ -1,13 +1,82 @@
-# We'll use defaults from the LLVM style, but with 4 columns indentation.
-BasedOnStyle: LLVM
-Language: Cpp
-# Force pointers to the type for C++.
+# Indentation
 IndentWidth: 4
-DerivePointerAlignment: false
+UseTab: Never
+
+# Pointer and reference alignment to the left
 PointerAlignment: Left
-# EmptyLineBeforeAccessModifier: LogicalBlock
+
+# Always put newlines on open/close of scopes (e.g., braces)
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+  BeforeLambdaBody: true
+
+# Don't break string literals unless they are obscenely long
+BreakStringLiterals: false
+
+# Namespace comments at the end of closing braces
 FixNamespaceComments: true
+
+# #ifdef comments at the end of #endif
+CommentPragmas: '^#.*$'
+
+# Templates on previous line
+AlwaysBreakTemplateDeclarations: true
+
+# Newlines around 'if', 'else', 'for', etc.
+IfMacros:
+  - 'IF'
+  - 'ELSE'
+
+# Classes indented, but not namespaces or access modifiers
 NamespaceIndentation: None
+IndentAccessModifiers: false
 AccessModifierOffset: -4
+IndentCaseLabels: false
+
+# Misc
+AllowShortLoopsOnASingleLine: false
 BreakBeforeBraces: Allman
-AlwaysBreakTemplateDeclarations: Yes
+ColumnLimit: 150 # You can adjust this to a more appropriate value for 'obscenely long' string literals
+
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: LogicalBlock
+AlignAfterOpenBracket: Align
+BinPackArguments: true
+BinPackParameters: false
+BitFieldColonSpacing: Both
+
+SpacesBeforeTrailingComments: 2
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+MaxEmptyLinesToKeep: 2
+
+SeparateDefinitionBlocks: Always
+AllowShortEnumsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BreakConstructorInitializers: BeforeComma
+
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+
+Macros:
+- TEST_CLASS(className)=class className
+- TEST_METHOD(x)=x

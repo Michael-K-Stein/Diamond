@@ -3,7 +3,7 @@
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
 #include "DiaSymbolTypes.h"
-#include "TypeResolution.h"
+#include "DiaTypeResolution.h"
 
 std::wostream& operator<<(std::wostream& os, const dia::Function& func);
 
@@ -67,8 +67,7 @@ public:
 
     DiaSymbolEnumerator<FunctionArgType> enumerateParameters() const
     {
-        return DiaSymbolEnumerator<FunctionArgType>::enumerate(
-            static_cast<const Symbol&>(*this), SymTagData);
+        return DiaSymbolEnumerator<FunctionArgType>::enumerate(static_cast<const Symbol&>(*this), SymTagData);
     };
 
     // Iterator-related methods
@@ -77,10 +76,9 @@ public:
     auto end() const { return enumerateParameters().end(); }
 
 private:
-    friend std::wostream& ::operator<<(std::wostream& os,
-                                       const dia::Function& func);
+    friend std::wostream& ::operator<<(std::wostream & os, const dia::Function & func);
 };
-} // namespace dia
+}  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Function& func);
 
@@ -92,21 +90,15 @@ struct hash<dia::Function>
     size_t operator()(const dia::Function& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(
-            calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())),
-            v.getAccess(), v.getAddressSection(), v.getClassParent(),
-            v.getConstType(), v.getCustomCallingConvention(), v.getFarReturn(),
-            v.getHasAlloca(), v.getHasEH(), v.getHasEHa(), v.getHasInlAsm(),
-            v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(),
-            v.getHasSetJump(), v.getInlSpec(), v.getInterruptReturn(),
-            v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(),
-            v.getLocationType(), v.getName(), v.getNoInline(), v.getNoReturn(),
-            v.getNoStackOrdering(), v.getNotReached(),
-            v.getOptimizedCodeDebugInfo(), v.getPure(), v.getToken(),
-            v.getType(), v.getUnalignedType(), v.getUndecoratedName(),
-            v.getVirtual(), v.getVirtualAddress(), v.getVolatileType());
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getAddressSection(), v.getClassParent(),
+                     v.getConstType(), v.getCustomCallingConvention(), v.getFarReturn(), v.getHasAlloca(), v.getHasEH(), v.getHasEHa(),
+                     v.getHasInlAsm(), v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(), v.getHasSetJump(), v.getInlSpec(),
+                     v.getInterruptReturn(), v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(), v.getLocationType(), v.getName(),
+                     v.getNoInline(), v.getNoReturn(), v.getNoStackOrdering(), v.getNotReached(), v.getOptimizedCodeDebugInfo(), v.getPure(),
+                     v.getToken(), v.getType(), v.getUnalignedType(), v.getUndecoratedName(), v.getVirtual(), v.getVirtualAddress(),
+                     v.getVolatileType());
 
         return calculatedHash;
     }
 };
-} // namespace std
+}  // namespace std
