@@ -10,6 +10,7 @@ def test_find_enum():
     assert pool_type_enum
     assert pool_type_enum.get_name() == "_POOL_TYPE"
 
+
 def test_list_enum_value_names():
     data_source = get_ntdll_datasource()
     pool_type_enum = data_source.get_enum("_POOL_TYPE")
