@@ -113,3 +113,5 @@ std::wostream& operator<<(std::wostream& os, const dia::Null& null) { throw std:
 std::wostream& operator<<(std::wostream& os, const dia::Data& null) { throw std::runtime_error("Stream of dia::Data has not been implemented!"); }
 
 std::wostream& operator<<(std::wostream& os, const dia::Udt& null) { throw std::runtime_error("Stream of dia::Udt has not been implemented!"); }
+
+std::wostream& operator<<(std::wostream& os, const dia::Enum& udt) {}

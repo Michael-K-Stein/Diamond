@@ -1,8 +1,8 @@
 #pragma once
-#include "DataMember.h"
+#include "DiaDataMember.h"
 #include "DiaSymbol.h"
-#include "SymbolTypes/DiaSymbolTypes.h"
 #include "Exceptions.h"
+#include "SymbolTypes/DiaSymbolTypes.h"
 #include <atlbase.h>
 #include <cstddef>  // For std::ptrdiff_t
 #include <dia2.h>
@@ -140,6 +140,16 @@ public:
     // Begin and End methods for iteration
     Iterator begin();
     Iterator end();
+
+    operator const std::vector<T>()
+    {
+        std::vector<T> myVector{};
+        for (const auto& item : *this)
+        {
+            myVector.push_back(item);
+        }
+        return myVector;
+    }
 
 private:
     DiaSymbolEnumerator() = default;

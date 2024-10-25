@@ -1,7 +1,9 @@
 #pragma once
+#include "AnyString.h"
 #include "DiaStruct.h"
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
+#include "SymbolTypes/DiaEnum.h"
 #include "SymbolTypes/DiaFunction.h"
 #include <atlbase.h>
 #include <dia2.h>
@@ -11,24 +13,20 @@
 
 namespace dia
 {
-
+/// @brief Wrapper for IDiaDataSource.
+/// Initiates access to a source of debugging symbols.
 class DataSource final
 {
 public:
     DataSource();
-    DataSource(const std::string& filePath);
-    DataSource(const std::wstring& filePath);
-    DataSource(const std::string& filePath, const std::string& symstoreDirectory);
-    DataSource(const std::wstring& filePath, const std::wstring& symstoreDirectory);
+    DataSource(const AnyString& filePath);
+    DataSource(const AnyString& filePath, const AnyString& symstoreDirectory);
     ~DataSource() noexcept;
 
-    void addSymtoreDirectory(const std::string& symstoreDirectory);
-    void addSymtoreDirectory(const std::wstring& symstoreDirectory);
+    void addSymtoreDirectory(const AnyString& symstoreDirectory);
 
-    void loadDataFromPdb(const std::string& pdbFilePath);
-    void loadDataFromPdb(const std::wstring& pdbFilePath);
-    void loadDataForExe(const std::string& exePath);
-    void loadDataForExe(const std::wstring& exePath);
+    void loadDataFromPdb(const AnyString& pdbFilePath);
+    void loadDataForExe(const AnyString& exePath);
 
     // TODO: Implement
     void loadAndValidateDataFromPdb();
@@ -41,6 +39,10 @@ public:
     const std::vector<Symbol> getExports() const;
 
     const std::vector<Symbol> getSymbols(enum SymTagEnum symTag) const;
+    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const;
+    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const;
+
+    const Enum getEnum(const AnyString& enumName) const;
     const std::vector<Symbol> getUntypedSymbols() const;
     const std::vector<Symbol> getCompilands() const;
     const std::vector<Symbol> getCompilandDetails() const;
@@ -54,7 +56,7 @@ public:
     const std::vector<Symbol> getUnions() const;
     const std::vector<Symbol> getTaggedUnions() const;
 
-    const Struct getStruct(const std::wstring& structName) const;
+    const Struct getStruct(const AnyString& structName) const;
 
     bool sessionOpened() const { return m_sessionOpenned; }
 

@@ -1,11 +1,12 @@
 #include "pch.h"
 //
+#include "BstrWrapper.h"
 #include "DiaDataSource.h"
 #include "DiaStruct.h"
 #include "DiaSymbolEnumerator.h"
-#include "BstrWrapper.h"
 #include "Exceptions.h"
 #include "SymbolPathHelper.h"
+#include "SymbolTypes/DiaEnum.h"
 #include <codecvt>
 #include <fstream>
 #include <iostream>
@@ -21,39 +22,30 @@ unsigned char PDB_FILE_MAGIC[29] = {  // Microsft C/C++ MSF 7.00...DS
 
 unsigned char PE_FILE_MAGIC[2]   = {0x4D, 0x5A};  // MZ
 
-static const std::wstring convertToWstring(const std::string& str)
-{
-
-    std::wstring wstr(str.begin(), str.end());
-    return wstr;
-}
-
 DataSource::DataSource()
 {
     const auto result = CoCreateInstance(CLSID_DiaSource, NULL, CLSCTX_INPROC_SERVER, __uuidof(IDiaDataSource), reinterpret_cast<void**>(&m_comPtr));
     CHECK_DIACOM_EXCEPTION("DiaSource creation failed!", result);
 }
 
-DataSource::DataSource(const std::string& filePath)
-    : DataSource{convertToWstring(filePath)}
-{
-}
-
-DataSource::DataSource(const std::wstring& filePath)
+DataSource::DataSource(const AnyString& filePath)
     : DataSource{}
 {
     loadDataFromArbitraryFile(filePath);
 }
 
+DataSource::DataSource(const AnyString& filePath, const AnyString& symstoreDirectory)
+{
+
+    addSymtoreDirectory(symstoreDirectory);
+    loadDataFromArbitraryFile(filePath);
+}
+
 DataSource::~DataSource() {}
 
-void DataSource::addSymtoreDirectory(const std::string& symstoreDirectory) { addSymtoreDirectory(convertToWstring(symstoreDirectory)); }
+void DataSource::addSymtoreDirectory(const AnyString& symstoreDirectory) { m_additionalSymstoreDirectories.push_back(symstoreDirectory); }
 
-void DataSource::addSymtoreDirectory(const std::wstring& symstoreDirectory) { m_additionalSymstoreDirectories.push_back(symstoreDirectory); }
-
-void DataSource::loadDataFromPdb(const std::string& pdbFilePath) { loadDataFromPdb(convertToWstring(pdbFilePath)); }
-
-void DataSource::loadDataFromPdb(const std::wstring& pdbFilePath)
+void DataSource::loadDataFromPdb(const AnyString& pdbFilePath)
 {
     if (sessionOpened())
     {
@@ -64,9 +56,7 @@ void DataSource::loadDataFromPdb(const std::wstring& pdbFilePath)
     openSession();
 }
 
-void DataSource::loadDataForExe(const std::string& exePath) { loadDataForExe(convertToWstring(exePath)); }
-
-void DataSource::loadDataForExe(const std::wstring& exePath)
+void DataSource::loadDataForExe(const AnyString& exePath)
 {
     if (sessionOpened())
     {
@@ -108,6 +98,50 @@ const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
         items.push_back(item);
     }
     return items;
+}
+
+const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const
+{
+    if (SymTagExport == symTag)
+    {
+        throw std::runtime_error("You probably meant to use DataSource::getExports()");
+    }
+    std::vector<Symbol> items{};
+    auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName);
+    for (const auto& item : exports)
+    {
+        items.push_back(item);
+    }
+    return items;
+}
+
+const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const
+{
+    if (SymTagExport == symTag)
+    {
+        throw std::runtime_error("You probably meant to use DataSource::getExports()");
+    }
+    std::vector<Symbol> items{};
+    auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName, nameComparisonFlags);
+    for (const auto& item : exports)
+    {
+        items.push_back(item);
+    }
+    return items;
+}
+
+const Enum DataSource::getEnum(const AnyString& enumName) const
+{
+    const auto rawEnumSymbols = getSymbols(SymTagEnum, enumName.c_str());
+    if (rawEnumSymbols.size() < 1)
+    {
+        throw StructNotFound("Enum by name not found!");
+    }
+    if (rawEnumSymbols.size() > 1)
+    {
+        throw std::runtime_error("Too many enums found matching name!");
+    }
+    return rawEnumSymbols.at(0);
 }
 
 const std::vector<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
@@ -162,7 +196,7 @@ const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) con
     return items;
 }
 
-const Struct DataSource::getStruct(const std::wstring& structName) const
+const Struct DataSource::getStruct(const AnyString& structName) const
 {
     std::vector<Symbol> items{};
     auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(), nsfCaseSensitive);

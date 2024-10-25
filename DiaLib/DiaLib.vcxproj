@@ -144,9 +144,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="include\AnyString.h" />
     <ClInclude Include="include\BstrWrapper.h" />
     <ClInclude Include="include\ComWrapper.h" />
-    <ClInclude Include="include\DataMember.h" />
+    <ClInclude Include="include\DiaDataMember.h" />
     <ClInclude Include="include\DiaDataSource.h" />
     <ClInclude Include="include\DiaPrint.h" />
     <ClInclude Include="include\DiaStruct.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="include\SymbolPathHelper.h" />
     <ClInclude Include="include\SymbolTypes\DiaArray.h" />
     <ClInclude Include="include\SymbolTypes\DiaData.h" />
+    <ClInclude Include="include\SymbolTypes\DiaEnum.h" />
     <ClInclude Include="include\SymbolTypes\DiaExe.h" />
     <ClInclude Include="include\SymbolTypes\DiaFunction.h" />
     <ClInclude Include="include\SymbolTypes\DiaFunctionArgType.h" />
@@ -180,7 +182,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\DataMember.cpp" />
+    <ClCompile Include="src\DiaDataMember.cpp" />
     <ClCompile Include="src\DiaDataSource.cpp" />
     <ClCompile Include="src\DiaStruct.cpp" />
     <ClCompile Include="src\DiaSymbol.cpp" />

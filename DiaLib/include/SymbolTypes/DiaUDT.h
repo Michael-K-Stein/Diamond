@@ -5,7 +5,8 @@
 
 namespace dia
 {
-/// @brief Each class, structure, and union is identified by a SymTagUDT symbol.
+/// @brief Internal - DO NOT USE! Use dia::UserDefinedSymbol instead!
+/// Each class, structure, and union is identified by a SymTagUDT symbol.
 /// Each member, function, data, or nested type, and each base class, appears as
 /// a class child of the user-defined type (UDT).
 class Udt : protected Symbol

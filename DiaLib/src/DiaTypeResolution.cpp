@@ -34,7 +34,7 @@ static const wchar_t* SYM_TAG_BASE_TYPE_NAMES[] = {
 };
 constexpr auto SYM_TAG_BASE_TYPE_NAMES_COUNT = sizeof(SYM_TAG_BASE_TYPE_NAMES) / sizeof(SYM_TAG_BASE_TYPE_NAMES[0]);
 
-static inline std::wstring resolveBaseTypeName(enum BasicType baseType)
+std::wstring resolveBaseTypeName(enum BasicType baseType)
 {
     if (static_cast<DWORD>(baseType) >= SYM_TAG_BASE_TYPE_NAMES_COUNT)
     {
@@ -43,7 +43,7 @@ static inline std::wstring resolveBaseTypeName(enum BasicType baseType)
     return SYM_TAG_BASE_TYPE_NAMES[static_cast<DWORD>(baseType)];
 }
 
-static inline std::wstring resolveBaseTypeNameWithLength(enum BasicType baseType, ULONGLONG length)
+std::wstring resolveBaseTypeNameWithLength(enum BasicType baseType, ULONGLONG length)
 {
     if (baseType >= SYM_TAG_BASE_TYPE_NAMES_COUNT)
     {

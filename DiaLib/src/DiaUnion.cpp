@@ -1,8 +1,8 @@
 #include "pch.h"
 //
-#include "DiaUnion.h"
-#include "DataMember.h"
+#include "DiaDataMember.h"
 #include "DiaSymbolEnumerator.h"
+#include "DiaUnion.h"
 
 namespace std
 {

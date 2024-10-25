@@ -10,33 +10,12 @@ class Struct;
 class Union;
 class Enum;
 
+/// @brief High level wrapper for any UserDefinedType
 class UserDefinedType : public Udt
 {
 public:
     using Udt::Udt;
-
-    UserDefinedType(const Udt& other)
-        : Udt{other}
-    {
-    }
-
-    UserDefinedType operator=(const Udt& other)
-    {
-        UserDefinedType udt{other};
-        udt.get().p->AddRef();
-        return udt;
-    }
-
-    UserDefinedType(Udt&& other)
-        : Udt{std::move(other)}
-    {
-    }
-
-    UserDefinedType operator=(Udt&& other)
-    {
-        UserDefinedType symbol{std::move(other)};
-        return symbol;
-    }
+    TRIVIAL_CONVERT(Udt, UserDefinedType);
 
     bool isUnion() const;
     Union asUnion() const;
@@ -48,7 +27,15 @@ public:
 
     bool operator==(const UserDefinedType& other) const { return calcHash() == other.calcHash(); }
 
+    bool operator!=(const UserDefinedType& other) const { return !(*this == other); }
+
     bool operator<(const UserDefinedType& other) const { return calcHash() < other.calcHash(); }
+
+    bool operator<=(const UserDefinedType& other) const { return !(*this > other); }
+
+    bool operator>(const UserDefinedType& other) const { return calcHash() > other.calcHash(); }
+
+    bool operator>=(const UserDefinedType& other) const { return !(*this < other); }
 
 protected:
     using Udt::get;

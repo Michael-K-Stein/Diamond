@@ -1,7 +1,7 @@
 #include "pch.h"
 //
+#include "DiaDataMember.h"
 #include "DiaStruct.h"
-#include "DataMember.h"
 #include "SymbolTypes/DiaPointer.h"
 #include <sstream>
 
