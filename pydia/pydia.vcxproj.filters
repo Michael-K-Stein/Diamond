@@ -42,6 +42,9 @@
     <ClCompile Include="pydia_exceptions.h.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pydia_data.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="pydia_exceptions.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_data.h">
+      <Filter>Header Files\dia_types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

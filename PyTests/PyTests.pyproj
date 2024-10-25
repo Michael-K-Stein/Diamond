@@ -30,9 +30,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="common.py" />
     <Compile Include="PyTests.py" />
-    <Compile Include="__test_datasource.py" />
     <Compile Include="test_datasource.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test_enum.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

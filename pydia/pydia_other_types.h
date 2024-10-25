@@ -13,7 +13,6 @@
 #define XFOR_TRIVIAL_PYDIA_CLASSES(opperation)                                                                                                       \
     opperation(Array);                                                                                                                               \
     opperation(Exe);                                                                                                                                 \
-    opperation(Data);                                                                                                                                \
     opperation(Function);                                                                                                                            \
     opperation(FunctionType);                                                                                                                        \
     opperation(FunctionArgType);                                                                                                                     \

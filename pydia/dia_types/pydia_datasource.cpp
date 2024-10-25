@@ -7,6 +7,7 @@
 // C pydia imports
 #include "__pydia_symbol.h"
 #include "pydia_datasource.h"
+#include "pydia_enum.h"
 #include "pydia_exceptions.h"
 #include "pydia_trivial_init.h"
 
@@ -17,6 +18,7 @@
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
+static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args);
 
 static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
 {
@@ -78,10 +80,10 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
 
 // Python method table for DiaDataSource
 static PyMethodDef PyDiaDataSource_methods[] = {
-    {"load_data_from_pdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file"},
-    {"get_functions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions"},
-    {"get_exports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports"},
-
+    {"load_data_from_pdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file."},
+    {"get_functions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions."},
+    {"get_exports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports."},
+    {"get_enum", (PyCFunction)PyDiaDataSource_getEnum, METH_VARARGS, "Get enum by name."},
     {NULL, NULL, 0, NULL}};
 
 // Define the Python DiaDataSource type object
@@ -223,4 +225,51 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* arg
     }
 
     return resultList;
+}
+
+static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
+{
+    // The PyObject argument for enum name
+    PyObject* pyEnumName = NULL;
+
+    // Parse the argument as a Python object (expected string or bytes)
+    if (!PyArg_ParseTuple(args, "O", &pyEnumName))
+    {
+        return NULL;  // If parsing fails, return NULL (error already set)
+    }
+
+    // Try to retrieve the enum using the provided name
+    try
+    {
+        const auto& enumSymbol = self->diaDataSource->getEnum(PyObjectToAnyString(pyEnumName));
+
+        // Allocate a new PyDiaEnum object
+        PyDiaEnum* pyEnum = PyObject_New(PyDiaEnum, &PyDiaEnum_Type);
+        if (!pyEnum)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaEnum object.");
+            return NULL;
+        }
+
+        // Initialize the PyDiaEnum object with the dia::Enum object
+        pyEnum->diaEnum = new (std::nothrow) dia::Enum(enumSymbol);
+        if (!pyEnum->diaEnum)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for DiaEnum.");
+            Py_DECREF(pyEnum);  // Release allocated PyDiaEnum object
+            return NULL;
+        }
+
+        return (PyObject*)pyEnum;
+    }
+    catch (const dia::SymbolNotFoundException& e)
+    {
+        PyErr_SetString(PyExc_ValueError, e.what());
+        return NULL;
+    }
+    catch (const std::bad_alloc&)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaEnum.");
+        return NULL;
+    }
 }

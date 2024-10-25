@@ -49,3 +49,63 @@ AnyString PyObjectToAnyString(PyObject* obj)
 }
 
 PyObject* BstrWrapperToPyObject(const BstrWrapper& bstrWrapper) { return PyUnicode_FromWideChar(bstrWrapper.c_str(), bstrWrapper.length()); }
+
+PyObject* VariantToPyObject(const VARIANT& variantValue)
+{
+    // Check the VARTYPE (type of data stored in the VARIANT)
+    switch (variantValue.vt)
+    {
+    case VT_I4:  // LONG
+        return PyLong_FromLong(variantValue.lVal);
+
+    case VT_I2:  // SHORT
+        return PyLong_FromLong(variantValue.iVal);
+
+    case VT_UI1:  // BYTE
+        return PyLong_FromUnsignedLong(variantValue.bVal);
+
+    case VT_R4:  // FLOAT
+        return PyFloat_FromDouble(static_cast<double>(variantValue.fltVal));
+
+    case VT_R8:  // DOUBLE
+        return PyFloat_FromDouble(variantValue.dblVal);
+
+    case VT_BOOL:  // VARIANT_BOOL (True or False)
+        return PyBool_FromLong(variantValue.boolVal != VARIANT_FALSE);
+
+    case VT_BSTR:
+    {  // BSTR (string)
+        // BSTR is a COM string type that needs to be converted to a Python string
+        PyObject* pyStr = PyUnicode_FromWideChar(variantValue.bstrVal, SysStringLen(variantValue.bstrVal));
+        // Free the BSTR to avoid memory leaks (SysFreeString)
+        SysFreeString(variantValue.bstrVal);
+        return pyStr;
+    }
+
+    case VT_I8:  // LONGLONG
+        return PyLong_FromLongLong(variantValue.llVal);
+
+    case VT_UI4:  // ULONG
+        return PyLong_FromUnsignedLong(variantValue.ulVal);
+
+    case VT_UI8:  // ULONGLONG
+        return PyLong_FromUnsignedLongLong(variantValue.ullVal);
+
+    case VT_INT:  // INT
+        return PyLong_FromLong(variantValue.intVal);
+
+    case VT_UINT:  // UINT
+        return PyLong_FromUnsignedLong(variantValue.uintVal);
+
+    case VT_EMPTY:  // No value
+        Py_RETURN_NONE;
+
+        // Add more cases here if needed for additional VARIANT types
+
+    default:
+        PyErr_SetString(PyExc_TypeError, "Unsupported data type in VARIANT.");
+        return NULL;
+    }
+
+    Py_UNREACHABLE();
+}

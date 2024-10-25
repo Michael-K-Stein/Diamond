@@ -274,6 +274,7 @@
     <ClCompile Include="dia_types\pydia_datasource.cpp" />
     <ClCompile Include="dia_types\pydia_symbol.cpp" />
     <ClCompile Include="pydiamodule.cpp" />
+    <ClCompile Include="pydia_data.cpp" />
     <ClCompile Include="pydia_enum.cpp" />
     <ClCompile Include="pydia_exceptions.h.cpp" />
     <ClCompile Include="pydia_helper_routines.cpp" />
@@ -282,6 +283,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dia_types\pydia_datasource.h" />
+    <ClInclude Include="pydia_data.h" />
     <ClInclude Include="pydia_helper_routines.h" />
     <ClInclude Include="pydia_other_types.h" />
     <ClInclude Include="pydia_wrapping_types.h" />

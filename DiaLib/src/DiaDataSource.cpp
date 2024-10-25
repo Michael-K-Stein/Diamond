@@ -135,7 +135,7 @@ const Enum DataSource::getEnum(const AnyString& enumName) const
     const auto rawEnumSymbols = getSymbols(SymTagEnum, enumName.c_str());
     if (rawEnumSymbols.size() < 1)
     {
-        throw StructNotFoundException("Enum by name not found!");
+        throw SymbolNotFoundException("Enum by name not found!");
     }
     if (rawEnumSymbols.size() > 1)
     {
@@ -206,7 +206,7 @@ const Struct DataSource::getStruct(const AnyString& structName) const
     }
     if (items.size() < 1)
     {
-        throw StructNotFoundException("Struct by name not found!");
+        throw SymbolNotFoundException("Struct by name not found!");
     }
     if (items.size() > 1)
     {

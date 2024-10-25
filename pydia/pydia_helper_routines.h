@@ -1,7 +1,9 @@
 #pragma once
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-//
+
+// Windows includes
+#include <oaidl.h>
 #include <objbase.h>
 
 // From C++ DiaLib
@@ -13,3 +15,5 @@
 AnyString PyObjectToAnyString(PyObject* obj);
 
 PyObject* BstrWrapperToPyObject(const BstrWrapper& bstrWrapper);
+
+PyObject* VariantToPyObject(const VARIANT& variantValue);

@@ -119,7 +119,7 @@ namespace dia
     };
 
 
-DEFINE_TRIVIAL_EXCEPTION(StructNotFoundException);
+DEFINE_TRIVIAL_EXCEPTION(SymbolNotFoundException);
 DEFINE_TRIVIAL_EXCEPTION(TooManyMatchesForFindException);
 DEFINE_TRIVIAL_EXCEPTION(DataMemberDataKindMismatchException);
 DEFINE_TRIVIAL_EXCEPTION(InvalidFileFormatException);
