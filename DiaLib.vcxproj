@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{50A4464F-3B7E-4F81-93B8-F87A7D307FD3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ctests\CTests.cpp" />
+    <ClCompile Include="ctests\pch.cpp" />
+    <ClCompile Include="dialib\DiaSymbolMaster.cpp" />
+    <ClCompile Include="dialib\DiaSymbolPrint.cpp" />
+    <ClCompile Include="dialib\src\DataMember.cpp" />
+    <ClCompile Include="dialib\src\DiaDataSource.cpp" />
+    <ClCompile Include="dialib\src\DiaStruct.cpp" />
+    <ClCompile Include="dialib\src\DiaSymbol.cpp" />
+    <ClCompile Include="dialib\src\DiaSymbolFuncs.cpp" />
+    <ClCompile Include="dialib\src\diasymboltypes\DiaHash.cpp" />
+    <ClCompile Include="dialib\src\diasymboltypes\DiaSymbolPrint.cpp" />
+    <ClCompile Include="dialib\src\DiaTypeResolution.cpp" />
+    <ClCompile Include="dialib\src\DiaUnion.cpp" />
+    <ClCompile Include="dialib\src\DiaUserDefinedTypeWrapper.cpp" />
+    <ClCompile Include="dialib\src\utils\BstrWrapper.cpp" />
+    <ClCompile Include="dialib\src\utils\SymbolPathHelper.cpp" />
+    <ClCompile Include="pydia\pydiamodule.cpp" />
+    <ClCompile Include="pydia\pydia_data_source.cpp" />
+    <ClCompile Include="pydia\pydia_symbol.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ctests\pch.h" />
+    <ClInclude Include="dialib\diasymbolprint.h" />
+    <ClInclude Include="dialib\src\DataMember.h" />
+    <ClInclude Include="dialib\src\DiaDataSource.h" />
+    <ClInclude Include="dialib\src\DiaPrint.h" />
+    <ClInclude Include="dialib\src\DiaStruct.h" />
+    <ClInclude Include="dialib\src\DiaSymbol.h" />
+    <ClInclude Include="dialib\src\DiaSymbolEnumerator.h" />
+    <ClInclude Include="dialib\src\DiaSymbolFuncs.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaArray.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaData.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaExe.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaFunction.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaFunctionArgType.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaFunctionType.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaNull.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaPointer.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaSymbolPrint.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaSymbolTypes.h" />
+    <ClInclude Include="dialib\src\diasymboltypes\DiaUDT.h" />
+    <ClInclude Include="dialib\src\DiaTypeResolution.h" />
+    <ClInclude Include="dialib\src\DiaUnion.h" />
+    <ClInclude Include="dialib\src\DiaUserDefinedTypeWrapper.h" />
+    <ClInclude Include="dialib\src\utils\BstrWrapper.h" />
+    <ClInclude Include="dialib\src\utils\ComWrapper.h" />
+    <ClInclude Include="dialib\src\utils\Exceptions.h" />
+    <ClInclude Include="dialib\src\utils\Hashing.h" />
+    <ClInclude Include="dialib\src\utils\SymbolPathHelper.h" />
+    <ClInclude Include="pydia\pydia.h" />
+    <ClInclude Include="pydia\pydia_datasource.h" />
+    <ClInclude Include="pydia\pydia_exceptions.h" />
+    <ClInclude Include="pydia\pydia_register_classes.h" />
+    <ClInclude Include="pydia\pydia_symbol.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

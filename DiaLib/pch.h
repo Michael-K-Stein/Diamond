@@ -8,13 +8,12 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-
-
-#include <filesystem>
+#include "framework.h"
 #include <atlbase.h>
 #include <dia2.h>
 #include <memory>
 #include <string>
 #include <vector>
+#pragma comment(lib, "diaguids")
 
-#endif //PCH_H
+#endif  // PCH_H

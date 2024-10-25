@@ -12,10 +12,8 @@
 // C++ DiaSymbolMaster imports
 #include "DiaDataSource.h"
 
-static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
-                                                 PyObject* args);
-static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self,
-                                            PyObject* args);
+static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
 
 // Deallocate method (destructor)
@@ -29,14 +27,12 @@ static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
 }
 
 // __init__ method (constructor)
-static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args,
-                                PyObject* kwds)
+static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject* kwds)
 {
     self->diaDataSource = new dia::DataSource();
     if (!self->diaDataSource)
     {
-        PyErr_SetString(PyExc_MemoryError,
-                        "Failed to create DataSource object.");
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DataSource object.");
         return -1;
     }
     return 0;
@@ -44,14 +40,11 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args,
 
 // Python method table for DiaDataSource
 static PyMethodDef PyDiaDataSource_methods[] = {
-    {"loadDataFromPdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb,
-     METH_VARARGS, "Load data from a PDB file"},
+    {"loadDataFromPdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file"},
 
-    {"getFunctions", (PyCFunction)PyDiaDataSource_getExportedFunctions,
-     METH_NOARGS, "Get exported functions"},
+    {"getFunctions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions"},
 
-    {"getSymbols", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS,
-     "Get all exports"},
+    {"getSymbols", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports"},
 
     {NULL, NULL, 0, NULL}};
 
@@ -97,15 +90,14 @@ PyTypeObject PyDiaDataSourceType = {
 };
 
 // Method: loadDataFromPdb
-static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
-                                                 PyObject* args)
+static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args)
 {
     PyObject* pyFilePath = NULL;
 
     // Parse the argument as a Python object (string or bytes)
     if (!PyArg_ParseTuple(args, "O", &pyFilePath))
     {
-        return NULL; // If parsing fails, return NULL (error already set)
+        return NULL;  // If parsing fails, return NULL (error already set)
     }
 
     // Variable to hold the converted wide-char path
@@ -118,9 +110,7 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
         pdbFilePath = PyUnicode_AsWideCharString(pyFilePath, NULL);
         if (!pdbFilePath)
         {
-            PyErr_SetString(
-                PyExc_ValueError,
-                "Failed to convert Unicode string to wide character.");
+            PyErr_SetString(PyExc_ValueError, "Failed to convert Unicode string to wide character.");
             return NULL;
         }
     }
@@ -131,35 +121,29 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
         const char* bytesFilePath = PyBytes_AsString(pyFilePath);
         if (!bytesFilePath)
         {
-            PyErr_SetString(PyExc_ValueError,
-                            "Failed to convert bytes to string.");
+            PyErr_SetString(PyExc_ValueError, "Failed to convert bytes to string.");
             return NULL;
         }
         // Convert char* to wchar_t* using MultiByteToWideChar
         int len = MultiByteToWideChar(CP_UTF8, 0, bytesFilePath, -1, NULL, 0);
         if (len <= 0)
         {
-            PyErr_SetString(PyExc_ValueError,
-                            "Failed to convert bytes to wide character.");
+            PyErr_SetString(PyExc_ValueError, "Failed to convert bytes to wide character.");
             return NULL;
         }
 
         wchar_t* widePath = (wchar_t*)PyMem_Malloc(len * sizeof(wchar_t));
         if (!widePath)
         {
-            PyErr_SetString(
-                PyExc_MemoryError,
-                "Failed to allocate memory for wide character conversion.");
+            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for wide character conversion.");
             return NULL;
         }
         MultiByteToWideChar(CP_UTF8, 0, bytesFilePath, -1, widePath, len);
-        pdbFilePath = widePath; // Use the newly converted wchar_t* path
+        pdbFilePath = widePath;  // Use the newly converted wchar_t* path
     }
     else
     {
-        PyErr_SetString(
-            PyExc_TypeError,
-            "Expected a string or bytes object for the PDB file path.");
+        PyErr_SetString(PyExc_TypeError, "Expected a string or bytes object for the PDB file path.");
         return NULL;
     }
 
@@ -173,15 +157,14 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self,
         PyErr_SetString(PyExc_RuntimeError, e.what());
         if (pdbFilePath && !PyUnicode_Check(pyFilePath))
         {
-            PyMem_Free(
-                (void*)pdbFilePath); // Free memory for widePath if converted
+            PyMem_Free((void*)pdbFilePath);  // Free memory for widePath if converted
         }
         return NULL;
     }
 
     if (pdbFilePath && !PyUnicode_Check(pyFilePath))
     {
-        PyMem_Free((void*)pdbFilePath); // Free memory for widePath if converted
+        PyMem_Free((void*)pdbFilePath);  // Free memory for widePath if converted
     }
 
     // Return self for method chaining
@@ -204,13 +187,11 @@ static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
     }
 
     PyObject* resultList = PyList_New(functions.size());
-    if (!resultList)
-        return NULL;
+    if (!resultList) return NULL;
 
     for (size_t i = 0; i < functions.size(); ++i)
     {
-        PyObject* functionStr = PyUnicode_FromWideChar(
-            functions[i].getName().c_str(), functions[i].getName().length());
+        PyObject* functionStr = PyUnicode_FromWideChar(functions[i].getName().c_str(), functions[i].getName().length());
         if (!functionStr)
         {
             Py_DECREF(resultList);
@@ -222,24 +203,22 @@ static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
     return resultList;
 }
 
-static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self,
-                                            PyObject* args)
+static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args)
 {
     int symTagInt;
     if (!PyArg_ParseTuple(args, "i", &symTagInt))
     {
-        PyErr_SetString(PyExc_ValueError,
-                        "Expected an integer for the SymTagEnum.");
+        PyErr_SetString(PyExc_ValueError, "Expected an integer for the SymTagEnum.");
         return NULL;
     }
 
-    enum SymTagEnum symTag = static_cast<enum SymTagEnum>(symTagInt);
+    enum SymTagEnum symTag           = static_cast<enum SymTagEnum>(symTagInt);
     std::vector<dia::Symbol> exports = self->diaDataSource->getSymbols(symTag);
 
-    PyObject* resultList = PyList_New(exports.size());
+    PyObject* resultList             = PyList_New(exports.size());
     if (!resultList)
     {
-        return NULL; // Return NULL on failure
+        return NULL;  // Return NULL on failure
     }
 
     for (size_t i = 0; i < exports.size(); ++i)
@@ -247,18 +226,18 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self,
         PyDiaSymbol* sym = PyObject_New(PyDiaSymbol, &PyDiaSymbolType);
         if (!sym)
         {
-            Py_DECREF(resultList); // Clean up the result list
-            return NULL;           // Return NULL on failure
+            Py_DECREF(resultList);  // Clean up the result list
+            return NULL;            // Return NULL on failure
         }
         sym->diaSymbol = new dia::Symbol(exports[i]);
 
         // Set the item in the list, transferring ownership
         if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
         {
-            delete sym->diaSymbol; // Clean up
-            delete sym;            // Clean up
-            Py_DECREF(resultList); // Clean up the result list
-            return NULL;           // Return NULL on failure
+            delete sym->diaSymbol;  // Clean up
+            delete sym;             // Clean up
+            Py_DECREF(resultList);  // Clean up the result list
+            return NULL;            // Return NULL on failure
         }
     }
 

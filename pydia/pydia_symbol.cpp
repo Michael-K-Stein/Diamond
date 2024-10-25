@@ -1,37 +1,37 @@
 #include "pydia_symbol.h"
 #include "DiaSymbol.h"
 #include <Python.h>
-
-// Method definitions
-static PyObject* PyDiaSymbol_getName(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getOffset(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getType(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getTypeName(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getSymTag(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getBaseType(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getCount(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getLocationType(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getBitPosition(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_getLength(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_isVolatile(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_isArray(PyDiaSymbol* self, PyObject*);
-static PyObject* PyDiaSymbol_isPointer(PyDiaSymbol* self, PyObject*);
+//
+//// Method definitions
+// static PyObject* PyDiaSymbol_getName(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getOffset(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getType(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getTypeName(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getSymTag(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getBaseType(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getCount(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getLocationType(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getBitPosition(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_getLength(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_isVolatile(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_isArray(PyDiaSymbol* self, PyObject*);
+// static PyObject* PyDiaSymbol_isPointer(PyDiaSymbol* self, PyObject*);
 
 // Method definitions struct
 static PyMethodDef PyDiaSymbol_methods[] = {
-    {"getName", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the symbol."},
-    {"getOffset", (PyCFunction)PyDiaSymbol_getOffset, METH_NOARGS, "Get the offset of the symbol."},
-    {"getType", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the symbol."},
-    {"getTypeName", (PyCFunction)PyDiaSymbol_getTypeName, METH_NOARGS, "Get the type name of the symbol."},
-    {"getSymTag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the SymTag of the symbol."},
-    {"getBaseType", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get the base type of the symbol."},
-    {"getCount", (PyCFunction)PyDiaSymbol_getCount, METH_NOARGS, "Get the count of the symbol."},
-    {"getLocationType", (PyCFunction)PyDiaSymbol_getLocationType, METH_NOARGS, "Get the location type of the symbol."},
-    {"getBitPosition", (PyCFunction)PyDiaSymbol_getBitPosition, METH_NOARGS, "Get the bit position of the symbol."},
-    {"getLength", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the symbol."},
-    {"isVolatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the symbol is volatile."},
-    {"isArray", (PyCFunction)PyDiaSymbol_isArray, METH_NOARGS, "Check if the symbol is an array."},
-    {"isPointer", (PyCFunction)PyDiaSymbol_isPointer, METH_NOARGS, "Check if the symbol is a pointer."},
+    /*   {"getName", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the symbol."},
+       {"getOffset", (PyCFunction)PyDiaSymbol_getOffset, METH_NOARGS, "Get the offset of the symbol."},
+       {"getType", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the symbol."},
+       {"getTypeName", (PyCFunction)PyDiaSymbol_getTypeName, METH_NOARGS, "Get the type name of the symbol."},
+       {"getSymTag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the SymTag of the symbol."},
+       {"getBaseType", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get the base type of the symbol."},
+       {"getCount", (PyCFunction)PyDiaSymbol_getCount, METH_NOARGS, "Get the count of the symbol."},
+       {"getLocationType", (PyCFunction)PyDiaSymbol_getLocationType, METH_NOARGS, "Get the location type of the symbol."},
+       {"getBitPosition", (PyCFunction)PyDiaSymbol_getBitPosition, METH_NOARGS, "Get the bit position of the symbol."},
+       {"getLength", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the symbol."},
+       {"isVolatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the symbol is volatile."},
+       {"isArray", (PyCFunction)PyDiaSymbol_isArray, METH_NOARGS, "Check if the symbol is an array."},
+       {"isPointer", (PyCFunction)PyDiaSymbol_isPointer, METH_NOARGS, "Check if the symbol is a pointer."},*/
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -107,6 +107,7 @@ PyTypeObject PyDiaSymbolType = {
     0,                                              // tp_version_tag
 };
 
+#if 0
 // Define the methods
 static PyObject* PyDiaSymbol_getName(PyDiaSymbol* self, PyObject*)
 {
@@ -206,3 +207,4 @@ static PyObject* PyDiaSymbol_isPointer(PyDiaSymbol* self, PyObject*)
     bool isPointer      = symbol->isPointer();
     return PyBool_FromLong(static_cast<long>(isPointer));
 }
+#endif
