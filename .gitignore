@@ -430,3 +430,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+DEPRECATED/
+BKP__DiaLib/
