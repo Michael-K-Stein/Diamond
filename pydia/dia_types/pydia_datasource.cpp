@@ -5,51 +5,87 @@
 #include <objbase.h>
 
 // C pydia imports
+#include "__pydia_symbol.h"
 #include "pydia_datasource.h"
 #include "pydia_exceptions.h"
-#include "pydia_symbol.h"
+#include "pydia_trivial_init.h"
 
 // C++ DiaSymbolMaster imports
 #include "DiaDataSource.h"
+#include <pydia_helper_routines.h>
 
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
 
-// Deallocate method (destructor)
 static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
 {
     if (self->diaDataSource)
     {
         delete self->diaDataSource;
     }
-    Py_TYPE(self)->tp_free((PyObject*)self);
+    _Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
 }
 
-// __init__ method (constructor)
+// Updated initialization function
 static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject* kwds)
 {
-    self->diaDataSource = new dia::DataSource();
-    if (!self->diaDataSource)
+    dia::DataSource* tempDataSource = nullptr;  // Temporary pointer
+
+    try
     {
-        PyErr_SetString(PyExc_MemoryError, "Failed to create DataSource object.");
+        // Check if we have any arguments
+        if (PyTuple_Size(args) == 0)
+        {
+            // Use the default constructor
+            tempDataSource = new dia::DataSource();
+        }
+        else if (PyTuple_Size(args) == 1)
+        {
+            // Handle the first argument as filePath
+            tempDataSource = new dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)));
+        }
+        else if (PyTuple_Size(args) == 2)
+        {
+            // Handle the first argument as filePath and the second as symstoreDirectory
+            tempDataSource = new dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)), PyObjectToAnyString(PyTuple_GetItem(args, 1)));
+        }
+        else
+        {
+            // Too many arguments
+            PyErr_SetString(PyExc_TypeError, "Invalid number of arguments for DataSource constructor.");
+            return -1;
+        }
+    }
+    catch (const dia::InvalidFileFormatException& e)
+    {
+        PyErr_SetString(PyDiaError, e.what());
         return -1;
     }
+
+    // Check if the DataSource was created successfully
+    if (!tempDataSource)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DataSource object with provided arguments.");
+        return -1;
+    }
+
+    // Assign the created DataSource to the member variable
+    self->diaDataSource = tempDataSource;
+
     return 0;
 }
 
 // Python method table for DiaDataSource
 static PyMethodDef PyDiaDataSource_methods[] = {
-    {"loadDataFromPdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file"},
-
-    {"getFunctions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions"},
-
-    {"getSymbols", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports"},
+    {"load_data_from_pdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file"},
+    {"get_functions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions"},
+    {"get_exports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports"},
 
     {NULL, NULL, 0, NULL}};
 
 // Define the Python DiaDataSource type object
-PyTypeObject PyDiaDataSourceType = {
+PyTypeObject PyDiaDataSource_Type = {
     PyVarObject_HEAD_INIT(NULL, 0) "pydia.DataSource", /* tp_name */
     sizeof(PyDiaDataSource),                           /* tp_basicsize */
     0,                                                 /* tp_itemsize */
@@ -92,6 +128,7 @@ PyTypeObject PyDiaDataSourceType = {
 // Method: loadDataFromPdb
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args)
 {
+    // The lifetime of thie PyObject is guaranteed by the "args"
     PyObject* pyFilePath = NULL;
 
     // Parse the argument as a Python object (string or bytes)
@@ -100,71 +137,15 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject
         return NULL;  // If parsing fails, return NULL (error already set)
     }
 
-    // Variable to hold the converted wide-char path
-    const wchar_t* pdbFilePath = NULL;
-
-    // Check if the object is a Unicode string (str in Python)
-    if (PyUnicode_Check(pyFilePath))
-    {
-        // Convert Unicode string (PyUnicodeObject) to a wchar_t*
-        pdbFilePath = PyUnicode_AsWideCharString(pyFilePath, NULL);
-        if (!pdbFilePath)
-        {
-            PyErr_SetString(PyExc_ValueError, "Failed to convert Unicode string to wide character.");
-            return NULL;
-        }
-    }
-    // Check if the object is a bytes string
-    else if (PyBytes_Check(pyFilePath))
-    {
-        // Convert bytes to a C string (char*)
-        const char* bytesFilePath = PyBytes_AsString(pyFilePath);
-        if (!bytesFilePath)
-        {
-            PyErr_SetString(PyExc_ValueError, "Failed to convert bytes to string.");
-            return NULL;
-        }
-        // Convert char* to wchar_t* using MultiByteToWideChar
-        int len = MultiByteToWideChar(CP_UTF8, 0, bytesFilePath, -1, NULL, 0);
-        if (len <= 0)
-        {
-            PyErr_SetString(PyExc_ValueError, "Failed to convert bytes to wide character.");
-            return NULL;
-        }
-
-        wchar_t* widePath = (wchar_t*)PyMem_Malloc(len * sizeof(wchar_t));
-        if (!widePath)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for wide character conversion.");
-            return NULL;
-        }
-        MultiByteToWideChar(CP_UTF8, 0, bytesFilePath, -1, widePath, len);
-        pdbFilePath = widePath;  // Use the newly converted wchar_t* path
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "Expected a string or bytes object for the PDB file path.");
-        return NULL;
-    }
-
     try
     {
-        // Call the C++ method with the wide-char path
-        self->diaDataSource->loadDataFromPdb(std::wstring(pdbFilePath));
+        // PyObjectToAnyString creates a new copy of the string which is C++ memory managed
+        self->diaDataSource->loadDataFromPdb(PyObjectToAnyString(pyFilePath));
     }
-    catch (const std::exception& e)
+    catch (const dia::InvalidUsageException& e)
     {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        if (pdbFilePath && !PyUnicode_Check(pyFilePath))
-        {
-            PyMem_Free((void*)pdbFilePath);  // Free memory for widePath if converted
-        }
+        PyErr_SetString(PyDiaInvalidUsageError, e.what());
         return NULL;
-    }
-
-    if (pdbFilePath && !PyUnicode_Check(pyFilePath))
-    {
-        PyMem_Free((void*)pdbFilePath);  // Free memory for widePath if converted
     }
 
     // Return self for method chaining

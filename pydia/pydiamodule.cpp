@@ -1,11 +1,12 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // Python.h must be included before anything else
-#include <objbase.h> // For CoInitialize
+#include <objbase.h>  // For CoInitialize
 // Further PyDia headers
 #include "pydia.h"
 #include "pydia_exceptions.h"
 #include "pydia_register_classes.h"
+#include "pydia_wrapping_types.h"
 
 typedef struct
 {
@@ -15,10 +16,7 @@ typedef struct
 static void pydia_cleanup(void* module);
 static PyDiaModuleState* get_pydia_module_state(PyObject* module);
 
-static PyDiaModuleState* get_pydia_module_state(PyObject* module)
-{
-    return (PyDiaModuleState*)PyModule_GetState(module);
-}
+static PyDiaModuleState* get_pydia_module_state(PyObject* module) { return (PyDiaModuleState*)PyModule_GetState(module); }
 
 static PyMethodDef PyDiaMethods[] = {
     //{"system", pydia_system, METH_VARARGS, "Execute a shell command."},
@@ -51,9 +49,9 @@ static void pydia_cleanup(void* module)
 
 PyMODINIT_FUNC PyInit_pydia(void)
 {
-    PyObject* module = NULL;
+    PyObject* module              = NULL;
     PyDiaModuleState* moduleState = NULL;
-    HRESULT hresult = S_OK;
+    HRESULT hresult               = S_OK;
 
     // Avoid multiple initializations
     static volatile short passed = 0;
@@ -65,11 +63,6 @@ PyMODINIT_FUNC PyInit_pydia(void)
     // Create the Python module
     module = PyModule_Create(&pydiamodule);
     if (NULL == module)
-    {
-        return NULL;
-    }
-
-    if (0 > pydia_initialize_pydiaerror(module))
     {
         return NULL;
     }
@@ -91,9 +84,17 @@ PyMODINIT_FUNC PyInit_pydia(void)
     if (FAILED(hresult))
     {
         // Propagate HRESULT error to the Python caller
-        PyErr_Format(PyExc_OSError,
-                     "Failed to initialize COM library! HRESULT: 0x%08lX",
-                     hresult);
+        PyErr_Format(PyExc_OSError, "Failed to initialize COM library! HRESULT: 0x%08lX", hresult);
+        return NULL;
+    }
+
+    if (0 > pydia_initialize_pydiaerrors(module))
+    {
+        return NULL;
+    }
+
+    if (NULL == createDiaEnumWrappings(module))
+    {
         return NULL;
     }
 

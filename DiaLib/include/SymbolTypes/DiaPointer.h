@@ -1,16 +1,16 @@
 #pragma once
-#include "SymbolTypes/DiaSymbolTypes.h"
 #include "DiaTypeResolution.h"
+#include "SymbolTypes/DiaSymbolTypes.h"
 #include <string>
 
 namespace dia
 {
 /// @brief Each pointer is identified by a SymTagPointerType symbol.
-class PointerType : protected Symbol
+class Pointer : protected Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, PointerType);
+    TRIVIAL_CONVERT(Symbol, Pointer);
 
     using Symbol::getConstType;
     using Symbol::getLength;
@@ -26,14 +26,14 @@ public:
 };
 }  // namespace dia
 
-std::wostream& operator<<(std::wostream& os, const dia::PointerType& pointer);
+std::wostream& operator<<(std::wostream& os, const dia::Pointer& pointer);
 
 namespace std
 {
 template <>
-struct hash<dia::PointerType>
+struct hash<dia::Pointer>
 {
-    size_t operator()(const dia::PointerType& v) const
+    size_t operator()(const dia::Pointer& v) const
     {
         size_t calculatedHash = 0;
         hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getConstType(), v.getLength(), v.getLexicalParent(),

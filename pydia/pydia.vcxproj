@@ -131,14 +131,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CPythonPath)\PCbuild\win32;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>diaguids.lib;DiaSymbols.lib;diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
@@ -151,14 +151,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(CPythonPath)\PCbuild\win32;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>diaguids.lib;DiaSymbols.lib;diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
@@ -173,7 +173,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -195,14 +195,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\x64\Debug;$(CPythonPath)\PCbuild\amd64;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\lib\amd64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>diaguids.lib;DiaSymbols.lib;diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
@@ -216,14 +216,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\mkupe\source\repos\DiaSymbolMaster\x64\Debug;$(CPythonPath)\PCbuild\amd64;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\lib\amd64\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>diaguids.lib;DiaSymbols.lib;diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
@@ -239,7 +239,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -256,7 +256,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CTest|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\win32\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
@@ -264,23 +264,33 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CTest|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\DiaLib\Include\;$(CPythonPath)\PCbuild\amd64\;$(CPythonPath)\Include\;C:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>diaguids.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dia_types\pydia_datasource.cpp" />
+    <ClCompile Include="dia_types\pydia_symbol.cpp" />
     <ClCompile Include="pydiamodule.cpp" />
-    <ClCompile Include="pydia_datasource.h" />
-    <ClCompile Include="pydia_data_source.cpp" />
-    <ClCompile Include="pydia_symbol.cpp" />
+    <ClCompile Include="pydia_enum.cpp" />
+    <ClCompile Include="pydia_exceptions.h.cpp" />
+    <ClCompile Include="pydia_helper_routines.cpp" />
+    <ClCompile Include="pydia_other_types.cpp" />
+    <ClCompile Include="pydia_wrapping_types.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dia_types\pydia_datasource.h" />
+    <ClInclude Include="pydia_helper_routines.h" />
+    <ClInclude Include="pydia_other_types.h" />
+    <ClInclude Include="pydia_wrapping_types.h" />
     <ClInclude Include="pydia.h" />
+    <ClInclude Include="pydia_classes.h" />
+    <ClInclude Include="pydia_enum.h" />
     <ClInclude Include="pydia_exceptions.h" />
     <ClInclude Include="pydia_register_classes.h" />
-    <ClInclude Include="pydia_symbol.h" />
+    <ClInclude Include="pydia_trivial_init.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiaLib\DiaLib.vcxproj">

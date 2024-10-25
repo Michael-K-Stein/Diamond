@@ -111,22 +111,24 @@ static inline std::ostream& operator<<(std::ostream& os, const DiaComException& 
 
 namespace dia
 {
-class StructNotFound : public DiaSymbolMasterException
+#define DEFINE_TRIVIAL_EXCEPTION(exceptionName)                                                                                                      \
+    class exceptionName : public DiaSymbolMasterException                                                                                            \
+    {                                                                                                                                                \
+    public:                                                                                                                                          \
+        using ::DiaSymbolMasterException::DiaSymbolMasterException;                                                                                  \
+    };
+
+
+DEFINE_TRIVIAL_EXCEPTION(StructNotFoundException);
+DEFINE_TRIVIAL_EXCEPTION(TooManyMatchesForFindException);
+DEFINE_TRIVIAL_EXCEPTION(DataMemberDataKindMismatchException);
+DEFINE_TRIVIAL_EXCEPTION(InvalidFileFormatException);
+
+class InvalidUsageException : public std::logic_error
 {
 public:
-    using ::DiaSymbolMasterException::DiaSymbolMasterException;
+    using std::logic_error::logic_error;
 };
 
-class TooManyMatchesForFind : public DiaSymbolMasterException
-{
-public:
-    using ::DiaSymbolMasterException::DiaSymbolMasterException;
-};
-
-class DataMemberDataKindMismatch : public DiaSymbolMasterException
-{
-public:
-    using ::DiaSymbolMasterException::DiaSymbolMasterException;
-};
 
 }  // namespace dia

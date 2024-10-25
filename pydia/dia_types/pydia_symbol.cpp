@@ -1,5 +1,5 @@
-#include "pydia_symbol.h"
 #include "DiaSymbol.h"
+#include "__pydia_symbol.h"
 #include <Python.h>
 //
 //// Method definitions

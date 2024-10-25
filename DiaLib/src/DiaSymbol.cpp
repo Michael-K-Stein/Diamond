@@ -82,7 +82,7 @@ std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Symbol& v)
 }
 
 template <>
-std::wostream& streamSymbolTypeModifiers(std::wostream& os, const ArrayType& v)
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Array& v)
 {
     return streamSymbolTypeModifiers<Symbol>(os, *reinterpret_cast<const Symbol*>(reinterpret_cast<const void*>(&v)));
 }

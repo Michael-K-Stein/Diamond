@@ -60,7 +60,7 @@ std::set<UserDefinedType> Struct::queryDependsOnForwardTypes() const
         {
             continue;
         }
-        const PointerType cTypeAsPointer{cType};
+        const Pointer cTypeAsPointer{cType};
         // Get the pointed-to type
         const auto decayType = cTypeAsPointer.getType();
         if (!decayType.isUserDefinedType())

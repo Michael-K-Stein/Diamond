@@ -49,7 +49,7 @@ void DataSource::loadDataFromPdb(const AnyString& pdbFilePath)
 {
     if (sessionOpened())
     {
-        throw DiaSymbolMasterException{"Session already openned!"};
+        throw InvalidUsageException{"Session already openned!"};
     }
     const auto result = m_comPtr->loadDataFromPdb(pdbFilePath.c_str());
     CHECK_DIACOM_EXCEPTION("Failed to load data from PDB!", result);
@@ -60,7 +60,7 @@ void DataSource::loadDataForExe(const AnyString& exePath)
 {
     if (sessionOpened())
     {
-        throw DiaSymbolMasterException{"Session already openned!"};
+        throw InvalidUsageException{"Session already openned!"};
     }
 
     const auto& symbolSearchPath = buildSymbolSearchPath(exePath);
@@ -89,7 +89,7 @@ const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
 {
     if (SymTagExport == symTag)
     {
-        throw std::runtime_error("You probably meant to use DataSource::getExports()");
+        throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), symTag);
@@ -104,7 +104,7 @@ const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLES
 {
     if (SymTagExport == symTag)
     {
-        throw std::runtime_error("You probably meant to use DataSource::getExports()");
+        throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName);
@@ -119,7 +119,7 @@ const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLES
 {
     if (SymTagExport == symTag)
     {
-        throw std::runtime_error("You probably meant to use DataSource::getExports()");
+        throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName, nameComparisonFlags);
@@ -135,7 +135,7 @@ const Enum DataSource::getEnum(const AnyString& enumName) const
     const auto rawEnumSymbols = getSymbols(SymTagEnum, enumName.c_str());
     if (rawEnumSymbols.size() < 1)
     {
-        throw StructNotFound("Enum by name not found!");
+        throw StructNotFoundException("Enum by name not found!");
     }
     if (rawEnumSymbols.size() > 1)
     {
@@ -206,7 +206,7 @@ const Struct DataSource::getStruct(const AnyString& structName) const
     }
     if (items.size() < 1)
     {
-        throw StructNotFound("Struct by name not found!");
+        throw StructNotFoundException("Struct by name not found!");
     }
     if (items.size() > 1)
     {
@@ -278,7 +278,7 @@ void DataSource::loadDataFromArbitraryFile(const std::wstring& filePath)
         return;
     }
 
-    throw std::runtime_error("Failed to deduce file format!");
+    throw InvalidFileFormatException("Failed to deduce file format!");
 }
 
 std::wstring DataSource::buildSymbolSearchPath(const std::wstring& exePath) const

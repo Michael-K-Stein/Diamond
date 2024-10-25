@@ -1,0 +1,62 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>daa11dd6-4e8a-410d-b917-5a352a5e976f</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>PyTests.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>PyTests</Name>
+    <RootNamespace>PyTests</RootNamespace>
+    <InterpreterId>
+    </InterpreterId>
+    <IsWindowsApplication>True</IsWindowsApplication>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterPath>C:\Users\mkupe\Code\cpython\PCbuild\amd64\python_d.exe</InterpreterPath>
+    <EnableNativeCodeDebugging>True</EnableNativeCodeDebugging>
+    <TestFramework>pytest</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="PyTests.py" />
+    <Compile Include="__test_datasource.py" />
+    <Compile Include="test_datasource.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|Python3.14a" />
+    <InterpreterReference Include="Global|VisualStudio|Python3.14a Debug" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\pydia\pydia.vcxproj">
+      <Name>pydia</Name>
+      <Project>{14b2e126-1d85-4944-98de-d0d4baafbfd0}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="pytest.ini" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

@@ -41,7 +41,7 @@ void DataMember::assertDataKind() const
     const auto myDataKind = getDataKind();
     if (DataIsMember != myDataKind && DataIsStaticMember != myDataKind)
     {
-        throw DataMemberDataKindMismatch("DataMembers must be of kind DataIsMember or DataIsStaticMember !");
+        throw DataMemberDataKindMismatchException("DataMembers must be of kind DataIsMember or DataIsStaticMember !");
     }
 }
 }  // namespace dia
@@ -60,7 +60,7 @@ std::wostream& operator<<(std::wostream& os, const dia::DataMember& member)
 
     if (ctype.isArray())
     {
-        const dia::ArrayType ctypeAsArray{ctype};
+        const dia::Array ctypeAsArray{ctype};
         const auto elementType = ctypeAsArray.getType();
         os << elementType.getTypeName() << L" " << fieldName << L"[0x" << std::hex << ctypeAsArray.getCount() << L"];";
     }

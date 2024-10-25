@@ -13,32 +13,65 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\dia_types">
+      <UniqueIdentifier>{f8b55680-f1fa-4b19-a57f-1fcef46d402b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pydiamodule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_data_source.cpp">
+    <ClCompile Include="dia_types\pydia_datasource.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="dia_types\pydia_symbol.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_enum.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_wrapping_types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_symbol.cpp">
+    <ClCompile Include="pydia_other_types.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_helper_routines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_datasource.h">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="pydia_exceptions.h.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pydia_exceptions.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="pydia.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pydia_symbol.h">
+    <ClInclude Include="pydia_register_classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pydia_register_classes.h">
+    <ClInclude Include="pydia_classes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dia_types\pydia_datasource.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_enum.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_trivial_init.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_wrapping_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_other_types.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_helper_routines.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

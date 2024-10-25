@@ -34,8 +34,8 @@ class PublicSymbol;
 class Udt;
 class Enum;
 class FunctionType;
-class PointerType;
-class ArrayType;
+class Pointer;
+class Array;
 class BaseType;
 class Typedef;
 class BaseClass;
@@ -113,14 +113,14 @@ enum class CvCall : uint8_t
         }                                                                                                                                            \
         case SymTagArrayType:                                                                                                                        \
         {                                                                                                                                            \
-            using typeNameSymbol = dia::ArrayType;                                                                                                   \
-            operation(*reinterpret_cast<const dia::ArrayType*>(&symbol));                                                                            \
+            using typeNameSymbol = dia::Array;                                                                                                   \
+            operation(*reinterpret_cast<const dia::Array*>(&symbol));                                                                            \
             break;                                                                                                                                   \
         }                                                                                                                                            \
         case SymTagPointerType:                                                                                                                      \
         {                                                                                                                                            \
-            using typeNameSymbol = dia::PointerType;                                                                                                 \
-            operation(*reinterpret_cast<const dia::PointerType*>(&symbol));                                                                          \
+            using typeNameSymbol = dia::Pointer;                                                                                                 \
+            operation(*reinterpret_cast<const dia::Pointer*>(&symbol));                                                                          \
             break;                                                                                                                                   \
         }                                                                                                                                            \
         case SymTagUDT:                                                                                                                              \

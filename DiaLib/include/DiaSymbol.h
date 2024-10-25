@@ -577,9 +577,9 @@ std::wostream& streamSymbolTypeModifiers(std::wostream& os, const T& v)
 template <>
 std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Symbol& v);
 
-class ArrayType;
+class Array;
 template <>
-std::wostream& streamSymbolTypeModifiers(std::wostream& os, const ArrayType& v);
+std::wostream& streamSymbolTypeModifiers(std::wostream& os, const Array& v);
 
 }  // namespace dia
 

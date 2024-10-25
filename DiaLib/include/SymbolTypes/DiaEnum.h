@@ -1,5 +1,7 @@
 #pragma once
+#include "DiaData.h"
 #include "DiaSymbol.h"
+#include "DiaSymbolEnumerator.h"
 #include "DiaSymbolTypes.h"
 #include "DiaTypeResolution.h"
 
