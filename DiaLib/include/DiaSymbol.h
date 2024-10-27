@@ -96,7 +96,12 @@ public:
     bool operator>(const Symbol& other) const;
     bool operator>=(const Symbol& other) const;
 
+#ifndef Py_PYTHON_H
+    // In Python builds, we are going to allow the CPython code free access to the member functions, since the "wrapping" will actually be done in the
+    // CPython extension.
 protected:
+#endif
+
     auto getType() const { return dia::getType(*this); }
 
     auto getName() const { return dia::getName(*this); }

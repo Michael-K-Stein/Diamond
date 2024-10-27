@@ -1,4 +1,3 @@
-#pragma once
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // Python.h must be included before anything else
@@ -7,23 +6,20 @@
 // C pydia imports
 #include "pydia_data.h"
 #include "pydia_exceptions.h"
+#include "pydia_helper_routines.h"
+#include "pydia_symbol_private.h"
 #include "pydia_trivial_init.h"
+#include "pydia_wrapping_types.h"
 
 // C++ DiaSymbolMaster imports
 #include "SymbolTypes/DiaData.h"
-#include "pydia_wrapping_types.h"
-#include <pydia_helper_routines.h>
-
-
-static PyObject* PyDiaData_getName(PyDiaData* self);
-static PyObject* PyDiaData_getValue(PyDiaData* self);
 
 TRIVIAL_INIT_DEINIT(Data);
 
 // Python method table for dia::Data
 static PyMethodDef PyDiaData_methods[] = {
-    {"get_name", (PyCFunction)PyDiaData_getName, METH_NOARGS, "Get the name of the data field."},
-    {"get_value", (PyCFunction)PyDiaData_getValue, METH_NOARGS, "Get the value of the data field."},
+    {"get_name", (PyCFunction)PyDiaSymbol_name, METH_NOARGS, "Get the name of the data field."},
+    {"get_value", (PyCFunction)PyDiaSymbol_value, METH_NOARGS, "Get the value of the data field."},
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -67,38 +63,3 @@ PyTypeObject PyDiaData_Type = {
     0,                                           /* tp_alloc */
     PyType_GenericNew,                           /* tp_new */
 };
-
-// Method: PyDiaData_getName
-static PyObject* PyDiaData_getName(PyDiaData* self)
-{
-    try
-    {
-        // Get the name as a std::string and convert to a Python string
-        const std::wstring name = self->diaData->getName();
-        return PyUnicode_FromWideChar(name.c_str(), name.length());
-    }
-    catch (const std::exception& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
-    Py_UNREACHABLE();
-}
-
-// Method: PyDiaData_getValue
-static PyObject* PyDiaData_getValue(PyDiaData* self)
-{
-    try
-    {
-        // Get the value from diaData and convert it to an appropriate Python object
-        const auto value           = self->diaData->getValue();
-        const auto variantPyObject = VariantToPyObject(value);
-        return variantPyObject;
-    }
-    catch (const std::exception& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
-    Py_UNREACHABLE();
-}

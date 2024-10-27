@@ -25,7 +25,7 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
 
-        Assert::ExpectException<dia::StructNotFound>(
+        Assert::ExpectException<dia::SymbolNotFoundException>(
             [&]
             {
                 const auto unicodeStringStructSymbol = dataSource.getStruct(L"_UNICODE_STRING_df9ed8fa_8973_4e6c_950a_dcad266c3b78");

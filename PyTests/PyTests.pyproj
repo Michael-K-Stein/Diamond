@@ -38,6 +38,9 @@
     <Compile Include="test_enum.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="test_struct.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|Python3.14a" />
