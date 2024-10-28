@@ -159,7 +159,7 @@ enum class CvCall : uint8_t
             operation(*reinterpret_cast<const dia::Data*>(&symbol));                                                                                 \
             break;                                                                                                                                   \
         }                                                                                                                                            \
-        /*TODO: IMPLEMENT !! */ case SymTagBaseType:                                                                                                 \
+        /* TODO: IMPLEMENT !! */ case SymTagBaseType:                                                                                                \
             using typeNameSymbol = dia::BaseType;                                                                                                    \
             operation(*reinterpret_cast<const dia::BaseType*>(&symbol));                                                                             \
             break;                                                                                                                                   \
