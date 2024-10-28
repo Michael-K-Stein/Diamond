@@ -8,15 +8,6 @@
 // DiaLib includes
 #include <DiaSymbolEnumerator.h>
 
-//
-//// Forward declerations
-// template <typename K, typename T>
-// static inline void PyDiaSymbolGenerator_dealloc(PyDiaAbstractGenerator<K, T>* self);
-// template <typename K, typename T>
-// static inline PyObject* PyDiaSymbolGenerator_iter(PyDiaAbstractGenerator<K, T>* self);
-// template <typename K, typename T>
-// static inline PyObject* PyDiaSymbolGenerator_iternext(PyDiaAbstractGenerator<K, T>* self);
-
 // A generator (the Python thing) for instances
 template <typename K, typename T>
 struct PyDiaAbstractGenerator
