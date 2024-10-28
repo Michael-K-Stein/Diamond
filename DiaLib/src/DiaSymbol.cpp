@@ -1,6 +1,10 @@
 #include "pch.h"
 //
+#include "BstrWrapper.h"
 #include "DiaSymbol.h"
+#include "DiaTypeResolution.h"
+#include "DiaUserDefinedTypeWrapper.h"
+#include "Exceptions.h"
 #include "SymbolTypes/DiaArray.h"
 #include "SymbolTypes/DiaData.h"
 #include "SymbolTypes/DiaFunction.h"
@@ -9,10 +13,6 @@
 #include "SymbolTypes/DiaNull.h"
 #include "SymbolTypes/DiaPointer.h"
 #include "SymbolTypes/DiaUdt.h"
-#include "DiaTypeResolution.h"
-#include "DiaUserDefinedTypeWrapper.h"
-#include "BstrWrapper.h"
-#include "Exceptions.h"
 
 namespace dia
 {
@@ -48,6 +48,12 @@ bool Symbol::isUserDefinedType() const { return SymTagUDT == getSymTag() || SymT
 
 size_t Symbol::calcHash() const
 {
+    _ASSERT(nullptr != this);
+    if (!!!*this)
+    {
+        // Uninitialized instance :(
+        return 0;
+    }
 #define __RETURN_HASH_SYMBOL(x) return std::hash<T>()(x);
     size_t calculatedHash = 0;
     hash_combine(calculatedHash, std::wstring(dia::symTagToName(getSymTag())), std::hash<std::wstring>()(getName()));

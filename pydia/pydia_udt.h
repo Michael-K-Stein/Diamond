@@ -10,3 +10,4 @@ typedef struct
 } PyDiaUdt;
 
 extern PyTypeObject PyDiaUdt_Type;
+

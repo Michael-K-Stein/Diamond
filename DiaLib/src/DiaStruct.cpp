@@ -1,7 +1,7 @@
 #include "pch.h"
 //
+#include "DEPRECATED__DiaStruct.h"
 #include "DiaDataMember.h"
-#include "DiaStruct.h"
 #include "SymbolTypes/DiaPointer.h"
 #include <sstream>
 
@@ -32,7 +32,6 @@ struct hash<dia::Struct>
 
 namespace dia
 {
-DiaSymbolEnumerator<DataMember> Struct::enumerateMembers() const { return enumerate<DataMember>(*this, SymTagData); }
 
 std::set<UserDefinedType> Struct::queryDependsOnTypes() const
 {

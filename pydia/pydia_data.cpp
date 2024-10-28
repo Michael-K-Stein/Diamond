@@ -18,48 +18,26 @@ TRIVIAL_INIT_DEINIT(Data);
 
 // Python method table for dia::Data
 static PyMethodDef PyDiaData_methods[] = {
-    {"get_name", (PyCFunction)PyDiaSymbol_name, METH_NOARGS, "Get the name of the data field."},
-    {"get_value", (PyCFunction)PyDiaSymbol_value, METH_NOARGS, "Get the value of the data field."},
+    {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the data field."},
+    {"get_value", (PyCFunction)PyDiaSymbol_getValue, METH_NOARGS, "Get the value of the data field."},
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
-// Define the Python DiaData type object
-PyTypeObject PyDiaData_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0) "pydia.Data", /* tp_name */
-    sizeof(PyDiaData),                           /* tp_basicsize */
-    0,                                           /* tp_itemsize */
-    (destructor)PyDiaData_dealloc,               /* tp_dealloc */
-    0,                                           /* tp_print */
-    0,                                           /* tp_getattr */
-    0,                                           /* tp_setattr */
-    0,                                           /* tp_as_async */
-    0,                                           /* tp_repr */
-    0,                                           /* tp_as_number */
-    0,                                           /* tp_as_sequence */
-    0,                                           /* tp_as_mapping */
-    0,                                           /* tp_hash  */
-    0,                                           /* tp_call */
-    0,                                           /* tp_str */
-    0,                                           /* tp_getattro */
-    0,                                           /* tp_setattro */
-    0,                                           /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,                          /* tp_flags */
-    "Data object",                               /* tp_doc */
-    0,                                           /* tp_traverse */
-    0,                                           /* tp_clear */
-    0,                                           /* tp_richcompare */
-    0,                                           /* tp_weaklistoffset */
-    0,                                           /* tp_iter */
-    0,                                           /* tp_iternext */
-    PyDiaData_methods,                           /* tp_methods */
-    0,                                           /* tp_members */
-    0,                                           /* tp_getset */
-    0,                                           /* tp_base */
-    0,                                           /* tp_dict */
-    0,                                           /* tp_descr_get */
-    0,                                           /* tp_descr_set */
-    0,                                           /* tp_dictoffset */
-    (initproc)PyDiaData_init,                    /* tp_init */
-    0,                                           /* tp_alloc */
-    PyType_GenericNew,                           /* tp_new */
-};
+PYDIA_SYMBOL_TYPE_DEFINITION(Data, PyDiaData_methods);
+
+PyObject* PyDiaData_FromDataSymbol(dia::Data&& symbol)
+{
+    // Create a new PyDiaData object
+    PyDiaData* pySymbol = PyObject_New(PyDiaData, &PyDiaData_Type);
+    if (!pySymbol)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DiaSymbol object.");
+        return NULL;
+    }
+
+    // Initialize the PyDiaData object with the corresponding dia::Data object
+    pySymbol->diaData = new (std::nothrow) dia::Data(symbol);
+
+    Py_INCREF(pySymbol);
+    return reinterpret_cast<PyObject*>(pySymbol);
+}

@@ -1,10 +1,10 @@
 #include "pch.h"
 //
-#include "DiaSymbolFuncs.h"
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
-#include "SymbolTypes/DiaSymbolTypes.h"
+#include "DiaSymbolFuncs.h"
 #include "Exceptions.h"
+#include "SymbolTypes/DiaSymbolTypes.h"
 
 namespace dia
 {
@@ -14,6 +14,14 @@ AccessModifier getAccess(const Symbol& symbol)
     const auto result = symbol.get()->get_access(&retVal);
     CHECK_DIACOM_EXCEPTION("get_access failed!", result);
     return static_cast<AccessModifier>(retVal);
+}
+
+DWORD getAddressOffset(const Symbol& symbol)
+{
+    DWORD retVal      = 0;
+    const auto result = symbol.get()->get_addressOffset(&retVal);
+    CHECK_DIACOM_EXCEPTION("get_addressOffset failed!", result);
+    return retVal;
 }
 
 DWORD getAddressSection(const Symbol& symbol)
@@ -82,10 +90,14 @@ ULONG getBindSpace(const Symbol& symbol)
 
 ULONG getBitPosition(const Symbol& symbol)
 {
+#if 0
+    // This threw an exception when hashing a dia::Data object.
+    // It seems fine to have all dia::Data objects hash as if they are at bit position 0... right?
     if (getLocationType(symbol) != LocIsBitField)
     {
         throw std::runtime_error("BitPosition is only valid for LocIsBitField types!");
     }
+#endif
     ULONG retVal      = 0;
     const auto result = symbol.get()->get_bitPosition(&retVal);
     CHECK_DIACOM_EXCEPTION("get_bitPosition failed!", result);

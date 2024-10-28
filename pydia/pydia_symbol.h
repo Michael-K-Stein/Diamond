@@ -12,3 +12,13 @@ typedef struct
 } PyDiaSymbol;
 
 extern PyTypeObject PyDiaSymbol_Type;
+
+PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol);
+
+// Auto decleration of trivial conversions like PyDiaSymbol_FromSymbol for all types
+#define DECLARE_PYDIA_SYMBOL_FROM_SYMBOL_TRIVIAL_CONVERSION(diaTypeName)                                                                             \
+    PyObject* PyDia##diaTypeName##_From##diaTypeName##Symbol(dia::##diaTypeName&& symbol);                                                           \
+    static inline PyObject* PyDiaSymbol_FromSymbol(dia::##diaTypeName&& symbol)                                                                      \
+    {                                                                                                                                                \
+        return PyDia##diaTypeName##_From##diaTypeName##Symbol(std::move(symbol));                                                                    \
+    }

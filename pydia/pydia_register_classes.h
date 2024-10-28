@@ -4,6 +4,29 @@
 #include "pydia_classes.h"
 #include "pydia_enum.h"
 #include "pydia_other_types.h"
+#include <functional>
+#include <vector>
+
+using PyClassRegistrationFunction = std::function<PyObject*(PyObject* module)>;
+
+static std::vector<PyClassRegistrationFunction>& getPyClassRegistrationFunctions()
+{
+    static std::vector<PyClassRegistrationFunction> initializers;
+    return initializers;
+}
+
+static inline void registerPyClassRegistrationFunction(PyClassRegistrationFunction func) { getPyClassRegistrationFunctions().push_back(func); }
+
+#define REGISTER_PYCLASS_REGISTRATION_FUNCTION(fn)                                                                                                   \
+    namespace                                                                                                                                        \
+    {                                                                                                                                                \
+    struct PyClassRegistration__##fn                                                                                                                 \
+    {                                                                                                                                                \
+        PyClassRegistration__##fn() { registerPyClassRegistrationFunction(fn); }                                                                     \
+    };                                                                                                                                               \
+    static PyClassRegistration__##fn pyClassRegistration__##fn;                                                                                      \
+    }
+
 
 #define __REGISTER_PYDIA_CLASS(className)                                                                                                            \
     do                                                                                                                                               \
@@ -19,5 +42,14 @@
 static PyObject* registerPydiaClasses(PyObject* module)
 {
     XFOR_EACH_PYDIA_CLASS(__REGISTER_PYDIA_CLASS)
+
+    for (const auto& registrationFunction : getPyClassRegistrationFunctions())
+    {
+        if (NULL == registrationFunction(module))
+        {
+            return NULL;
+        }
+    }
+
     return module;
 }

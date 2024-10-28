@@ -1,5 +1,7 @@
 #pragma once
 #include <Python.h>
+//
+#include "pydia_generators.h"
 #include <SymbolTypes/DiaData.h>
 
 // Define the Python DiaDataType object

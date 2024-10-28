@@ -150,12 +150,10 @@
     <ClInclude Include="include\DiaDataMember.h" />
     <ClInclude Include="include\DiaDataSource.h" />
     <ClInclude Include="include\DiaPrint.h" />
-    <ClInclude Include="include\DiaStruct.h" />
     <ClInclude Include="include\DiaSymbol.h" />
     <ClInclude Include="include\DiaSymbolEnumerator.h" />
     <ClInclude Include="include\DiaSymbolFuncs.h" />
     <ClInclude Include="include\DiaTypeResolution.h" />
-    <ClInclude Include="include\DiaUnion.h" />
     <ClInclude Include="include\DiaUserDefinedTypeWrapper.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\Hashing.h" />
@@ -176,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp" />
+    <ClCompile Include="include\SymbolTypes\DiaUDT.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -184,12 +183,10 @@
     </ClCompile>
     <ClCompile Include="src\DiaDataMember.cpp" />
     <ClCompile Include="src\DiaDataSource.cpp" />
-    <ClCompile Include="src\DiaStruct.cpp" />
     <ClCompile Include="src\DiaSymbol.cpp" />
     <ClCompile Include="src\DiaSymbolFuncs.cpp" />
     <ClCompile Include="src\DiaSymbolTypes\DiaSymbolPrint.cpp" />
     <ClCompile Include="src\DiaTypeResolution.cpp" />
-    <ClCompile Include="src\DiaUnion.cpp" />
     <ClCompile Include="src\DiaUserDefinedTypeWrapper.cpp" />
     <ClCompile Include="src\Utils\BstrWrapper.cpp" />
     <ClCompile Include="src\Utils\SymbolPathHelper.cpp" />

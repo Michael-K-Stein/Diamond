@@ -1,5 +1,8 @@
 #pragma once
 #include <Python.h>
+//
+#include "pydia_symbol.h"
+//
 #include <SymbolTypes/DiaEnum.h>
 
 // Define the Python DiaEnumType object

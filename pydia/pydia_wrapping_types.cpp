@@ -1,8 +1,17 @@
 #include "pydia_wrapping_types.h"
 
-PyObject* g_diaBasicTypeEnumWrappings = NULL;
+PyObject* g_diaBasicTypeEnumWrappings    = NULL;
+PyObject* g_diaLocationTypeEnumWrappings = NULL;
+PyObject* g_diaDataKindEnumWrappings     = NULL;
+PyObject* g_diaUdtKindEnumWrappings      = NULL;
 
 PyObject* getDiaBasicTypeEnumWrappings() { return g_diaBasicTypeEnumWrappings; }
+
+PyObject* getDiaLocationTypeEnumWrappings() { return g_diaLocationTypeEnumWrappings; }
+
+PyObject* getDiaDataKindEnumWrappings() { return g_diaDataKindEnumWrappings; }
+
+PyObject* getDiaUdtKindEnumWrappings() { return g_diaUdtKindEnumWrappings; }
 
 static PyObject* createDiaBasicTypeEnumWrappings(PyObject* module)
 {
@@ -48,9 +57,77 @@ static PyObject* createDiaBasicTypeEnumWrappings(PyObject* module)
     return module;
 }
 
+static PyObject* createDiaLocationTypeEnumWrappings(PyObject* module)
+{
+    if (g_diaLocationTypeEnumWrappings != NULL) return NULL;
+
+    g_diaLocationTypeEnumWrappings = PyDict_New();
+    if (g_diaLocationTypeEnumWrappings == NULL) return NULL;
+
+    // Add LocationType constants to the dictionary
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Null", PyLong_FromLong(0));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Static", PyLong_FromLong(1));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "TLS", PyLong_FromLong(2));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "RegRel", PyLong_FromLong(3));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "ThisRel", PyLong_FromLong(4));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Enregistered", PyLong_FromLong(5));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "BitField", PyLong_FromLong(6));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Slot", PyLong_FromLong(7));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "IlRel", PyLong_FromLong(8));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "MetaData", PyLong_FromLong(9));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Constant", PyLong_FromLong(10));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "RegRelAliasIndir", PyLong_FromLong(11));
+    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "LocTypeMax", PyLong_FromLong(12));  // TODO: Do we really need this?
+
+    PyModule_AddObject(module, "LocationType", g_diaLocationTypeEnumWrappings);
+    return module;
+}
+
+static PyObject* createDiaDataKindEnumWrappings(PyObject* module)
+{
+    if (g_diaDataKindEnumWrappings != NULL) return NULL;
+
+    g_diaDataKindEnumWrappings = PyDict_New();
+    if (g_diaDataKindEnumWrappings == NULL) return NULL;
+
+    // Add DataKind constants to the dictionary
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Unknown", PyLong_FromLong(0));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Local", PyLong_FromLong(1));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "StaticLocal", PyLong_FromLong(2));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Param", PyLong_FromLong(3));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "ObjectPtr", PyLong_FromLong(4));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "FileStatic", PyLong_FromLong(5));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Global", PyLong_FromLong(6));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Member", PyLong_FromLong(7));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "StaticMember", PyLong_FromLong(8));
+    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Constant", PyLong_FromLong(9));
+
+    PyModule_AddObject(module, "DataKind", g_diaDataKindEnumWrappings);
+    return module;
+}
+
+static PyObject* createDiaUdtKindEnumWrappings(PyObject* module)
+{
+    if (g_diaUdtKindEnumWrappings != NULL) return NULL;
+
+    g_diaUdtKindEnumWrappings = PyDict_New();
+    if (g_diaUdtKindEnumWrappings == NULL) return NULL;
+
+    // Add UdtKind constants to the dictionary
+    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Struct", PyLong_FromLong(0));
+    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Class", PyLong_FromLong(1));
+    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Union", PyLong_FromLong(2));
+    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Interface", PyLong_FromLong(3));
+    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "TaggedUnion", PyLong_FromLong(4));
+
+    PyModule_AddObject(module, "UdtKind", g_diaUdtKindEnumWrappings);
+    return module;
+}
+
 PyObject* createDiaEnumWrappings(PyObject* module)
 {
-    if (NULL == createDiaBasicTypeEnumWrappings(module))
+    if (createDiaBasicTypeEnumWrappings(module) == NULL || createDiaLocationTypeEnumWrappings(module) == NULL ||
+        createDiaDataKindEnumWrappings(module) == NULL || createDiaUdtKindEnumWrappings(module) == NULL)
     {
         return NULL;
     }

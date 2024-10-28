@@ -4,3 +4,6 @@
 PyObject* createDiaEnumWrappings(PyObject* module);
 
 PyObject* getDiaBasicTypeEnumWrappings();
+PyObject* getDiaLocationTypeEnumWrappings();
+PyObject* getDiaDataKindEnumWrappings();
+PyObject* getDiaUdtKindEnumWrappings();

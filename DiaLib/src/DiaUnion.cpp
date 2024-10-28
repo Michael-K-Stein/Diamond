@@ -1,21 +1,21 @@
 #include "pch.h"
 //
+#include "DEPRECATED__DiaUnion.h"
 #include "DiaDataMember.h"
 #include "DiaSymbolEnumerator.h"
-#include "DiaUnion.h"
 
 namespace std
 {
 template <>
-struct hash<dia::Union>
+struct hash<dia::DEPRECATED__Union>
 {
-    size_t operator()(const dia::Union& diaUnion) const
+    size_t operator()(const dia::DEPRECATED__Union& diaDEPRECATED__Union) const
     {
         size_t calculatedHash = 0;
-        const size_t nameHash = hash<std::wstring>()(diaUnion.getName());
-        hash_combine(calculatedHash, std::wstring(L"Union"), nameHash);
+        const size_t nameHash = hash<std::wstring>()(diaDEPRECATED__Union.getName());
+        hash_combine(calculatedHash, std::wstring(L"DEPRECATED__Union"), nameHash);
 
-        for (const auto& member : diaUnion.enumerateMembers())
+        for (const auto& member : diaDEPRECATED__Union.enumerateMembers())
         {
             const auto memberOffset   = member.getOffset();
             const auto memberTypeName = member.getFieldCType().getTypeName();
@@ -31,12 +31,12 @@ struct hash<dia::Union>
 
 namespace dia
 {
-DiaSymbolEnumerator<DataMember> Union::enumerateMembers() const { return enumerate<DataMember>(*this, SymTagData); }
+DiaSymbolEnumerator<DataMember> DEPRECATED__Union::enumerateMembers() const { return enumerate<DataMember>(*this, SymTagData); }
 
-size_t Union::calcHash() const { return std::hash<Union>()(*this); }
+size_t DEPRECATED__Union::calcHash() const { return std::hash<DEPRECATED__Union>()(*this); }
 }  // namespace dia
 
-std::wostream& operator<<(std::wostream& os, const dia::Union& v)
+std::wostream& operator<<(std::wostream& os, const dia::DEPRECATED__Union& v)
 {
     const auto& unionName      = v.getName();
     const auto& structPureName = unionName.c_str() + 1;

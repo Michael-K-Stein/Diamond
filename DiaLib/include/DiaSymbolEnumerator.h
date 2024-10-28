@@ -23,6 +23,10 @@ template <typename T>
 class DiaSymbolEnumerator final
 {
 public:
+    // Explicit NULL constructor
+    explicit DiaSymbolEnumerator(nullptr_t)
+        : DiaSymbolEnumerator(){};
+
     DiaSymbolEnumerator(const DiaSymbolEnumerator& other);
     DiaSymbolEnumerator operator=(const DiaSymbolEnumerator& other);
     DiaSymbolEnumerator(DiaSymbolEnumerator&& other) noexcept;
@@ -190,7 +194,7 @@ template <typename T>
 inline DiaSymbolEnumerator<T>::DiaSymbolEnumerator(DiaSymbolEnumerator&& other) noexcept
 {
     _ASSERT(nullptr == m_enumSymbols);
-    if (*this != other)
+    if (this != &other)
     {
         move(std::move(other));
     }
@@ -200,7 +204,7 @@ template <typename T>
 inline DiaSymbolEnumerator<T> DiaSymbolEnumerator<T>::operator=(DiaSymbolEnumerator&& other) noexcept
 {
     _ASSERT(nullptr == m_enumSymbols);
-    if (*this != other)
+    if (this != &other)
     {
         move(std::move(other));
     }
@@ -229,7 +233,7 @@ inline typename DiaSymbolEnumerator<T>::Iterator DiaSymbolEnumerator<T>::end()
 template <typename T>
 inline void DiaSymbolEnumerator<T>::move(DiaSymbolEnumerator&& other) noexcept
 {
-    _ASSERT(*this != other);
+    _ASSERT(this != &other);
     m_enumSymbols       = std::move(other.m_enumSymbols);
     other.m_enumSymbols = nullptr;
 }

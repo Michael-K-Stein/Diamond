@@ -6,6 +6,7 @@
 // C pydia imports
 #include "pydia_exceptions.h"
 #include "pydia_helper_routines.h"
+#include "pydia_symbol_private.h"
 #include "pydia_trivial_init.h"
 #include "pydia_udt.h"
 #include "pydia_wrapping_types.h"
@@ -25,7 +26,7 @@ static void PyDiaUdt_dealloc(PyDiaUdt* self)
 
 static int PyDiaUdt_init(PyDiaUdt* self, PyObject* args, PyObject* kwds)
 {
-    self->diaUdt = new dia::UserDefinedType();
+    self->diaUdt = new (std::nothrow) dia::UserDefinedType();
     if (!self->diaUdt)
     {
         PyErr_SetString(PyExc_MemoryError, "Failed to create Udt object.");
@@ -36,8 +37,8 @@ static int PyDiaUdt_init(PyDiaUdt* self, PyObject* args, PyObject* kwds)
 
 // Python method table for dia::Udt
 static PyMethodDef PyDiaUdt_methods[] = {
-    {"get_name", (PyCFunction)PyDiaUdt_getName, METH_NOARGS, "Get the name of the UDT."},
-    {"get_value", (PyCFunction)PyDiaUdt_getValue, METH_NOARGS, "Get the value of the UDT."},
+    {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the UDT."},
+    {"get_value", (PyCFunction)PyDiaSymbol_getValue, METH_NOARGS, "Get the value of the UDT."},
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -55,7 +56,7 @@ PyTypeObject PyDiaUdt_Type = {
     0,                                          /* tp_as_number */
     0,                                          /* tp_as_sequence */
     0,                                          /* tp_as_mapping */
-    (hashfunc)PyDiaUdt_hash,                    /* tp_hash  */
+    (hashfunc)PyDiaSymbol_hash,                 /* tp_hash  */
     0,                                          /* tp_call */
     0,                                          /* tp_str */
     0,                                          /* tp_getattro */
@@ -65,7 +66,7 @@ PyTypeObject PyDiaUdt_Type = {
     "UserDefinedType object",                   /* tp_doc */
     0,                                          /* tp_traverse */
     0,                                          /* tp_clear */
-    (richcmpfunc)PyDiaUdt_richcompare,          /* tp_richcompare */
+    (richcmpfunc)PyDiaSymbol_richcompare,       /* tp_richcompare */
     0,                                          /* tp_weaklistoffset */
     0,                                          /* tp_iter */
     0,                                          /* tp_iternext */
@@ -81,23 +82,3 @@ PyTypeObject PyDiaUdt_Type = {
     0,                                          /* tp_alloc */
     PyType_GenericNew,                          /* tp_new */
 };
-
-// Method: PyDiaUdt_getName
-static PyObject* PyDiaUdt_getName(PyDiaUdt* self)
-{
-    _ASSERT(nullptr != self);
-    _ASSERT(nullptr != self->diaUdt);
-
-    try
-    {
-        // Get the name as a std::string and convert to a Python string
-        const std::wstring name = self->diaUdt->getName();
-        return PyUnicode_FromWideChar(name.c_str(), name.length());
-    }
-    catch (const std::exception& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
-    Py_UNREACHABLE();
-}

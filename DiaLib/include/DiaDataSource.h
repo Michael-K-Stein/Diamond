@@ -1,8 +1,8 @@
 #pragma once
 #include "AnyString.h"
-#include "DiaStruct.h"
 #include "DiaSymbol.h"
 #include "DiaSymbolEnumerator.h"
+#include "DiaUserDefinedTypeWrapper.h"
 #include "SymbolTypes/DiaEnum.h"
 #include "SymbolTypes/DiaFunction.h"
 #include <atlbase.h>
@@ -56,7 +56,7 @@ public:
     const std::vector<Symbol> getUnions() const;
     const std::vector<Symbol> getTaggedUnions() const;
 
-    const Struct getStruct(const AnyString& structName) const;
+    const UserDefinedType getStruct(const AnyString& structName) const;
 
     bool sessionOpened() const { return m_sessionOpenned; }
 

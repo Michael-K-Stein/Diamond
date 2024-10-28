@@ -5,11 +5,12 @@
 #include <objbase.h>
 
 // C pydia imports
-#include "__pydia_symbol.h"
 #include "pydia_datasource.h"
 #include "pydia_enum.h"
 #include "pydia_exceptions.h"
+#include "pydia_symbol.h"
 #include "pydia_trivial_init.h"
+#include "pydia_udts.h"
 
 // C++ DiaSymbolMaster imports
 #include "DiaDataSource.h"
@@ -41,17 +42,18 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
         if (PyTuple_Size(args) == 0)
         {
             // Use the default constructor
-            tempDataSource = new dia::DataSource();
+            tempDataSource = new (std::nothrow) dia::DataSource();
         }
         else if (PyTuple_Size(args) == 1)
         {
             // Handle the first argument as filePath
-            tempDataSource = new dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)));
+            tempDataSource = new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)));
         }
         else if (PyTuple_Size(args) == 2)
         {
             // Handle the first argument as filePath and the second as symstoreDirectory
-            tempDataSource = new dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)), PyObjectToAnyString(PyTuple_GetItem(args, 1)));
+            tempDataSource =
+                new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)), PyObjectToAnyString(PyTuple_GetItem(args, 1)));
         }
         else
         {
@@ -208,13 +210,13 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* arg
 
     for (size_t i = 0; i < exports.size(); ++i)
     {
-        PyDiaSymbol* sym = PyObject_New(PyDiaSymbol, &PyDiaSymbolType);
+        PyDiaSymbol* sym = PyObject_New(PyDiaSymbol, &PyDiaSymbol_Type);
         if (!sym)
         {
             Py_DECREF(resultList);  // Clean up the result list
             return NULL;            // Return NULL on failure
         }
-        sym->diaSymbol = new dia::Symbol(exports[i]);
+        sym->diaSymbol = new (std::nothrow) dia::Symbol(exports[i]);
 
         // Set the item in the list, transferring ownership
         if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
@@ -278,11 +280,14 @@ static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
 
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args)
 {
+    _ASSERT(self);
+    _ASSERT(self->diaDataSource);
+
     // The PyObject argument for struct name
-    PyObject* pyEnumName = NULL;
+    PyObject* pyStructName = NULL;
 
     // Parse the argument as a Python object (expected string or bytes)
-    if (!PyArg_ParseTuple(args, "O", &pyEnumName))
+    if (!PyArg_ParseTuple(args, "O", &pyStructName))
     {
         return NULL;  // If parsing fails, return NULL (error already set)
     }
@@ -290,26 +295,27 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
     // Try to retrieve the struct using the provided name
     try
     {
-        const auto& structSymbol = self->diaDataSource->getEnum(PyObjectToAnyString(pyEnumName));
+        const auto& structSymbol = self->diaDataSource->getStruct(PyObjectToAnyString(pyStructName));
+        _ASSERT(NULL != &structSymbol);
 
         // Allocate a new PyDiaEnum object
-        PyDiaEnum* pyEnum = PyObject_New(PyDiaEnum, &PyDiaEnum_Type);
-        if (!pyEnum)
+        PyDiaStruct* pyStruct = PyObject_New(PyDiaStruct, &PyDiaStruct_Type);
+        if (!pyStruct)
         {
-            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaEnum object.");
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaStruct object.");
             return NULL;
         }
 
-        // Initialize the PyDiaEnum object with the dia::Enum object
-        pyEnum->diaEnum = new (std::nothrow) dia::Enum(structSymbol);
-        if (!pyEnum->diaEnum)
+        // Initialize the PyDiaStruct object with the dia::UserDefinedType object
+        pyStruct->diaUserDefinedType = new (std::nothrow) dia::UserDefinedType(structSymbol);
+        if (!pyStruct->diaUserDefinedType)
         {
-            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for DiaEnum.");
-            Py_DECREF(pyEnum);  // Release allocated PyDiaEnum object
+            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for DiaStruct.");
+            Py_DECREF(pyStruct);  // Release allocated PyDiaStruct object
             return NULL;
         }
 
-        return (PyObject*)pyEnum;
+        return (PyObject*)pyStruct;
     }
     catch (const dia::SymbolNotFoundException& e)
     {
@@ -318,7 +324,7 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
     }
     catch (const std::bad_alloc&)
     {
-        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaEnum.");
+        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaStruct.");
         return NULL;
     }
 }

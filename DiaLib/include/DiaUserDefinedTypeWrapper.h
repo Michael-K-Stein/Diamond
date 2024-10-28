@@ -5,10 +5,6 @@ namespace dia
 {
 
 class DataSource;
-// Derived Types
-class Struct;
-class Union;
-class Enum;
 
 /// @brief High level wrapper for any UserDefinedType
 class UserDefinedType : public Udt
@@ -17,13 +13,9 @@ public:
     using Udt::Udt;
     TRIVIAL_CONVERT(Udt, UserDefinedType);
 
-    bool isUnion() const;
-    Union asUnion() const;
+    using Udt::calcHash;
 
-    bool isStruct() const;
-    Struct asStruct() const;
-
-    virtual size_t calcHash() const;
+    DiaSymbolEnumerator<Data> enumerateMembers() const;
 
     bool operator==(const UserDefinedType& other) const { return calcHash() == other.calcHash(); }
 
@@ -43,6 +35,13 @@ protected:
 private:
     friend class DataSource;
 };
+
+using Class       = UserDefinedType;
+using TaggedUnion = UserDefinedType;
+using Struct      = UserDefinedType;
+using Union       = UserDefinedType;
+using Interface   = UserDefinedType;
+
 }  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::UserDefinedType& udt);

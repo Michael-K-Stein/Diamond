@@ -17,8 +17,7 @@
     opperation(FunctionType);                                                                                                                        \
     opperation(FunctionArgType);                                                                                                                     \
     opperation(Null);                                                                                                                                \
-    opperation(Pointer);                                                                                                                             \
-    opperation(Udt);
+    opperation(Pointer);
 
 #define __TRIVIAL_PYDIA_TYPE_WRAPPER_DEFINITION(className)                                                                                           \
     typedef struct                                                                                                                                   \

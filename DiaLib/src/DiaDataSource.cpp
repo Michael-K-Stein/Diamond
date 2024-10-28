@@ -2,8 +2,8 @@
 //
 #include "BstrWrapper.h"
 #include "DiaDataSource.h"
-#include "DiaStruct.h"
 #include "DiaSymbolEnumerator.h"
+#include "DiaUserDefinedTypeWrapper.h"
 #include "Exceptions.h"
 #include "SymbolPathHelper.h"
 #include "SymbolTypes/DiaEnum.h"
@@ -196,12 +196,16 @@ const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) con
     return items;
 }
 
-const Struct DataSource::getStruct(const AnyString& structName) const
+const UserDefinedType DataSource::getStruct(const AnyString& structName) const
 {
     std::vector<Symbol> items{};
     auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(), nsfCaseSensitive);
     for (const auto& item : exports)
     {
+        if (UdtStruct != item.getUdtKind())
+        {
+            continue;
+        }
         items.push_back(item);
     }
     if (items.size() < 1)

@@ -113,14 +113,14 @@ enum class CvCall : uint8_t
         }                                                                                                                                            \
         case SymTagArrayType:                                                                                                                        \
         {                                                                                                                                            \
-            using typeNameSymbol = dia::Array;                                                                                                   \
-            operation(*reinterpret_cast<const dia::Array*>(&symbol));                                                                            \
+            using typeNameSymbol = dia::Array;                                                                                                       \
+            operation(*reinterpret_cast<const dia::Array*>(&symbol));                                                                                \
             break;                                                                                                                                   \
         }                                                                                                                                            \
         case SymTagPointerType:                                                                                                                      \
         {                                                                                                                                            \
-            using typeNameSymbol = dia::Pointer;                                                                                                 \
-            operation(*reinterpret_cast<const dia::Pointer*>(&symbol));                                                                          \
+            using typeNameSymbol = dia::Pointer;                                                                                                     \
+            operation(*reinterpret_cast<const dia::Pointer*>(&symbol));                                                                              \
             break;                                                                                                                                   \
         }                                                                                                                                            \
         case SymTagUDT:                                                                                                                              \
@@ -159,8 +159,14 @@ enum class CvCall : uint8_t
             operation(*reinterpret_cast<const dia::Data*>(&symbol));                                                                                 \
             break;                                                                                                                                   \
         }                                                                                                                                            \
+        /*TODO: IMPLEMENT !! */ case SymTagBaseType:                                                                                                 \
+            using typeNameSymbol = dia::BaseType;                                                                                                    \
+            operation(*reinterpret_cast<const dia::BaseType*>(&symbol));                                                                             \
+            break;                                                                                                                                   \
         default:                                                                                                                                     \
         {                                                                                                                                            \
+            printf("%d\n", symbol.getSymTag());                                                                                                      \
+            _ASSERT_EXPR(false, L"Invalid SymTag!");                                                                                                 \
             throw std::runtime_error("Invalid SymTag!");                                                                                             \
         }                                                                                                                                            \
         } /* End of switch statment */                                                                                                               \

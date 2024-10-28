@@ -11,4 +11,8 @@
     opperation(Udt);                                                                                                                                 \
     opperation(FunctionType);                                                                                                                        \
     opperation(FunctionArgType);                                                                                                                     \
-    opperation(Function);
+    opperation(Function);                                                                                                                            \
+    opperation(Struct);                                                                                                                              \
+    opperation(Union);                                                                                                                               \
+    opperation(Class);                                                                                                                               \
+    opperation(Interface);

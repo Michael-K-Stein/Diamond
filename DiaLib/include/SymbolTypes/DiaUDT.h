@@ -37,6 +37,8 @@ public:
     using Symbol::getVirtualTableShape;
     using Symbol::getVirtualTableShapeId;
     using Symbol::getVolatileType;
+
+    size_t calcHash() const;
 };
 }  // namespace dia
 

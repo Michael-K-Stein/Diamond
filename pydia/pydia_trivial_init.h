@@ -16,7 +16,7 @@
                                                                                                                                                      \
     static int PyDia##diaName##_init(PyDia##diaName* self, PyObject* args, PyObject* kwds)                                                           \
     {                                                                                                                                                \
-        self->dia##diaName = new dia::##diaName();                                                                                                   \
+        self->dia##diaName = new (std::nothrow) dia::##diaName();                                                                                    \
         if (!self->dia##diaName)                                                                                                                     \
         {                                                                                                                                            \
             PyErr_SetString(PyExc_MemoryError, "Failed to create " #diaName "object.");                                                              \

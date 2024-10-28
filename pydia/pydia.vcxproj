@@ -272,19 +272,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dia_types\pydia_datasource.cpp" />
-    <ClCompile Include="dia_types\pydia_symbol.cpp" />
     <ClCompile Include="pydiamodule.cpp" />
     <ClCompile Include="pydia_data.cpp" />
     <ClCompile Include="pydia_enum.cpp" />
     <ClCompile Include="pydia_exceptions.h.cpp" />
+    <ClCompile Include="pydia_generators.cpp" />
     <ClCompile Include="pydia_helper_routines.cpp" />
     <ClCompile Include="pydia_other_types.cpp" />
     <ClCompile Include="pydia_symbol.cpp" />
     <ClCompile Include="pydia_udt.cpp" />
+    <ClCompile Include="pydia_udts.cpp" />
     <ClCompile Include="pydia_wrapping_types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dia_types\pydia_datasource.h" />
+    <ClInclude Include="pydia_all_types.h" />
+    <ClInclude Include="pydia_generators.h" />
+    <ClInclude Include="pydia_udts.h" />
     <ClInclude Include="pydia_symbol_private.h" />
     <ClInclude Include="pydia_data.h" />
     <ClInclude Include="pydia_helper_routines.h" />

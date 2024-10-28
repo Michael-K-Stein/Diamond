@@ -78,9 +78,6 @@
     <ClInclude Include="include\DiaPrint.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\DiaStruct.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\DiaSymbol.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -91,9 +88,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\DiaTypeResolution.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DiaUnion.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\DiaUserDefinedTypeWrapper.h">
@@ -128,9 +122,6 @@
     <ClCompile Include="src\DiaDataSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DiaStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\DiaSymbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,9 +129,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\DiaTypeResolution.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DiaUnion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\DiaUserDefinedTypeWrapper.cpp">
@@ -153,6 +141,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\DiaSymbolTypes\DiaSymbolPrint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SymbolTypes\DiaUDT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
