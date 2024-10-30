@@ -20,10 +20,13 @@ struct PyDiaAbstractGenerator
 template <typename K, typename T>
 static inline void PyDiaSymbolGenerator_dealloc(PyDiaAbstractGenerator<K, T>* self)
 {
+    _ASSERT(NULL != self);
+    _ASSERT(NULL != self->enumerator);
     if (self->enumerator)
     {
         delete self->enumerator;
     }
+    _ASSERT(NULL != Py_TYPE(self)->tp_free);
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
@@ -116,7 +119,8 @@ PyTypeObject PyDiaAbstractGenerator_Type = {
     0,                                                                /* tp_dictoffset */
     0 /* This object should never be created by Python callers */,    /* tp_init */
     PyType_GenericAlloc,                                              /* tp_alloc */
-    PyType_GenericNew,                                                /* tp_new */
+    0,                                                                /* tp_new */
+    PyObject_Free,                                                    /* tp_free */
 };
 
 // Generic enumerator for implementations

@@ -12,6 +12,10 @@
         {                                                                                                                                            \
             throw DiaComException(message, hResult);                                                                                                 \
         }                                                                                                                                            \
+        else if (S_FALSE == hResult)                                                                                                                 \
+        {                                                                                                                                            \
+            /* throw dia::InvalidUsageException("Queried property that is not available for the symbol!"); */                                        \
+        }                                                                                                                                            \
     } while (0)
 
 class DiaSymbolMasterException : public std::exception

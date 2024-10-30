@@ -96,7 +96,7 @@ static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self)
         return (PyObject*)generator;
     };
 
-    PYDIA_SAFE_TRY_EXCEPT({ return safeExecution(); });
+    PYDIA_SAFE_TRY({ return safeExecution(); });
     Py_UNREACHABLE();
 }
 

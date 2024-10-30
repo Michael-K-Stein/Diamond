@@ -159,6 +159,7 @@
     <ClInclude Include="include\Hashing.h" />
     <ClInclude Include="include\SymbolPathHelper.h" />
     <ClInclude Include="include\SymbolTypes\DiaArray.h" />
+    <ClInclude Include="include\SymbolTypes\DiaBaseType.h" />
     <ClInclude Include="include\SymbolTypes\DiaData.h" />
     <ClInclude Include="include\SymbolTypes\DiaEnum.h" />
     <ClInclude Include="include\SymbolTypes\DiaExe.h" />

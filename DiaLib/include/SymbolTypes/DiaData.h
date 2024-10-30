@@ -56,10 +56,20 @@ struct hash<dia::Data>
     size_t operator()(const dia::Data& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), v.getClassParent(),
-                     v.getCompilerGenerated(), v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(),
-                     v.getLocationType(), v.getName(), v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(),
-                     v.getVolatileType());
+        auto classParent      = v.getClassParent();
+        if (!!classParent)  // TODO: This is a temporary hack since some Data members do not have a classParent :(
+        {
+            hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), classParent,
+                         v.getCompilerGenerated(), v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(),
+                         v.getLocationType(), v.getName(), v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(),
+                         v.getVolatileType());
+        }
+        else
+        {
+            hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), v.getCompilerGenerated(),
+                         v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(), v.getLocationType(), v.getName(),
+                         v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(), v.getVolatileType());
+        }
         return calculatedHash;
     }
 };

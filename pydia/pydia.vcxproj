@@ -276,7 +276,6 @@
     <ClCompile Include="pydia_data.cpp" />
     <ClCompile Include="pydia_enum.cpp" />
     <ClCompile Include="pydia_exceptions.h.cpp" />
-    <ClCompile Include="pydia_generators.cpp" />
     <ClCompile Include="pydia_helper_routines.cpp" />
     <ClCompile Include="pydia_other_types.cpp" />
     <ClCompile Include="pydia_symbol.cpp" />

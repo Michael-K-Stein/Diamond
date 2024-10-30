@@ -108,6 +108,9 @@
     <ClInclude Include="include\SymbolTypes\DiaEnum.h">
       <Filter>include\SymbolTypes</Filter>
     </ClInclude>
+    <ClInclude Include="include\SymbolTypes\DiaBaseType.h">
+      <Filter>include\SymbolTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp">

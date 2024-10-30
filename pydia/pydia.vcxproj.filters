@@ -54,9 +54,6 @@
     <ClCompile Include="pydia_udts.cpp">
       <Filter>Header Files\dia_types\dia_udts</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_generators.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia.h">

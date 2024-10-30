@@ -7,5 +7,4 @@ namespace dia
 std::wstring callingConventionToString(const CvCall& callingConvention);
 }
 
-std::wostream& operator<<(std::wostream& os,
-                          const dia::CvCall& callingConvention);
+std::wostream& operator<<(std::wostream& os, const dia::CvCall& callingConvention);

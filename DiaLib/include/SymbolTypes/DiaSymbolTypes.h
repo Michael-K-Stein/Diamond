@@ -147,27 +147,198 @@ enum class CvCall : uint8_t
             operation(*reinterpret_cast<const dia::FunctionArgType*>(&symbol));                                                                      \
             break;                                                                                                                                   \
         }                                                                                                                                            \
-        /* case SymTagExe:                                                                                                                           \
+        case SymTagExe:                                                                                                                              \
         {                                                                                                                                            \
             using typeNameSymbol = dia::Exe;                                                                                                         \
             operation(*reinterpret_cast<const dia::Exe*>(&symbol));                                                                                  \
             break;                                                                                                                                   \
-        }    */                                                                                                                                      \
+        }                                                                                                                                            \
         case SymTagData:                                                                                                                             \
         {                                                                                                                                            \
             using typeNameSymbol = dia::Data;                                                                                                        \
             operation(*reinterpret_cast<const dia::Data*>(&symbol));                                                                                 \
             break;                                                                                                                                   \
         }                                                                                                                                            \
-        /* TODO: IMPLEMENT !! */ case SymTagBaseType:                                                                                                \
+        case SymTagBaseType:                                                                                                                         \
+        {                                                                                                                                            \
             using typeNameSymbol = dia::BaseType;                                                                                                    \
             operation(*reinterpret_cast<const dia::BaseType*>(&symbol));                                                                             \
             break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCompiland:                                                                                                                        \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Compiland;                                                                                                   \
+            operation(*reinterpret_cast<const dia::Compiland*>(&symbol));                                                                            \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCompilandDetails:                                                                                                                 \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::CompilandDetails;                                                                                            \
+            operation(*reinterpret_cast<const dia::CompilandDetails*>(&symbol));                                                                     \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCompilandEnv:                                                                                                                     \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::CompilandEnv;                                                                                                \
+            operation(*reinterpret_cast<const dia::CompilandEnv*>(&symbol));                                                                         \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagLabel:                                                                                                                            \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Label;                                                                                                       \
+            operation(*reinterpret_cast<const dia::Label*>(&symbol));                                                                                \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagEnum:                                                                                                                             \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Enum;                                                                                                        \
+            operation(*reinterpret_cast<const dia::Enum*>(&symbol));                                                                                 \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagTypedef:                                                                                                                          \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Typedef;                                                                                                     \
+            operation(*reinterpret_cast<const dia::Typedef*>(&symbol));                                                                              \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagBaseClass:                                                                                                                        \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::BaseClass;                                                                                                   \
+            operation(*reinterpret_cast<const dia::BaseClass*>(&symbol));                                                                            \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagFriend:                                                                                                                           \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Friend;                                                                                                      \
+            operation(*reinterpret_cast<const dia::Friend*>(&symbol));                                                                               \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagAnnotation:                                                                                                                       \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Annotation;                                                                                                  \
+            operation(*reinterpret_cast<const dia::Annotation*>(&symbol));                                                                           \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagPublicSymbol:                                                                                                                     \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::PublicSymbol;                                                                                                \
+            operation(*reinterpret_cast<const dia::PublicSymbol*>(&symbol));                                                                         \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCustom:                                                                                                                           \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Custom;                                                                                                      \
+            operation(*reinterpret_cast<const dia::Custom*>(&symbol));                                                                               \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagThunk:                                                                                                                            \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Thunk;                                                                                                       \
+            operation(*reinterpret_cast<const dia::Thunk*>(&symbol));                                                                                \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCustomType:                                                                                                                       \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::CustomType;                                                                                                  \
+            operation(*reinterpret_cast<const dia::CustomType*>(&symbol));                                                                           \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagManagedType:                                                                                                                      \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::ManagedType;                                                                                                 \
+            operation(*reinterpret_cast<const dia::ManagedType*>(&symbol));                                                                          \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagDimension:                                                                                                                        \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Dimension;                                                                                                   \
+            operation(*reinterpret_cast<const dia::Dimension*>(&symbol));                                                                            \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCallSite:                                                                                                                         \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::CallSite;                                                                                                    \
+            operation(*reinterpret_cast<const dia::CallSite*>(&symbol));                                                                             \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagInlineSite:                                                                                                                       \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::InlineSite;                                                                                                  \
+            operation(*reinterpret_cast<const dia::InlineSite*>(&symbol));                                                                           \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagBaseInterface:                                                                                                                    \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::BaseInterface;                                                                                               \
+            operation(*reinterpret_cast<const dia::BaseInterface*>(&symbol));                                                                        \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagVectorType:                                                                                                                       \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::VectorType;                                                                                                  \
+            operation(*reinterpret_cast<const dia::VectorType*>(&symbol));                                                                           \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagMatrixType:                                                                                                                       \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::MatrixType;                                                                                                  \
+            operation(*reinterpret_cast<const dia::MatrixType*>(&symbol));                                                                           \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagHLSLType:                                                                                                                         \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::HLSLType;                                                                                                    \
+            operation(*reinterpret_cast<const dia::HLSLType*>(&symbol));                                                                             \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCaller:                                                                                                                           \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Caller;                                                                                                      \
+            operation(*reinterpret_cast<const dia::Caller*>(&symbol));                                                                               \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCallee:                                                                                                                           \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Callee;                                                                                                      \
+            operation(*reinterpret_cast<const dia::Callee*>(&symbol));                                                                               \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagExport:                                                                                                                           \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Export;                                                                                                      \
+            operation(*reinterpret_cast<const dia::Export*>(&symbol));                                                                               \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagHeapAllocationSite:                                                                                                               \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::HeapAllocationSite;                                                                                          \
+            operation(*reinterpret_cast<const dia::HeapAllocationSite*>(&symbol));                                                                   \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagCoffGroup:                                                                                                                        \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::CoffGroup;                                                                                                   \
+            operation(*reinterpret_cast<const dia::CoffGroup*>(&symbol));                                                                            \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagInlinee:                                                                                                                          \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::Inlinee;                                                                                                     \
+            operation(*reinterpret_cast<const dia::Inlinee*>(&symbol));                                                                              \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+        case SymTagTaggedUnionCase:                                                                                                                  \
+        {                                                                                                                                            \
+            using typeNameSymbol = dia::TaggedUnionCase;                                                                                             \
+            operation(*reinterpret_cast<const dia::TaggedUnionCase*>(&symbol));                                                                      \
+            break;                                                                                                                                   \
+        }                                                                                                                                            \
+                                                                                                                                                     \
         default:                                                                                                                                     \
         {                                                                                                                                            \
             printf("%d\n", symbol.getSymTag());                                                                                                      \
             _ASSERT_EXPR(false, L"Invalid SymTag!");                                                                                                 \
             throw std::runtime_error("Invalid SymTag!");                                                                                             \
         }                                                                                                                                            \
-        } /* End of switch statment */                                                                                                               \
+        }                                                                                                                                            \
     } while (0)

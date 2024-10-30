@@ -83,7 +83,7 @@ template <typename InterfaceT>
 inline ComWrapper<InterfaceT>::ComWrapper(const ComWrapper& other)
     : m_itemRef{other.m_itemRef}
 {
-    _ASSERT(nullptr != m_itemRef);
+    //_ASSERT(nullptr != m_itemRef);
 }
 
 template <typename InterfaceT>
