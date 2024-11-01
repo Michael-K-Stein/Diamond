@@ -109,3 +109,92 @@ PyObject* registerUdtPyClasses(PyObject* module)
     XFOR_EACH_UDT_KIND(__REGISTER_PYDIA_CLASS);
     return module;
 }
+
+PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
+{
+    PyObject* pySymbol = NULL;
+    switch (symbol.getUdtKind())
+    {
+    case UdtStruct:
+    {
+
+        auto pyStruct = PyObject_New(PyDiaStruct, &PyDiaStruct_Type);
+        if (!pyStruct)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaStruct object.");
+            return NULL;
+        }
+        pyStruct->diaUserDefinedType = new (std::nothrow) dia::Struct(symbol);
+        pySymbol                     = reinterpret_cast<PyObject*>(pyStruct);
+        break;
+    }
+    case UdtClass:
+    {
+
+        auto pyClass = PyObject_New(PyDiaClass, &PyDiaClass_Type);
+        if (!pyClass)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaClass object.");
+            return NULL;
+        }
+        pyClass->diaUserDefinedType = new (std::nothrow) dia::Class(symbol);
+        pySymbol                    = reinterpret_cast<PyObject*>(pyClass);
+        break;
+    }
+    case UdtUnion:
+    {
+
+        auto pyUnion = PyObject_New(PyDiaUnion, &PyDiaUnion_Type);
+        if (!pyUnion)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaUnion object.");
+            return NULL;
+        }
+        pyUnion->diaUserDefinedType = new (std::nothrow) dia::Union(symbol);
+        pySymbol                    = reinterpret_cast<PyObject*>(pyUnion);
+        break;
+    }
+    case UdtInterface:
+    {
+
+        auto pyInterface = PyObject_New(PyDiaInterface, &PyDiaInterface_Type);
+        if (!pyInterface)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaInterface object.");
+            return NULL;
+        }
+        pyInterface->diaUserDefinedType = new (std::nothrow) dia::Interface(symbol);
+        pySymbol                        = reinterpret_cast<PyObject*>(pyInterface);
+        break;
+    }
+    case UdtTaggedUnion:
+    {
+        auto pyTaggedUnion = PyObject_New(PyDiaTaggedUnion, &PyDiaTaggedUnion_Type);
+        if (!pyTaggedUnion)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaTaggedUnion object.");
+            return NULL;
+        }
+        pyTaggedUnion->diaUserDefinedType = new (std::nothrow) dia::TaggedUnion(symbol);
+        pySymbol                          = reinterpret_cast<PyObject*>(pyTaggedUnion);
+        break;
+    }
+    default:
+        Py_UNREACHABLE();
+        break;
+    }
+
+    if (!pySymbol)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create specific UDTs object.");
+        return NULL;
+    }
+
+    if (NULL == reinterpret_cast<PyDiaUdt_Abstract*>(pySymbol)->diaUserDefinedType)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to allocate specific UDT's internal state.");
+        return NULL;
+    }
+
+    return pySymbol;
+}

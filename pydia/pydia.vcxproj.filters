@@ -54,6 +54,15 @@
     <ClCompile Include="pydia_udts.cpp">
       <Filter>Header Files\dia_types\dia_udts</Filter>
     </ClCompile>
+    <ClCompile Include="pydia_basetype.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_pointer.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_array.cpp">
+      <Filter>Header Files\dia_types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia.h">
@@ -105,6 +114,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pydia_all_types.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_basetype.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_pointer.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_array.h">
       <Filter>Header Files\dia_types</Filter>
     </ClInclude>
   </ItemGroup>

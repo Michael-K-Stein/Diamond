@@ -273,11 +273,14 @@
   <ItemGroup>
     <ClCompile Include="dia_types\pydia_datasource.cpp" />
     <ClCompile Include="pydiamodule.cpp" />
+    <ClCompile Include="pydia_array.cpp" />
+    <ClCompile Include="pydia_basetype.cpp" />
     <ClCompile Include="pydia_data.cpp" />
     <ClCompile Include="pydia_enum.cpp" />
     <ClCompile Include="pydia_exceptions.h.cpp" />
     <ClCompile Include="pydia_helper_routines.cpp" />
     <ClCompile Include="pydia_other_types.cpp" />
+    <ClCompile Include="pydia_pointer.cpp" />
     <ClCompile Include="pydia_symbol.cpp" />
     <ClCompile Include="pydia_udt.cpp" />
     <ClCompile Include="pydia_udts.cpp" />
@@ -286,7 +289,10 @@
   <ItemGroup>
     <ClInclude Include="dia_types\pydia_datasource.h" />
     <ClInclude Include="pydia_all_types.h" />
+    <ClInclude Include="pydia_array.h" />
+    <ClInclude Include="pydia_basetype.h" />
     <ClInclude Include="pydia_generators.h" />
+    <ClInclude Include="pydia_pointer.h" />
     <ClInclude Include="pydia_udts.h" />
     <ClInclude Include="pydia_symbol_private.h" />
     <ClInclude Include="pydia_data.h" />

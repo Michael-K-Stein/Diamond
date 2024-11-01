@@ -15,4 +15,6 @@
     opperation(Struct);                                                                                                                              \
     opperation(Union);                                                                                                                               \
     opperation(Class);                                                                                                                               \
+    opperation(BaseType);                                                                                                                            \
+    opperation(Typedef);                                                                                                                               \
     opperation(Interface);

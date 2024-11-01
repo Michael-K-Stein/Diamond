@@ -111,6 +111,9 @@
     <ClInclude Include="include\SymbolTypes\DiaBaseType.h">
       <Filter>include\SymbolTypes</Filter>
     </ClInclude>
+    <ClInclude Include="include\SymbolTypes\DiaTypedef.h">
+      <Filter>include\SymbolTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp">
@@ -147,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\SymbolTypes\DiaUDT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SymbolTypes\DiaData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

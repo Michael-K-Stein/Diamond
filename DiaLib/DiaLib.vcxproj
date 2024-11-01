@@ -170,11 +170,13 @@
     <ClInclude Include="include\SymbolTypes\DiaPointer.h" />
     <ClInclude Include="include\SymbolTypes\DiaSymbolPrint.h" />
     <ClInclude Include="include\SymbolTypes\DiaSymbolTypes.h" />
+    <ClInclude Include="include\SymbolTypes\DiaTypedef.h" />
     <ClInclude Include="include\SymbolTypes\DiaUDT.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp" />
+    <ClCompile Include="include\SymbolTypes\DiaData.cpp" />
     <ClCompile Include="include\SymbolTypes\DiaUDT.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

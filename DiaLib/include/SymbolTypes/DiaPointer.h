@@ -36,7 +36,7 @@ struct hash<dia::Pointer>
     size_t operator()(const dia::Pointer& v) const
     {
         size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getConstType(), v.getLength(), v.getLexicalParent(),
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getConstType(), v.getLength(), v.getLexicalParentId(),
                      v.getReference(), v.getUnalignedType(), v.getVolatileType());
         return calculatedHash;
     }

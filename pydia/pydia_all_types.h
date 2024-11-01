@@ -19,6 +19,8 @@
     opperation(Data);                                                                                                                                \
     opperation(Enum);                                                                                                                                \
     opperation(Udt);                                                                                                                                 \
+    opperation(BaseType);                                                                                                                                \
+    opperation(Typedef);                                                                                                                             \
     opperation(UserDefinedType);
 
 // Forward decleration

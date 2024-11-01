@@ -34,7 +34,7 @@ struct hash<dia::BaseType>
     {
         size_t calculatedHash = 0;
         hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getBaseType(), v.getConstType(), v.getLength(),
-                     v.getLexicalParent(), v.getUnalignedType(), v.getVolatileType());
+                     v.getLexicalParentId(), v.getUnalignedType(), v.getVolatileType());
         return calculatedHash;
     }
 };

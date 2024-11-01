@@ -4,6 +4,7 @@
 #include <objbase.h>
 
 // C pydia imports
+#include "pydia_data.h"
 #include "pydia_exceptions.h"
 #include "pydia_helper_routines.h"
 #include "pydia_symbol.h"
@@ -12,8 +13,10 @@
 #include "pydia_wrapping_types.h"
 
 // C++ DiaSymbolMaster imports
-#include "DiaSymbol.h"
-#include "DiaUserDefinedTypeWrapper.h"
+#include <DiaSymbol.h>
+#include <DiaUserDefinedTypeWrapper.h>
+#include <SymbolTypes/DiaArray.h>
+#include <SymbolTypes/DiaBaseType.h>
 
 #define PYDIA_ASSERT_SYMBOL_POINTERS(__self)                                                                                                         \
     do                                                                                                                                               \
@@ -25,18 +28,55 @@
 PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol)
 {
     // Create a new PyDiaData object
-    PyDiaSymbol* pySymbol = PyObject_New(PyDiaSymbol, &PyDiaSymbol_Type);
+
+    const auto symTag  = symbol.getSymTag();
+
+    PyObject* pySymbol = NULL;
+    switch (symTag)
+    {
+
+    case SymTagNull:
+        pySymbol = PyDiaNull_FromNullSymbol(std::move(symbol));
+        break;
+    case SymTagExe:
+        pySymbol = PyDiaExe_FromExeSymbol(std::move(symbol));
+        break;
+    case SymTagData:
+        pySymbol = PyDiaData_FromDataSymbol(std::move(symbol));
+        break;
+    case SymTagEnum:
+        pySymbol = PyDiaEnum_FromEnumSymbol(std::move(symbol));
+        break;
+    case SymTagUDT:
+        pySymbol = PyDiaUdt_FromSymbol(std::move(symbol));
+        break;
+    case SymTagFunctionType:
+        pySymbol = PyDiaFunctionType_FromFunctionTypeSymbol(std::move(symbol));
+        break;
+    case SymTagPointerType:
+        pySymbol = PyDiaPointer_FromPointerSymbol(std::move(symbol));
+        break;
+    case SymTagArrayType:
+        pySymbol = PyDiaArray_FromArraySymbol(std::move(symbol));
+        break;
+    case SymTagBaseType:
+        pySymbol = PyDiaBaseType_FromBaseTypeSymbol(std::move(symbol));
+        break;
+    case SymTagTypedef:
+        pySymbol = PyDiaTypedef_FromTypedefSymbol(std::move(symbol));
+        break;
+    default:
+        break;
+    }
+
     if (!pySymbol)
     {
-        PyErr_SetString(PyExc_MemoryError, "Failed to create DiaSymbol object.");
+        PyErr_SetString(PyExc_MemoryError, "Failed to create symbol object.");
         return NULL;
     }
 
-    // Initialize the PyDiaData object with the corresponding dia::Data object
-    pySymbol->diaSymbol = new (std::nothrow) dia::Symbol(symbol);
-
     Py_INCREF(pySymbol);
-    return reinterpret_cast<PyObject*>(pySymbol);
+    return pySymbol;
 }
 
 PyObject* PyDiaSymbol_richcompare(PyObject* self, PyObject* other, int op)
@@ -314,6 +354,17 @@ PyObject* PyDiaSymbol_getBaseType(const PyDiaSymbol* self)
         // Static assert to assure that this static_cast is valid
         static_assert(sizeof(baseType) <= sizeof(unsigned long));
         return PyLong_FromUnsignedLong(static_cast<unsigned long>(baseType));
+    });
+    Py_UNREACHABLE();
+}
+
+PyObject* PyDiaSymbol_getBitPosition(const PyDiaSymbol* self)
+{
+    PYDIA_ASSERT_SYMBOL_POINTERS(self);
+    PYDIA_SAFE_TRY({
+        // Call getBitPosition and convert to Python integer
+        const DWORD bitPosition = self->diaSymbol->getBitPosition();
+        return PyLong_FromUnsignedLong(bitPosition);
     });
     Py_UNREACHABLE();
 }
@@ -997,8 +1048,8 @@ PyObject* PyDiaSymbol_is_accelerator_stub_function(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_aggregated
-PyObject* PyDiaSymbol_is_aggregated(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isAggregated
+PyObject* PyDiaSymbol_isAggregated(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1008,8 +1059,8 @@ PyObject* PyDiaSymbol_is_aggregated(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_ctypes
-PyObject* PyDiaSymbol_is_ctypes(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isCtypes
+PyObject* PyDiaSymbol_isCtypes(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1904,8 +1955,8 @@ PyObject* PyDiaSymbol_pure(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_r_value_reference
-PyObject* PyDiaSymbol_r_value_reference(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isRValueReference
+PyObject* PyDiaSymbol_isRValueReference(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1915,8 +1966,8 @@ PyObject* PyDiaSymbol_r_value_reference(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_rank
-PyObject* PyDiaSymbol_rank(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getRank
+PyObject* PyDiaSymbol_getRank(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1926,8 +1977,8 @@ PyObject* PyDiaSymbol_rank(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_reference
-PyObject* PyDiaSymbol_reference(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isReference
+PyObject* PyDiaSymbol_isReference(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1937,8 +1988,8 @@ PyObject* PyDiaSymbol_reference(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_register_id
-PyObject* PyDiaSymbol_register_id(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getRegisterId
+PyObject* PyDiaSymbol_getRegisterId(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2306,7 +2357,16 @@ PyObject* PyDiaSymbol_getUdtKind(const PyDiaSymbol* self)
             return NULL;
         }
 
-        PyObject* udtKindObj = PyDict_GetItemString(getDiaUdtKindEnumWrappings(), udtKindKeys[udtKind]);
+
+        // Get the item from the enum object using the key
+        PyObject* udtKindObj = PyObject_GetAttrString(getDiaUdtKindEnumWrappings(), udtKindKeys[udtKind]);
+        if (!udtKindObj)
+        {
+            // If the object was not found, raise an error
+            PyErr_SetString(PyExc_ValueError, "Failed to retrieve UdtKind object from enum.");
+            return NULL;
+        }
+
         Py_XINCREF(udtKindObj);  // Increase reference count to return a new reference
         return udtKindObj;
     };

@@ -24,3 +24,23 @@
         }                                                                                                                                            \
         return 0;                                                                                                                                    \
     }
+
+#define TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(className)                                                                                             \
+    PyObject* PyDia##className##_From##className##Symbol(dia::##className&& symbol)                                                                  \
+    {                                                                                                                                                \
+        PyDia##className* pySymbol = PyObject_New(PyDia##className, &PyDia##className##_Type);                                                       \
+        if (!pySymbol)                                                                                                                               \
+        {                                                                                                                                            \
+            PyErr_SetString(PyExc_MemoryError, "Failed to create Dia" #className " object.");                                                        \
+            return NULL;                                                                                                                             \
+        }                                                                                                                                            \
+                                                                                                                                                     \
+        pySymbol->dia##className = new (std::nothrow) dia::##className(symbol);                                                                      \
+        if (!(pySymbol->dia##className))                                                                                                             \
+        {                                                                                                                                            \
+            PyErr_SetString(PyExc_MemoryError, "Failed to create Dia" #className "'s internal state.");                                              \
+            return NULL;                                                                                                                             \
+        }                                                                                                                                            \
+        Py_INCREF(pySymbol);                                                                                                                         \
+        return reinterpret_cast<PyObject*>(pySymbol);                                                                                                \
+    }

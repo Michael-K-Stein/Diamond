@@ -52,6 +52,8 @@ static PyMethodDef PyDiaEnum_methods[] = {
 
 PYDIA_SYMBOL_TYPE_DEFINITION(Enum, PyDiaEnum_methods);
 
+TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Enum);
+
 static PyObject* PyDiaEnum_getValues(PyDiaEnum* self)
 {
     try

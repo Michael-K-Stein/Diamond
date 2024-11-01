@@ -2,6 +2,7 @@
 #include "DiaSymbol.h"
 #include "DiaSymbolTypes.h"
 #include "DiaTypeResolution.h"
+#include "Exceptions.h"
 
 namespace dia
 {
@@ -45,6 +46,8 @@ public:
     using Symbol::getValue;
     using Symbol::getVirtualAddress;
     using Symbol::getVolatileType;
+
+    size_t calcHash() const;
 };
 }  // namespace dia
 
@@ -56,20 +59,11 @@ struct hash<dia::Data>
     size_t operator()(const dia::Data& v) const
     {
         size_t calculatedHash = 0;
-        auto classParent      = v.getClassParent();
-        if (!!classParent)  // TODO: This is a temporary hack since some Data members do not have a classParent :(
-        {
-            hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), classParent,
-                         v.getCompilerGenerated(), v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(),
-                         v.getLocationType(), v.getName(), v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(),
-                         v.getVolatileType());
-        }
-        else
-        {
-            hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getBitPosition(), v.getCompilerGenerated(),
-                         v.getConstType(), v.getDataKind(), v.getIsAggregated(), v.getIsSplitted(), v.getLength(), v.getLocationType(), v.getName(),
-                         v.getOffset(), v.getSlot(), v.getSymTag(), v.getToken(), v.getType(), v.getUnalignedType(), v.getVolatileType());
-        }
+        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), GET_BIT_POSITION_OR_ZERO(v),
+                     GET_CLASS_PARENT_OR_EMPTY(v), GET_COMPILER_GENERATED_OR_FALSE(v), v.getConstType(), v.getDataKind(), GET_AGGREGATED_OR_FALSE(v),
+                     GET_SPLITTED_OR_FALSE(v), GET_LENGTH_OR_ZERO(v), v.getLocationType(), v.getName(), v.getOffset(), GET_SLOT_OR_ZERO(v),
+                     v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType());
+
         return calculatedHash;
     }
 };

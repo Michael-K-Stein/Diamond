@@ -95,7 +95,7 @@ struct hash<dia::Function>
                      v.getHasInlAsm(), v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(), v.getHasSetJump(), v.getInlSpec(),
                      v.getInterruptReturn(), v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(), v.getLocationType(), v.getName(),
                      v.getNoInline(), v.getNoReturn(), v.getNoStackOrdering(), v.getNotReached(), v.getOptimizedCodeDebugInfo(), v.getPure(),
-                     v.getToken(), v.getType(), v.getUnalignedType(), v.getUndecoratedName(), v.getVirtual(), v.getVirtualAddress(),
+                     GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getUndecoratedName(), v.getVirtual(), v.getVirtualAddress(),
                      v.getVolatileType());
 
         return calculatedHash;

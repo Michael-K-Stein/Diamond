@@ -2,6 +2,7 @@
 #include "BstrWrapper.h"
 #include "ComWrapper.h"
 #include "DiaSymbolFuncs.h"
+#include "Exceptions.h"
 #include "Hashing.h"
 #include <atlbase.h>
 #include <dia2.h>
@@ -9,6 +10,31 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#define GET_ATTRIBUTE_OR_DEFAULT(_symbol, attribute)                                                                                                 \
+    (                                                                                                                                                \
+        [](const auto& symbol)                                                                                                                       \
+        {                                                                                                                                            \
+            try                                                                                                                                      \
+            {                                                                                                                                        \
+                return symbol.##attribute##();                                                                                                       \
+            }                                                                                                                                        \
+            catch (const dia::InvalidUsageException&)                                                                                                \
+            {                                                                                                                                        \
+                return decltype(symbol.##attribute##()){};                                                                                           \
+            }                                                                                                                                        \
+        })(_symbol)
+
+#define GET_CLASS_PARENT_OR_EMPTY(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getClassParent)
+#define GET_CLASS_PARENT_ID_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getClassParentId)
+#define GET_TOKEN_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getToken)
+#define GET_SLOT_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getSlot)
+#define GET_LENGTH_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getLength)
+#define GET_SPLITTED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getIsSplitted)
+#define GET_AGGREGATED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getIsAggregated)
+#define GET_COMPILER_GENERATED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getCompilerGenerated)
+#define GET_BIT_POSITION_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getBitPosition)
+#define GET_RANK_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getRank)
 
 // Forward decleration for tests
 namespace CTests
@@ -99,7 +125,7 @@ public:
 #ifndef Py_PYTHON_H
     // In Python builds, we are going to allow the CPython code free access to the member functions, since the "wrapping" will actually be done in the
     // CPython extension.
-protected:
+public:
 #endif
 
     auto getType() const { return dia::getType(*this); }

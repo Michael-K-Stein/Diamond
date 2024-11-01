@@ -30,3 +30,5 @@ XFOR_EACH_UDT_KIND(__EXTERN_DEF_UDT_TYPE_OBJECT);
 
 PyObject* registerUdtPyClasses(PyObject* module);
 REGISTER_PYCLASS_REGISTRATION_FUNCTION(registerUdtPyClasses)
+
+PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol);

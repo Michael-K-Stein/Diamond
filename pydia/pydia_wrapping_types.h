@@ -7,3 +7,4 @@ PyObject* getDiaBasicTypeEnumWrappings();
 PyObject* getDiaLocationTypeEnumWrappings();
 PyObject* getDiaDataKindEnumWrappings();
 PyObject* getDiaUdtKindEnumWrappings();
+PyObject* getDiaAccessModifierEnumWrappings();

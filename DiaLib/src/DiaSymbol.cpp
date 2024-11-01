@@ -58,8 +58,6 @@ size_t Symbol::calcHash() const
         return 0;
     }
 #define __RETURN_HASH_SYMBOL(x) return std::hash<T>()(x);
-    size_t calculatedHash = 0;
-    hash_combine(calculatedHash, std::wstring(dia::symTagToName(getSymTag())), std::hash<std::wstring>()(getName()));
     XBY_SYMBOL_TYPE_T((*this), T, __RETURN_HASH_SYMBOL);
 }
 

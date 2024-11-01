@@ -1,9 +1,12 @@
 #include "pydia_wrapping_types.h"
+#include <DiaSymbolFuncs.h>
+#include <cvconst.h>
 
-PyObject* g_diaBasicTypeEnumWrappings    = NULL;
-PyObject* g_diaLocationTypeEnumWrappings = NULL;
-PyObject* g_diaDataKindEnumWrappings     = NULL;
-PyObject* g_diaUdtKindEnumWrappings      = NULL;
+PyObject* g_diaBasicTypeEnumWrappings      = NULL;
+PyObject* g_diaLocationTypeEnumWrappings   = NULL;
+PyObject* g_diaDataKindEnumWrappings       = NULL;
+PyObject* g_diaUdtKindEnumWrappings        = NULL;
+PyObject* g_diaAccessModifierEnumWrappings = NULL;
 
 PyObject* getDiaBasicTypeEnumWrappings() { return g_diaBasicTypeEnumWrappings; }
 
@@ -13,121 +16,107 @@ PyObject* getDiaDataKindEnumWrappings() { return g_diaDataKindEnumWrappings; }
 
 PyObject* getDiaUdtKindEnumWrappings() { return g_diaUdtKindEnumWrappings; }
 
-static PyObject* createDiaBasicTypeEnumWrappings(PyObject* module)
-{
-    if (NULL != g_diaBasicTypeEnumWrappings)
-    {
-        // Avoid duplicate initialization
-        return NULL;
-    }
+PyObject* getDiaAccessModifierEnumWrappings() { return g_diaAccessModifierEnumWrappings; }
 
-    // Create a dictionary for BasicType constants
-    g_diaBasicTypeEnumWrappings = PyDict_New();
-    if (g_diaBasicTypeEnumWrappings == NULL)
+static PyObject* createEnumObject(PyObject* module, const char* name, std::initializer_list<std::pair<const char*, int>> items)
+{
+    PyObject* pyEnumDict = PyDict_New();
+    if (!pyEnumDict)
     {
         return NULL;
     }
 
-    // Add BasicType constants to the dictionary
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "NoType", PyLong_FromLong(0));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Void", PyLong_FromLong(1));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Char", PyLong_FromLong(2));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "WChar", PyLong_FromLong(3));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Int", PyLong_FromLong(6));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "UInt", PyLong_FromLong(7));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Float", PyLong_FromLong(8));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "BCD", PyLong_FromLong(9));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Bool", PyLong_FromLong(10));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Long", PyLong_FromLong(13));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "ULong", PyLong_FromLong(14));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Currency", PyLong_FromLong(25));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Date", PyLong_FromLong(26));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Variant", PyLong_FromLong(27));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Complex", PyLong_FromLong(28));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Bit", PyLong_FromLong(29));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "BSTR", PyLong_FromLong(30));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Hresult", PyLong_FromLong(31));
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Char16", PyLong_FromLong(32));  // char16_t
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Char32", PyLong_FromLong(33));  // char32_t
-    PyDict_SetItemString(g_diaBasicTypeEnumWrappings, "Char8", PyLong_FromLong(34));   // char8_t
+    for (auto& item : items)
+    {
+        PyDict_SetItemString(pyEnumDict, item.first, PyLong_FromLong(item.second));
+    }
 
-    // Set the BasicType dictionary as an attribute of the main module
-    PyModule_AddObject(module, "BasicType", g_diaBasicTypeEnumWrappings);
 
-    return module;
-}
+    // Create a new PyTypeObject for the enum
+    PyTypeObject* pyEnumType = (PyTypeObject*)PyType_Type.tp_alloc(&PyType_Type, 0);
+    if (!pyEnumType)
+    {
+        Py_DECREF(pyEnumDict);
+        return NULL;
+    }
 
-static PyObject* createDiaLocationTypeEnumWrappings(PyObject* module)
-{
-    if (g_diaLocationTypeEnumWrappings != NULL) return NULL;
+    pyEnumType->tp_name      = name;
+    pyEnumType->tp_basicsize = sizeof(PyObject);
+    pyEnumType->tp_flags     = Py_TPFLAGS_DEFAULT;
+    pyEnumType->tp_dict      = pyEnumDict;
 
-    g_diaLocationTypeEnumWrappings = PyDict_New();
-    if (g_diaLocationTypeEnumWrappings == NULL) return NULL;
+    // Finalize the type so it can be used as a proper Python object
+    if (PyType_Ready(pyEnumType) < 0)
+    {
+        Py_DECREF(pyEnumDict);
+        Py_DECREF(pyEnumType);
+        return NULL;
+    }
 
-    // Add LocationType constants to the dictionary
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Null", PyLong_FromLong(0));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Static", PyLong_FromLong(1));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "TLS", PyLong_FromLong(2));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "RegRel", PyLong_FromLong(3));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "ThisRel", PyLong_FromLong(4));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Enregistered", PyLong_FromLong(5));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "BitField", PyLong_FromLong(6));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Slot", PyLong_FromLong(7));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "IlRel", PyLong_FromLong(8));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "MetaData", PyLong_FromLong(9));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "Constant", PyLong_FromLong(10));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "RegRelAliasIndir", PyLong_FromLong(11));
-    PyDict_SetItemString(g_diaLocationTypeEnumWrappings, "LocTypeMax", PyLong_FromLong(12));  // TODO: Do we really need this?
-
-    PyModule_AddObject(module, "LocationType", g_diaLocationTypeEnumWrappings);
-    return module;
-}
-
-static PyObject* createDiaDataKindEnumWrappings(PyObject* module)
-{
-    if (g_diaDataKindEnumWrappings != NULL) return NULL;
-
-    g_diaDataKindEnumWrappings = PyDict_New();
-    if (g_diaDataKindEnumWrappings == NULL) return NULL;
-
-    // Add DataKind constants to the dictionary
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Unknown", PyLong_FromLong(0));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Local", PyLong_FromLong(1));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "StaticLocal", PyLong_FromLong(2));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Param", PyLong_FromLong(3));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "ObjectPtr", PyLong_FromLong(4));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "FileStatic", PyLong_FromLong(5));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Global", PyLong_FromLong(6));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Member", PyLong_FromLong(7));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "StaticMember", PyLong_FromLong(8));
-    PyDict_SetItemString(g_diaDataKindEnumWrappings, "Constant", PyLong_FromLong(9));
-
-    PyModule_AddObject(module, "DataKind", g_diaDataKindEnumWrappings);
-    return module;
-}
-
-static PyObject* createDiaUdtKindEnumWrappings(PyObject* module)
-{
-    if (g_diaUdtKindEnumWrappings != NULL) return NULL;
-
-    g_diaUdtKindEnumWrappings = PyDict_New();
-    if (g_diaUdtKindEnumWrappings == NULL) return NULL;
-
-    // Add UdtKind constants to the dictionary
-    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Struct", PyLong_FromLong(0));
-    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Class", PyLong_FromLong(1));
-    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Union", PyLong_FromLong(2));
-    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "Interface", PyLong_FromLong(3));
-    PyDict_SetItemString(g_diaUdtKindEnumWrappings, "TaggedUnion", PyLong_FromLong(4));
-
-    PyModule_AddObject(module, "UdtKind", g_diaUdtKindEnumWrappings);
-    return module;
+    Py_INCREF(pyEnumType);
+    PyModule_AddObject(module, name, (PyObject*)pyEnumType);
+    return (PyObject*)pyEnumType;
 }
 
 PyObject* createDiaEnumWrappings(PyObject* module)
 {
-    if (createDiaBasicTypeEnumWrappings(module) == NULL || createDiaLocationTypeEnumWrappings(module) == NULL ||
-        createDiaDataKindEnumWrappings(module) == NULL || createDiaUdtKindEnumWrappings(module) == NULL)
+    if (NULL ==
+        (g_diaBasicTypeEnumWrappings = createEnumObject(
+             module, "BasicType",
+             {{"NoType", btNoType}, {"Void", btVoid},       {"Char", btChar},       {"WChar", btWChar}, {"Int", btInt},     {"UInt", btUInt},
+              {"Float", btFloat},   {"BCD", btBCD},         {"Bool", btBool},       {"Long", btLong},   {"ULong", btULong}, {"Currency", btCurrency},
+              {"Date", btDate},     {"Variant", btVariant}, {"Complex", btComplex}, {"Bit", btBit},     {"BSTR", btBSTR},   {"Hresult", btHresult},
+              {"Char16", btChar16}, {"Char32", btChar32},   {"Char8", btChar8}})))
+    {
+        return NULL;
+    }
+
+    if (NULL == (g_diaLocationTypeEnumWrappings = createEnumObject(module, "LocationType",
+                                                                   {{"Null", LocIsNull},
+                                                                    {"Static", LocIsStatic},
+                                                                    {"TLS", LocIsTLS},
+                                                                    {"RegRel", LocIsRegRel},
+                                                                    {"ThisRel", LocIsThisRel},
+                                                                    {"Enregistered", LocIsEnregistered},
+                                                                    {"BitField", LocIsBitField},
+                                                                    {"Slot", LocIsSlot},
+                                                                    {"IlRel", LocIsIlRel},
+                                                                    {"MetaData", LocInMetaData},
+                                                                    {"Constant", LocIsConstant},
+                                                                    {"RegRelAliasIndir", LocIsRegRelAliasIndir},
+                                                                    {"LocTypeMax", LocTypeMax}})))
+    {
+        return NULL;
+    }
+
+
+    if (NULL == (g_diaDataKindEnumWrappings = createEnumObject(module, "DataKind",
+                                                               {{"Unknown", DataIsUnknown},
+                                                                {"Local", DataIsLocal},
+                                                                {"StaticLocal", DataIsStaticLocal},
+                                                                {"Param", DataIsParam},
+                                                                {"ObjectPtr", DataIsObjectPtr},
+                                                                {"FileStatic", DataIsFileStatic},
+                                                                {"Global", DataIsGlobal},
+                                                                {"Member", DataIsMember},
+                                                                {"StaticMember", DataIsStaticMember},
+                                                                {"Constant", DataIsConstant}})))
+    {
+        return NULL;
+    }
+
+    if (NULL ==
+        (g_diaUdtKindEnumWrappings = createEnumObject(
+             module, "UdtKind",
+             {{"Struct", UdtStruct}, {"Class", UdtClass}, {"Union", UdtUnion}, {"Interface", UdtInterface}, {"TaggedUnion", UdtTaggedUnion}})))
+    {
+        return NULL;
+    }
+
+    if (NULL == (g_diaAccessModifierEnumWrappings = createEnumObject(module, "AccessModifier",
+                                                                     {{"Private", static_cast<int>(dia::AccessModifier::Private)},
+                                                                      {"Public", static_cast<int>(dia::AccessModifier::Public)},
+                                                                      {"Protected", static_cast<int>(dia::AccessModifier::Protected)}})))
     {
         return NULL;
     }
