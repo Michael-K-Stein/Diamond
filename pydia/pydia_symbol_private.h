@@ -16,7 +16,7 @@
                 unsafeCode;                                                                                                                          \
             } while (0);                                                                                                                             \
         }                                                                                                                                            \
-        catch (const std::exception& e)                                                                                                              \
+        catch ([[maybe_unused]] const std::exception& e) /* The exception handler has no obligation of using the exception itself */                 \
         {                                                                                                                                            \
             exceptionHandler;                                                                                                                        \
         }                                                                                                                                            \
