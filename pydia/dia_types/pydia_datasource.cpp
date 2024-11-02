@@ -9,6 +9,7 @@
 #include "pydia_enum.h"
 #include "pydia_exceptions.h"
 #include "pydia_symbol.h"
+#include "pydia_symbol_private.h"
 #include "pydia_trivial_init.h"
 #include "pydia_udts.h"
 
@@ -36,36 +37,51 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
 {
     dia::DataSource* tempDataSource = nullptr;  // Temporary pointer
 
-    try
+    const auto unsafeInit           = [&]() -> int
     {
-        // Check if we have any arguments
-        if (PyTuple_Size(args) == 0)
+        try
         {
-            // Use the default constructor
-            tempDataSource = new (std::nothrow) dia::DataSource();
+            // Check if we have any arguments
+            if (PyTuple_Size(args) == 0)
+            {
+                // Use the default constructor
+                tempDataSource = new (std::nothrow) dia::DataSource();
+            }
+            else if (PyTuple_Size(args) == 1)
+            {
+                // Handle the first argument as filePath
+                tempDataSource = new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)));
+            }
+            else if (PyTuple_Size(args) == 2)
+            {
+                // Handle the first argument as filePath and the second as symstoreDirectory
+                tempDataSource =
+                    new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)), PyObjectToAnyString(PyTuple_GetItem(args, 1)));
+            }
+            else
+            {
+                // Too many arguments
+                PyErr_SetString(PyExc_TypeError, "Invalid number of arguments for DataSource constructor.");
+                return -1;
+            }
         }
-        else if (PyTuple_Size(args) == 1)
+        catch (const dia::InvalidFileFormatException& e)
         {
-            // Handle the first argument as filePath
-            tempDataSource = new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)));
-        }
-        else if (PyTuple_Size(args) == 2)
-        {
-            // Handle the first argument as filePath and the second as symstoreDirectory
-            tempDataSource =
-                new (std::nothrow) dia::DataSource(PyObjectToAnyString(PyTuple_GetItem(args, 0)), PyObjectToAnyString(PyTuple_GetItem(args, 1)));
-        }
-        else
-        {
-            // Too many arguments
-            PyErr_SetString(PyExc_TypeError, "Invalid number of arguments for DataSource constructor.");
+            PyErr_SetString(PyDiaError, e.what());
             return -1;
         }
-    }
-    catch (const dia::InvalidFileFormatException& e)
+        return 0;
+    };
+
+    int retVal = -1;
+    PYDIA_SAFE_TRY_EXCEPT({ retVal = unsafeInit(); },
+                          {
+                              PyErr_SetString(PyDiaError, e.what());
+                              return -1;
+                          });
+    if (0 > retVal)
     {
-        PyErr_SetString(PyDiaError, e.what());
-        return -1;
+        return retVal;
     }
 
     // Check if the DataSource was created successfully
@@ -314,4 +330,42 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
         PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaStruct.");
         return NULL;
     }
+}
+
+PyDiaDataSource* PyDiaDataSource_FromInitializerList(PyObject* initializerList)
+{
+    if (PyObject_IsInstance(initializerList, (PyObject*)&PyDiaDataSource_Type))
+    {
+        return (PyDiaDataSource*)initializerList;
+    }
+
+    if (PyUnicode_Check(initializerList))
+    {
+        // Create a new PyDiaDataSource object using tp_new
+        PyDiaDataSource* dataSourceObj = (PyDiaDataSource*)PyDiaDataSource_Type.tp_new(&PyDiaDataSource_Type, NULL, NULL);
+        if (!dataSourceObj)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for new PyDiaDataSource object.");
+            return NULL;
+        }
+
+        PyObject* pyTupleOfString = PyTuple_Pack(1, initializerList);
+        if (!pyTupleOfString)
+        {
+            Py_DECREF(dataSourceObj);  // Clean up if initialization fails
+            return NULL;
+        }
+
+        // Initialize the PyDiaDataSource object with the string data source
+        if (0 > PyDiaDataSource_init(dataSourceObj, pyTupleOfString, NULL))
+        {
+            Py_DECREF(dataSourceObj);  // Clean up if initialization fails
+            return NULL;
+        }
+
+        return dataSourceObj;
+    }
+
+    PyErr_SetString(PyExc_TypeError, "A DataSource object cannot be deduced from the given parameters.");
+    return NULL;
 }

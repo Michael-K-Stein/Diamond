@@ -18,6 +18,12 @@ static std::wstring ToString<enum BasicType>(const enum BasicType& v)
 {
     return dia::resolveBaseTypeName(v);
 }
+
+template <>
+static std::wstring ToString<enum SymTagEnum>(const enum SymTagEnum& v)
+{
+    return dia::symTagToName(v);
+}
 }  // namespace CppUnitTestFramework
 }  // namespace VisualStudio
 }  // namespace Microsoft

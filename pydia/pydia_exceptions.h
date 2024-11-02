@@ -3,6 +3,31 @@
 #include <Python.h>
 // Python.h must be included before anything else
 
+#define PYDIA_SAFE_TRY_EXCEPT(unsafeCode, exceptionHandler)                                                                                          \
+    do                                                                                                                                               \
+    {                                                                                                                                                \
+        try                                                                                                                                          \
+        {                                                                                                                                            \
+            do                                                                                                                                       \
+            {                                                                                                                                        \
+                unsafeCode;                                                                                                                          \
+            } while (0);                                                                                                                             \
+        }                                                                                                                                            \
+        catch ([[maybe_unused]] const std::exception& e) /* The exception handler has no obligation of using the exception itself */                 \
+        {                                                                                                                                            \
+            exceptionHandler;                                                                                                                        \
+        }                                                                                                                                            \
+    } while (0)
+
+#define PYDIA_SAFE_TRY(unsafeCode)                                                                                                                   \
+    PYDIA_SAFE_TRY_EXCEPT(unsafeCode, {                                                                                                              \
+        do                                                                                                                                           \
+        {                                                                                                                                            \
+            PyErr_SetString(PyDiaError, e.what());                                                                                                   \
+            return NULL;                                                                                                                             \
+        } while (0);                                                                                                                                 \
+    })
+
 
 #define XFOR_TRIVIAL_PYDIA_ERRORS(opperation)                                                                                                        \
     opperation(InvalidUsage);                                                                                                                        \

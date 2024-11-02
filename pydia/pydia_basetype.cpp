@@ -35,5 +35,4 @@ static PyMethodDef PyDiaBaseType_methods[] = {
 // Define the Python DiaEnum type object
 
 PYDIA_SYMBOL_TYPE_DEFINITION(BaseType, PyDiaBaseType_methods);
-
 TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(BaseType);

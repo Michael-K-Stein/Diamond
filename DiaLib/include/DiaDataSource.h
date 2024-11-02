@@ -5,6 +5,7 @@
 #include "DiaUserDefinedTypeWrapper.h"
 #include "SymbolTypes/DiaEnum.h"
 #include "SymbolTypes/DiaFunction.h"
+#include <DiaSession.h>
 #include <atlbase.h>
 #include <dia2.h>
 #include <memory>
@@ -36,6 +37,10 @@ public:
 
     const std::wstring getLoadedPdbFile() const;
 
+    Session& getSession() { return m_session; }
+
+    Symbol getSymbolByHash(size_t symbolHash) const;
+
     const std::vector<Symbol> getExports() const;
 
     const std::vector<Symbol> getSymbols(enum SymTagEnum symTag) const;
@@ -58,20 +63,10 @@ public:
 
     UserDefinedType getStruct(const AnyString& structName) const;
 
-    bool sessionOpened() const { return m_sessionOpenned; }
+    bool sessionOpened() const { return !(!m_session); }
 
 private:
-    Symbol& getGlobalScope();
-
-    const Symbol& getGlobalScope() const
-    {
-        if (!!!m_globalScope)
-        {
-            throw std::runtime_error("A DIA session must be openned and a global "
-                                     "scope must be identified before using this API!");
-        }
-        return m_globalScope;
-    }
+    Symbol& getGlobalScope() const;
 
     void openSession();
     void loadDataFromArbitraryFile(const std::wstring& filePath);
@@ -79,9 +74,7 @@ private:
     std::wstring buildSymbolSearchPath(const std::wstring& exePath) const;
 
     CComPtr<IDiaDataSource> m_comPtr{nullptr};
-    CComPtr<IDiaSession> m_sessionComPtr{nullptr};
-    Symbol m_globalScope{};
-    bool m_sessionOpenned{false};
+    Session m_session{};
     std::vector<std::wstring> m_additionalSymstoreDirectories{};
 };
 

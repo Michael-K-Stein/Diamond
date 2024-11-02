@@ -39,6 +39,8 @@ template <typename T>
 /// @return The stream, with modifiers written as needed.
 std::wostream& streamSymbolTypeModifiers(std::wostream& os, const T& v);
 
+std::string convertGuidToString(const GUID& guid);
+
 // Derived Types
 class UserDefinedType;
 
@@ -554,12 +556,14 @@ protected:
 
     auto getWasInlined() const { return dia::getWasInlined(*this); }
 
-    // Implicit cnversion operators
+    // Implicit conversion operators
 #define __DECLARE_AND_DEFINE_IMPLICIT_CAST_OPERATIONS(className)                                                                                     \
-    operator className&() { return static_cast<className&>(*this); }                                                                                 \
+    operator className&() { return reinterpret_cast<className&>(*this); }                                                                            \
     operator className&&()& { return reinterpret_cast<className&&>(static_cast<Symbol&&>(*this)); }                                                  \
     operator className&&()&& { return reinterpret_cast<className&&>(*this); }
     XFOR_DIA_SYMBOL_TYPE(__DECLARE_AND_DEFINE_IMPLICIT_CAST_OPERATIONS);
+
+    __DECLARE_AND_DEFINE_IMPLICIT_CAST_OPERATIONS(UserDefinedType);
 
 private:
     using SymbolEnum = DiaSymbolEnumerator<Symbol>;

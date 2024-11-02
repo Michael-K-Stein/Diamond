@@ -8,11 +8,16 @@
 #define CHECK_DIACOM_EXCEPTION(message, hResult)                                                                                                     \
     do                                                                                                                                               \
     {                                                                                                                                                \
+        if (E_INVALIDARG == hResult)                                                                                                                 \
+        {                                                                                                                                            \
+            /* __debugbreak(); */                                                                                                                    \
+            throw dia::InvalidUsageException("Invalid arguments passed!");                                                                           \
+        }                                                                                                                                            \
         if (FAILED(hResult))                                                                                                                         \
         {                                                                                                                                            \
             throw DiaComException(message, hResult);                                                                                                 \
         }                                                                                                                                            \
-        else if (S_FALSE == hResult)                                                                                                                 \
+        if (S_FALSE == hResult)                                                                                                                      \
         {                                                                                                                                            \
             /* __debugbreak(); */                                                                                                                    \
             throw dia::InvalidUsageException("Queried property that is not available for the symbol!");                                              \

@@ -3,33 +3,8 @@
 // This header is EXPLICITLY only for very internal implementations of the pydia library!
 #include <Python.h>
 //
+#include "pydia_exceptions.h"
 #include "pydia_symbol.h"
-
-
-#define PYDIA_SAFE_TRY_EXCEPT(unsafeCode, exceptionHandler)                                                                                          \
-    do                                                                                                                                               \
-    {                                                                                                                                                \
-        try                                                                                                                                          \
-        {                                                                                                                                            \
-            do                                                                                                                                       \
-            {                                                                                                                                        \
-                unsafeCode;                                                                                                                          \
-            } while (0);                                                                                                                             \
-        }                                                                                                                                            \
-        catch ([[maybe_unused]] const std::exception& e) /* The exception handler has no obligation of using the exception itself */                 \
-        {                                                                                                                                            \
-            exceptionHandler;                                                                                                                        \
-        }                                                                                                                                            \
-    } while (0)
-
-#define PYDIA_SAFE_TRY(unsafeCode)                                                                                                                   \
-    PYDIA_SAFE_TRY_EXCEPT(unsafeCode, {                                                                                                              \
-        do                                                                                                                                           \
-        {                                                                                                                                            \
-            PyErr_SetString(PyExc_RuntimeError, e.what());                                                                                           \
-            return NULL;                                                                                                                             \
-        } while (0);                                                                                                                                 \
-    })
 
 
 #define PYDIA_SYMBOL_TYPE_DEFINITION(className, classMethods)                                                                                        \

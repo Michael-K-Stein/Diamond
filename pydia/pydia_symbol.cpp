@@ -136,12 +136,12 @@ PyObject* PyDiaSymbol_repr(const PyDiaSymbol* self)
     auto safeExecution = [&]() -> PyObject*
     {
         _ASSERT_EXPR(nullptr != self->dataSource->diaDataSource, L"Internal data source raw pointer must be initialized!");
-        const std::wstring dataSource  = self->dataSource->diaDataSource->getLoadedPdbFile();
-        const unsigned long symIndexId = self->diaSymbol->getSymIndexId();
+        const std::wstring dataSource = self->dataSource->diaDataSource->getLoadedPdbFile();
+        const auto hash               = self->diaSymbol->calcHash();
 
-        return PyUnicode_FromFormat("%T(R'%U', 0x%.8lX)", self, PyUnicode_FromWideChar(dataSource.c_str(), dataSource.length()), symIndexId);
+        return PyUnicode_FromFormat("%T(R'%U', 0x%.16llX)", self, PyUnicode_FromWideChar(dataSource.c_str(), dataSource.length()), hash);
     };
-    PYDIA_SAFE_TRY_EXCEPT({ return safeExecution(); }, { Py_UNREACHABLE(); });
+    PYDIA_SAFE_TRY({ return safeExecution(); });
 }
 
 Py_hash_t PyDiaSymbol_hash(PyObject* self)

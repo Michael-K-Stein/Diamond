@@ -9,3 +9,5 @@ typedef struct
 } PyDiaDataSource;
 
 extern PyTypeObject PyDiaDataSource_Type;
+
+PyDiaDataSource* PyDiaDataSource_FromInitializerList(PyObject* initializerList);

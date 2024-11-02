@@ -114,6 +114,9 @@
     <ClInclude Include="DiaHashing.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\DiaSession.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp">
@@ -147,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DiaHashing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DiaSession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

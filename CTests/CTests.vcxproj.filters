@@ -33,6 +33,9 @@
     <ClCompile Include="Hash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Symbol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

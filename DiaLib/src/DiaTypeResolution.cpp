@@ -161,6 +161,18 @@ std::wstring locationTypeToName(const enum LocationType v)
     return LOCATION_TYPE_NAMES[vIndex];
 }
 
+std::string convertGuidToString(const GUID& guid)
+{
+    char rawGuidString[34];
+    if (34 != snprintf(rawGuidString, sizeof(rawGuidString), "%.8lX-%.2hX-%.2hX-%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX", guid.Data1,
+                       guid.Data2, guid.Data3, guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5],
+                       guid.Data4[6], guid.Data4[7]))
+    {
+        throw std::runtime_error("GUID must be 34 ASCII characters long!");
+    }
+    return std::string{rawGuidString, 34};
+}
+
 std::wstring resolveTypeName(const Symbol& symbol)
 {
     const auto symTag = symbol.getSymTag();

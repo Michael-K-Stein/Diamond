@@ -71,12 +71,22 @@ void DataSource::loadDataForExe(const AnyString& exePath)
 
 const std::wstring DataSource::getLoadedPdbFile() const { return getGlobalScope().getSymbolsFileName(); }
 
+Symbol DataSource::getSymbolByHash(size_t symbolHash) const
+{
+    auto allSymbols = getSymbols(SymTagNull);
+    for (const auto& symbol : allSymbols)
+    {
+        if (symbol.calcHash() == symbolHash)
+        {
+            return symbol;
+        }
+    }
+    throw dia::SymbolNotFoundException("No symbol was found matching the given hash!");
+}
+
 const std::vector<Symbol> DataSource::getExports() const
 {
-    CComPtr<IDiaEnumSymbols> rawExportEnum = nullptr;
-    const auto result                      = m_sessionComPtr->getExports(&rawExportEnum);
-    CHECK_DIACOM_EXCEPTION("Failed to get session exports!", result);
-    DiaSymbolEnumerator<Symbol> exports{std::move(rawExportEnum)};
+    auto exports = m_session.getExports();
     std::vector<Symbol> items{};
     for (const auto& item : exports)
     {
@@ -204,23 +214,12 @@ UserDefinedType DataSource::getStruct(const AnyString& structName) const
     return static_cast<const UserDefinedType&>(items.at(0));
 }
 
-Symbol& DataSource::getGlobalScope()
-{
-    if (!m_globalScope)
-    {
-        const auto result = m_sessionComPtr->get_globalScope(&m_globalScope.makeFromRaw());
-        CHECK_DIACOM_EXCEPTION("Failed to get global scope!", result);
-    }
-
-    return m_globalScope;
-}
+Symbol& DataSource::getGlobalScope() const { return m_session.getGlobalScope(); }
 
 void DataSource::openSession()
 {
-    const auto result = m_comPtr->openSession(&m_sessionComPtr);
+    const auto result = m_comPtr->openSession(&m_session.makeFromRaw());
     CHECK_DIACOM_EXCEPTION("Failed to open IDiaSession!", result);
-    m_sessionOpenned = true;
-    getGlobalScope();
 }
 
 void DataSource::loadDataFromArbitraryFile(const std::wstring& filePath)

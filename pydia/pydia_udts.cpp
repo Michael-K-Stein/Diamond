@@ -21,26 +21,7 @@
 
 static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self);
 
-#define __INIT_DEINIT_UDT(udtName)                                                                                                                   \
-    static void PyDia##udtName##_dealloc(PyDia##udtName* self)                                                                                       \
-    {                                                                                                                                                \
-        if (self->diaUserDefinedType)                                                                                                                \
-        {                                                                                                                                            \
-            delete self->diaUserDefinedType;                                                                                                         \
-        }                                                                                                                                            \
-        Py_TYPE(self)->tp_free((PyObject*)self);                                                                                                     \
-    }                                                                                                                                                \
-                                                                                                                                                     \
-    static int PyDia##udtName##_init(PyDia##udtName* self, PyObject* args, PyObject* kwds)                                                           \
-    {                                                                                                                                                \
-        self->diaUserDefinedType = new (std::nothrow) dia::UserDefinedType();                                                                        \
-        if (!self->diaUserDefinedType)                                                                                                               \
-        {                                                                                                                                            \
-            PyErr_SetString(PyExc_MemoryError, "Failed to create " #udtName "object.");                                                              \
-            return -1;                                                                                                                               \
-        }                                                                                                                                            \
-        return 0;                                                                                                                                    \
-    }
+#define __INIT_DEINIT_UDT(udtName) TRIVIAL_INIT_DEINIT_CUSTOM_FIELD(udtName, UserDefinedType)
 
 XFOR_EACH_UDT_KIND(__INIT_DEINIT_UDT);
 

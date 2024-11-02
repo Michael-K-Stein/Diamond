@@ -173,6 +173,7 @@ private:
     template <typename U>
     friend DiaSymbolEnumerator<U> enumerate(const Symbol& parentSymbol, enum SymTagEnum symTag, LPCOLESTR name, DWORD compareFlags);
     friend class DataSource;
+    friend class Session;
 };
 
 template <typename T>
