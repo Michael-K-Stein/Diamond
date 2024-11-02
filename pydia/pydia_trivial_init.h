@@ -26,7 +26,7 @@
     }
 
 #define TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(className)                                                                                             \
-    PyObject* PyDia##className##_From##className##Symbol(dia::##className&& symbol)                                                                  \
+    PyObject* PyDia##className##_From##className##Symbol(dia::##className&& symbol, PyDiaDataSource* dataSource)                                     \
     {                                                                                                                                                \
         PyDia##className* pySymbol = PyObject_New(PyDia##className, &PyDia##className##_Type);                                                       \
         if (!pySymbol)                                                                                                                               \
@@ -41,6 +41,10 @@
             PyErr_SetString(PyExc_MemoryError, "Failed to create Dia" #className "'s internal state.");                                              \
             return NULL;                                                                                                                             \
         }                                                                                                                                            \
+                                                                                                                                                     \
+        Py_INCREF(dataSource);                                                                                                                       \
+        pySymbol->dataSource = dataSource;                                                                                                           \
+                                                                                                                                                     \
         Py_INCREF(pySymbol);                                                                                                                         \
         return reinterpret_cast<PyObject*>(pySymbol);                                                                                                \
     }

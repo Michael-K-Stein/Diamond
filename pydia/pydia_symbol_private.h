@@ -42,7 +42,7 @@
         0,                                                  /* tp_getattr */                                                                         \
         0,                                                  /* tp_setattr */                                                                         \
         0,                                                  /* tp_as_async */                                                                        \
-        0,                                                  /* tp_repr */                                                                            \
+        (reprfunc)PyDiaSymbol_repr,                         /* tp_repr */                                                                            \
         0,                                                  /* tp_as_number */                                                                       \
         0,                                                  /* tp_as_sequence */                                                                     \
         0,                                                  /* tp_as_mapping */                                                                      \
@@ -76,6 +76,7 @@
 
 Py_hash_t PyDiaSymbol_hash(PyObject* self);
 PyObject* PyDiaSymbol_richcompare(PyObject* self, PyObject* other, int op);
+PyObject* PyDiaSymbol_repr(const PyDiaSymbol* self);
 
 #if 1
 PyObject* PyDiaSymbol_getSymIndexId(const PyDiaSymbol* self);
@@ -282,7 +283,7 @@ PyObject* PyDiaSymbol_udt_kind(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_isUnaligned(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_undecorated_name(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_undecorated_name_ex(const PyDiaSymbol* self, DWORD options);
-PyObject* PyDiaSymbol_unmodified_type(const PyDiaSymbol* self);
+PyObject* PyDiaSymbol_getUnmodifiedType(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_unmodified_type_id(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_unused(const PyDiaSymbol* self);
 PyObject* PyDiaSymbol_upper_bound(const PyDiaSymbol* self);

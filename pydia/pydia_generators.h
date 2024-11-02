@@ -12,7 +12,8 @@
 template <typename K, typename T>
 struct PyDiaAbstractGenerator
 {
-    PyObject_HEAD const K* parent;
+    PyObject_HEAD;
+    const K* parent;
     dia::DiaSymbolEnumerator<T>* enumerator;
     dia::DiaSymbolEnumerator<T>::Iterator* iterator;
 };
@@ -78,7 +79,7 @@ static inline PyObject* PyDiaSymbolGenerator_iternext(PyDiaAbstractGenerator<K, 
     auto& currentItem = *capturedIteration;
     _ASSERT(NULL != &currentItem);
 
-    return PyDiaSymbol_FromSymbol(std::move(currentItem));
+    return PyDiaSymbol_FromSymbol(std::move(currentItem), self->parent->dataSource);
 }
 
 template <typename K, typename T>
@@ -138,7 +139,10 @@ PyDiaAbstractGenerator<K, T>* PyDiaSymbolGenerator_create(const K* parent, dia::
         return NULL;
     }
 
-    self->parent     = parent;
+    Py_INCREF(parent);
+    self->parent = parent;
+    _ASSERT_EXPR(nullptr != self->parent->dataSource, L"Parent's data source must be initialized!");
+
     self->enumerator = new (std::nothrow) dia::DiaSymbolEnumerator<T>(std::move(enumerator));
     if (!self->enumerator)
     {

@@ -86,7 +86,7 @@ static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self)
     {
         auto rawEnumerator = self->diaUserDefinedType->enumerateMembers();
         PyDiaDataGenerator* generator =
-            (PyDiaDataGenerator*)PyDiaSymbolGenerator_create<dia::UserDefinedType, dia::Data>(self->diaUserDefinedType, std::move(rawEnumerator));
+            (PyDiaDataGenerator*)PyDiaSymbolGenerator_create<PyDiaUdt_Abstract, dia::Data>(self, std::move(rawEnumerator));
         if (!generator)
         {
             PyErr_SetString(PyExc_RuntimeError, "Failed to create generator.");
@@ -110,7 +110,7 @@ PyObject* registerUdtPyClasses(PyObject* module)
     return module;
 }
 
-PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
+PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
 {
     PyObject* pySymbol = NULL;
     switch (symbol.getUdtKind())
@@ -190,11 +190,8 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
         return NULL;
     }
 
-    if (NULL == reinterpret_cast<PyDiaUdt_Abstract*>(pySymbol)->diaUserDefinedType)
-    {
-        PyErr_SetString(PyExc_MemoryError, "Failed to allocate specific UDT's internal state.");
-        return NULL;
-    }
+    Py_INCREF(dataSource);
+    reinterpret_cast<PyDiaUdt_Abstract*>(pySymbol)->dataSource = dataSource;
 
     return pySymbol;
 }

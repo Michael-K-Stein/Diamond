@@ -5,6 +5,7 @@
 #include <objbase.h>
 
 // C pydia imports
+#include "dia_types/pydia_datasource.h"
 #include "pydia_exceptions.h"
 #include "pydia_other_types.h"
 #include "pydia_symbol_private.h"

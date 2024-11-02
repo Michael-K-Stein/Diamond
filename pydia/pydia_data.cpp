@@ -54,20 +54,4 @@ static PyMethodDef PyDiaData_methods[] = {
 
 
 PYDIA_SYMBOL_TYPE_DEFINITION(Data, PyDiaData_methods);
-
-PyObject* PyDiaData_FromDataSymbol(dia::Data&& symbol)
-{
-    // Create a new PyDiaData object
-    PyDiaData* pySymbol = PyObject_New(PyDiaData, &PyDiaData_Type);
-    if (!pySymbol)
-    {
-        PyErr_SetString(PyExc_MemoryError, "Failed to create DiaSymbol object.");
-        return NULL;
-    }
-
-    // Initialize the PyDiaData object with the corresponding dia::Data object
-    pySymbol->diaData = new (std::nothrow) dia::Data(symbol);
-
-    Py_INCREF(pySymbol);
-    return reinterpret_cast<PyObject*>(pySymbol);
-}
+TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Data);

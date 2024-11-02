@@ -181,7 +181,7 @@ const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) con
     return items;
 }
 
-const UserDefinedType DataSource::getStruct(const AnyString& structName) const
+UserDefinedType DataSource::getStruct(const AnyString& structName) const
 {
     std::vector<Symbol> items{};
     auto exports = enumerate<Symbol>(getGlobalScope(), SymTagUDT, structName.c_str());

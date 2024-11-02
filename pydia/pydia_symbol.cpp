@@ -21,11 +21,12 @@
 #define PYDIA_ASSERT_SYMBOL_POINTERS(__self)                                                                                                         \
     do                                                                                                                                               \
     {                                                                                                                                                \
-        _ASSERT_EXPR(nullptr != __self, "Self must not be null!");                                                                                   \
-        _ASSERT_EXPR(nullptr != __self->diaSymbol, "Internal symbol must not be null!");                                                             \
+        _ASSERT_EXPR(nullptr != __self, L"Self must not be null!");                                                                                  \
+        _ASSERT_EXPR(nullptr != __self->diaSymbol, L"Internal symbol must not be null!");                                                            \
+        _ASSERT_EXPR(nullptr != __self->dataSource, L"Internal dataSource pointer can never be null!");                                              \
     } while (0)
 
-PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol)
+PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
 {
     // Create a new PyDiaData object
 
@@ -36,34 +37,34 @@ PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol)
     {
 
     case SymTagNull:
-        pySymbol = PyDiaNull_FromNullSymbol(std::move(symbol));
+        pySymbol = PyDiaNull_FromNullSymbol(std::move(symbol), dataSource);
         break;
     case SymTagExe:
-        pySymbol = PyDiaExe_FromExeSymbol(std::move(symbol));
+        pySymbol = PyDiaExe_FromExeSymbol(std::move(symbol), dataSource);
         break;
     case SymTagData:
-        pySymbol = PyDiaData_FromDataSymbol(std::move(symbol));
+        pySymbol = PyDiaData_FromDataSymbol(std::move(symbol), dataSource);
         break;
     case SymTagEnum:
-        pySymbol = PyDiaEnum_FromEnumSymbol(std::move(symbol));
+        pySymbol = PyDiaEnum_FromEnumSymbol(std::move(symbol), dataSource);
         break;
     case SymTagUDT:
-        pySymbol = PyDiaUdt_FromSymbol(std::move(symbol));
+        pySymbol = PyDiaUdt_FromSymbol(std::move(symbol), dataSource);
         break;
     case SymTagFunctionType:
-        pySymbol = PyDiaFunctionType_FromFunctionTypeSymbol(std::move(symbol));
+        pySymbol = PyDiaFunctionType_FromFunctionTypeSymbol(std::move(symbol), dataSource);
         break;
     case SymTagPointerType:
-        pySymbol = PyDiaPointer_FromPointerSymbol(std::move(symbol));
+        pySymbol = PyDiaPointer_FromPointerSymbol(std::move(symbol), dataSource);
         break;
     case SymTagArrayType:
-        pySymbol = PyDiaArray_FromArraySymbol(std::move(symbol));
+        pySymbol = PyDiaArray_FromArraySymbol(std::move(symbol), dataSource);
         break;
     case SymTagBaseType:
-        pySymbol = PyDiaBaseType_FromBaseTypeSymbol(std::move(symbol));
+        pySymbol = PyDiaBaseType_FromBaseTypeSymbol(std::move(symbol), dataSource);
         break;
     case SymTagTypedef:
-        pySymbol = PyDiaTypedef_FromTypedefSymbol(std::move(symbol));
+        pySymbol = PyDiaTypedef_FromTypedefSymbol(std::move(symbol), dataSource);
         break;
     default:
         break;
@@ -129,16 +130,55 @@ PyObject* PyDiaSymbol_richcompare(PyObject* self, PyObject* other, int op)
     }
 }
 
+PyObject* PyDiaSymbol_repr(const PyDiaSymbol* self)
+{
+    PYDIA_ASSERT_SYMBOL_POINTERS(self);
+    auto safeExecution = [&]() -> PyObject*
+    {
+        _ASSERT_EXPR(nullptr != self->dataSource->diaDataSource, L"Internal data source raw pointer must be initialized!");
+        const std::wstring dataSource  = self->dataSource->diaDataSource->getLoadedPdbFile();
+        const unsigned long symIndexId = self->diaSymbol->getSymIndexId();
+
+        return PyUnicode_FromFormat("%T(R'%U', 0x%.8lX)", self, PyUnicode_FromWideChar(dataSource.c_str(), dataSource.length()), symIndexId);
+    };
+    PYDIA_SAFE_TRY_EXCEPT({ return safeExecution(); }, { Py_UNREACHABLE(); });
+}
+
 Py_hash_t PyDiaSymbol_hash(PyObject* self)
 {
-    _ASSERT_EXPR(nullptr != self, "Self must not be null when hashing!");
+    _ASSERT_EXPR(nullptr != self, L"Self must not be null when hashing!");
     dia::Symbol* selfSymbol = reinterpret_cast<PyDiaSymbol*>(self)->diaSymbol;
-    _ASSERT_EXPR(nullptr != selfSymbol, "Self->diaSymbol must not be null when hashing!");
+    _ASSERT_EXPR(nullptr != selfSymbol, L"Self->diaSymbol must not be null when hashing!");
     PYDIA_SAFE_TRY_EXCEPT({ return static_cast<Py_hash_t>(selfSymbol->calcHash()); }, { Py_UNREACHABLE(); });
     Py_UNREACHABLE();
 }
 
-TRIVIAL_INIT_DEINIT(Symbol);
+static void PyDiaSymbol_dealloc(PyDiaSymbol* self)
+{
+    if (self->diaSymbol)
+    {
+        delete self->diaSymbol;
+    }
+    if (self->dataSource)
+    {
+        const auto dataSource = self->dataSource;
+        self->dataSource      = nullptr;
+        Py_DECREF(dataSource);
+    }
+    _Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
+}
+
+static int PyDiaSymbol_init(PyDiaSymbol* self, PyObject* args, PyObject* kwds)
+{
+    self->diaSymbol = new (std::nothrow) dia::Symbol();
+    if (!self->diaSymbol)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create Symbol object.");
+        return -1;
+    }
+    return 0;
+};
+
 PYDIA_SYMBOL_TYPE_DEFINITION(Symbol, 0);
 
 // Method: PyDiaSymbol_getClassParent
@@ -147,7 +187,7 @@ PyObject* PyDiaSymbol_getClassParent(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         auto classParent = self->diaSymbol->getClassParent();
-        return PyDiaSymbol_FromSymbol(std::move(classParent));
+        return PyDiaSymbol_FromSymbol(std::move(classParent), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -231,7 +271,7 @@ PyObject* PyDiaSymbol_getArrayIndexType(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Call getArrayIndexType and wrap the returned Symbol in a new PyDiaSymbol
         dia::Symbol arrayIndexType = self->diaSymbol->getArrayIndexType();
-        return PyDiaSymbol_FromSymbol(std::move(arrayIndexType));
+        return PyDiaSymbol_FromSymbol(std::move(arrayIndexType), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -327,7 +367,7 @@ PyObject* PyDiaSymbol_getBaseSymbol(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Call getBaseSymbol and wrap the returned Symbol in a new PyDiaSymbol
         dia::Symbol baseSymbol = self->diaSymbol->getBaseSymbol();
-        return PyDiaSymbol_FromSymbol(std::move(baseSymbol));
+        return PyDiaSymbol_FromSymbol(std::move(baseSymbol), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -412,7 +452,7 @@ PyObject* PyDiaSymbol_getCoffGroup(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Call getCoffGroup and wrap the returned Symbol in a new PyDiaSymbol
         dia::Symbol coffGroup = self->diaSymbol->getCoffGroup();
-        return PyDiaSymbol_FromSymbol(std::move(coffGroup));
+        return PyDiaSymbol_FromSymbol(std::move(coffGroup), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -484,7 +524,7 @@ PyObject* PyDiaSymbol_getContainer(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Call getContainer and wrap the returned Symbol in a new PyDiaSymbol
         dia::Symbol container = self->diaSymbol->getContainer();
-        return PyDiaSymbol_FromSymbol(std::move(container));
+        return PyDiaSymbol_FromSymbol(std::move(container), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -1428,7 +1468,7 @@ PyObject* PyDiaSymbol_getLexicalParent(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol lexicalParent = self->diaSymbol->getLexicalParent();
-        return PyDiaSymbol_FromSymbol(std::move(lexicalParent));
+        return PyDiaSymbol_FromSymbol(std::move(lexicalParent), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -1527,7 +1567,7 @@ PyObject* PyDiaSymbol_getLowerBound(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol lowerBound = self->diaSymbol->getLowerBound();
-        return PyDiaSymbol_FromSymbol(std::move(lowerBound));
+        return PyDiaSymbol_FromSymbol(std::move(lowerBound), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -1774,7 +1814,7 @@ PyObject* PyDiaSymbol_getObjectPointerType(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol objectPointerType = self->diaSymbol->getObjectPointerType();
-        return PyDiaSymbol_FromSymbol(std::move(objectPointerType));
+        return PyDiaSymbol_FromSymbol(std::move(objectPointerType), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2157,7 +2197,7 @@ PyObject* PyDiaSymbol_getSubType(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol subType = self->diaSymbol->getSubType();
-        return PyDiaSymbol_FromSymbol(std::move(subType));
+        return PyDiaSymbol_FromSymbol(std::move(subType), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2322,7 +2362,7 @@ PyObject* PyDiaSymbol_getType(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol type = self->diaSymbol->getType();
-        return PyDiaSymbol_FromSymbol(std::move(type));
+        return PyDiaSymbol_FromSymbol(std::move(type), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2465,13 +2505,13 @@ PyObject* PyDiaSymbol_undecorated_name_ex(const PyDiaSymbol* self, DWORD options
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_unmodified_type
-PyObject* PyDiaSymbol_unmodified_type(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getUnmodifiedType
+PyObject* PyDiaSymbol_getUnmodifiedType(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol unmodifiedType = self->diaSymbol->getUnmodifiedType();
-        return PyDiaSymbol_FromSymbol(std::move(unmodifiedType));
+        return PyDiaSymbol_FromSymbol(std::move(unmodifiedType), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2504,7 +2544,7 @@ PyObject* PyDiaSymbol_upper_bound(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol upperBound = self->diaSymbol->getUpperBound();
-        return PyDiaSymbol_FromSymbol(std::move(upperBound));
+        return PyDiaSymbol_FromSymbol(std::move(upperBound), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2605,7 +2645,7 @@ PyObject* PyDiaSymbol_getVirtualBaseTableType(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol virtualBaseTableType = self->diaSymbol->getVirtualBaseTableType();
-        return PyDiaSymbol_FromSymbol(std::move(virtualBaseTableType));
+        return PyDiaSymbol_FromSymbol(std::move(virtualBaseTableType), self->dataSource);
     });
     Py_UNREACHABLE();
 }
@@ -2616,7 +2656,7 @@ PyObject* PyDiaSymbol_getVirtualTableShape(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         dia::Symbol virtualTableShape = self->diaSymbol->getVirtualTableShape();
-        return PyDiaSymbol_FromSymbol(std::move(virtualTableShape));
+        return PyDiaSymbol_FromSymbol(std::move(virtualTableShape), self->dataSource);
     });
     Py_UNREACHABLE();
 }

@@ -56,7 +56,7 @@ public:
     const std::vector<Symbol> getUnions() const;
     const std::vector<Symbol> getTaggedUnions() const;
 
-    const UserDefinedType getStruct(const AnyString& structName) const;
+    UserDefinedType getStruct(const AnyString& structName) const;
 
     bool sessionOpened() const { return m_sessionOpenned; }
 

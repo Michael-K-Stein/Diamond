@@ -6,8 +6,9 @@
 // Define the Python DiaStructType object
 typedef struct
 {
-    PyObject_HEAD dia::UserDefinedType* diaUdt;
+    PyObject_HEAD;
+    dia::UserDefinedType* diaUdt;
+    PYDIA_DERIVED_SYMBOL_ADDITIONAL_MEMBERS;
 } PyDiaUdt;
 
 extern PyTypeObject PyDiaUdt_Type;
-

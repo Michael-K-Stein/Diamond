@@ -216,11 +216,16 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* arg
             Py_DECREF(resultList);  // Clean up the result list
             return NULL;            // Return NULL on failure
         }
-        sym->diaSymbol = new (std::nothrow) dia::Symbol(exports[i]);
+
+        Py_INCREF(self);
+        sym->dataSource = self;
+        sym->diaSymbol  = new (std::nothrow) dia::Symbol(exports[i]);
 
         // Set the item in the list, transferring ownership
         if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
         {
+            self->diaDataSource = nullptr;
+            Py_DECREF(self);
             delete sym->diaSymbol;  // Clean up
             delete sym;             // Clean up
             Py_DECREF(resultList);  // Clean up the result list
@@ -295,27 +300,9 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
     // Try to retrieve the struct using the provided name
     try
     {
-        const auto& structSymbol = self->diaDataSource->getStruct(PyObjectToAnyString(pyStructName));
+        auto structSymbol = self->diaDataSource->getStruct(PyObjectToAnyString(pyStructName));
         _ASSERT(NULL != &structSymbol);
-
-        // Allocate a new PyDiaEnum object
-        PyDiaStruct* pyStruct = PyObject_New(PyDiaStruct, &PyDiaStruct_Type);
-        if (!pyStruct)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaStruct object.");
-            return NULL;
-        }
-
-        // Initialize the PyDiaStruct object with the dia::UserDefinedType object
-        pyStruct->diaUserDefinedType = new (std::nothrow) dia::UserDefinedType(structSymbol);
-        if (!pyStruct->diaUserDefinedType)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for DiaStruct.");
-            Py_DECREF(pyStruct);  // Release allocated PyDiaStruct object
-            return NULL;
-        }
-
-        return (PyObject*)pyStruct;
+        return PyDiaUdt_FromSymbol(std::move(static_cast<dia::Symbol&>(structSymbol)), self);
     }
     catch (const dia::SymbolNotFoundException& e)
     {

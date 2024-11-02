@@ -8,7 +8,9 @@
 // Define the Python DiaEnumType object
 typedef struct
 {
-    PyObject_HEAD dia::Enum* diaEnum;  // Pointer to the C++ DiaEnumType object
+    PyObject_HEAD;
+    dia::Enum* diaEnum;  // Pointer to the C++ DiaEnumType object
+    PYDIA_DERIVED_SYMBOL_ADDITIONAL_MEMBERS;
 } PyDiaEnum;
 
 extern PyTypeObject PyDiaEnum_Type;

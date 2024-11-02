@@ -19,7 +19,9 @@
 
 typedef struct
 {
-    PyObject_HEAD dia::UserDefinedType* diaUserDefinedType;  // Pointer to the C++ UserDefinedType object
+    PyObject_HEAD;
+    dia::UserDefinedType* diaUserDefinedType;  // Pointer to the C++ UserDefinedType object
+    PYDIA_DERIVED_SYMBOL_ADDITIONAL_MEMBERS;
 } PyDiaUdt_Abstract;
 
 #define __TYPEDEF_UDT(udtName) typedef PyDiaUdt_Abstract PyDia##udtName;
@@ -31,4 +33,4 @@ XFOR_EACH_UDT_KIND(__EXTERN_DEF_UDT_TYPE_OBJECT);
 PyObject* registerUdtPyClasses(PyObject* module);
 REGISTER_PYCLASS_REGISTRATION_FUNCTION(registerUdtPyClasses)
 
-PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol);
+PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource);

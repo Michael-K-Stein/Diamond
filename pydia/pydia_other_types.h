@@ -1,5 +1,6 @@
 #pragma once
 #include <Python.h>
+//
 #include <SymbolTypes/DiaArray.h>
 #include <SymbolTypes/DiaBaseType.h>
 #include <SymbolTypes/DiaData.h>
@@ -11,6 +12,9 @@
 #include <SymbolTypes/DiaPointer.h>
 #include <SymbolTypes/DiaTypedef.h>
 #include <SymbolTypes/DiaUdt.h>
+//
+#include "dia_types/pydia_datasource.h"
+#include "pydia_symbol.h"
 
 #define XFOR_TRIVIAL_PYDIA_CLASSES(opperation)                                                                                                       \
     opperation(Exe);                                                                                                                                 \
@@ -23,7 +27,9 @@
 #define __TRIVIAL_PYDIA_TYPE_WRAPPER_DEFINITION(className)                                                                                           \
     typedef struct                                                                                                                                   \
     {                                                                                                                                                \
-        PyObject_HEAD dia::##className* dia##className;                                                                                              \
+        PyObject_HEAD;                                                                                                                               \
+        dia::##className* dia##className;                                                                                                            \
+        PYDIA_DERIVED_SYMBOL_ADDITIONAL_MEMBERS;                                                                                                     \
     } PyDia##className;                                                                                                                              \
     extern PyTypeObject PyDia##className##_Type;
 
