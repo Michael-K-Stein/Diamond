@@ -11,13 +11,11 @@ namespace dia
 {
 
 /// @brief Indicates that the symbol is a function.
-class Function : protected Symbol
+class Function : public Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Function);
-
-    explicit operator const Symbol&() const { return *this; }
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getAccess;
     using Symbol::getAddressOffset;
@@ -81,24 +79,3 @@ private:
 }  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::Function& func);
-
-namespace std
-{
-template <>
-struct hash<dia::Function>
-{
-    size_t operator()(const dia::Function& v) const
-    {
-        size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), v.getAddressSection(), v.getClassParent(),
-                     v.getConstType(), v.getCustomCallingConvention(), v.getFarReturn(), v.getHasAlloca(), v.getHasEH(), v.getHasEHa(),
-                     v.getHasInlAsm(), v.getHasLongJump(), v.getHasSecurityChecks(), v.getHasSEH(), v.getHasSetJump(), v.getInlSpec(),
-                     v.getInterruptReturn(), v.getIntro(), v.getIsNaked(), v.getIsStatic(), v.getLength(), v.getLocationType(), v.getName(),
-                     v.getNoInline(), v.getNoReturn(), v.getNoStackOrdering(), v.getNotReached(), v.getOptimizedCodeDebugInfo(), v.getPure(),
-                     GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getUndecoratedName(), v.getVirtual(), v.getVirtualAddress(),
-                     v.getVolatileType());
-
-        return calculatedHash;
-    }
-};
-}  // namespace std

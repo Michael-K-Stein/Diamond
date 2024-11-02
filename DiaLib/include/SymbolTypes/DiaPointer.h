@@ -6,11 +6,11 @@
 namespace dia
 {
 /// @brief Each pointer is identified by a SymTagPointerType symbol.
-class Pointer : protected Symbol
+class Pointer : public Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Pointer);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getConstType;
     using Symbol::getLength;

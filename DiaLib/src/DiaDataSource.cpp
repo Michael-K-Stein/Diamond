@@ -141,7 +141,7 @@ const Enum DataSource::getEnum(const AnyString& enumName) const
     {
         throw std::runtime_error("Too many enums found matching name!");
     }
-    return rawEnumSymbols.at(0);
+    return static_cast<const Enum&>(rawEnumSymbols.at(0));
 }
 
 const std::vector<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
@@ -152,26 +152,11 @@ const std::vector<Symbol> DataSource::getCompilandDetails() const { return getSy
 
 const std::vector<Symbol> DataSource::getCompilandEnvs() const { return getSymbols(SymTagCompilandEnv); }
 
-const std::vector<Function> DataSource::getFunctions() const
-{
-    const auto functionSymbols = getSymbols(SymTagFunction);
-    std::vector<Function> functions{functionSymbols.begin(), functionSymbols.end()};
-    return functions;
-}
+const std::vector<Function> DataSource::getFunctions() const { return convertSymbolVector<Function>(getSymbols(SymTagFunction)); }
 
-const std::vector<UserDefinedType> DataSource::getUserDefinedTypes() const
-{
-    const auto exports = getSymbols(SymTagUDT);
-    std::vector<UserDefinedType> types{exports.begin(), exports.end()};
-    return types;
-}
+const std::vector<UserDefinedType> DataSource::getUserDefinedTypes() const { return convertSymbolVector<UserDefinedType>(getSymbols(SymTagUDT)); }
 
-const std::vector<Struct> DataSource::getStructs() const
-{
-    const auto userDefinedStructs = getUserDefinedTypes(UdtStruct);
-    std::vector<Struct> structs{userDefinedStructs.begin(), userDefinedStructs.end()};
-    return structs;
-}
+const std::vector<Struct> DataSource::getStructs() const { return convertSymbolVector<Struct>(getUserDefinedTypes(UdtStruct)); }
 
 const std::vector<Symbol> DataSource::getClasses() const { return getUserDefinedTypes(UdtClass); }
 
@@ -199,7 +184,7 @@ const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) con
 const UserDefinedType DataSource::getStruct(const AnyString& structName) const
 {
     std::vector<Symbol> items{};
-    auto exports = enumerate(getGlobalScope(), SymTagUDT, structName.c_str(), nsfCaseSensitive);
+    auto exports = enumerate<Symbol>(getGlobalScope(), SymTagUDT, structName.c_str());
     for (const auto& item : exports)
     {
         if (UdtStruct != item.getUdtKind())
@@ -216,7 +201,7 @@ const UserDefinedType DataSource::getStruct(const AnyString& structName) const
     {
         throw std::runtime_error("Too many structs found matching name!");
     }
-    return items.at(0);
+    return static_cast<const UserDefinedType&>(items.at(0));
 }
 
 Symbol& DataSource::getGlobalScope()

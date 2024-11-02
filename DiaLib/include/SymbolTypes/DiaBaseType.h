@@ -6,12 +6,12 @@
 namespace dia
 {
 /// @brief Base types are identified by SymTagBaseType symbols.
-class BaseType : protected Symbol
+class BaseType : public Symbol
 {
 public:
     BaseType() = default;
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, BaseType);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getBaseType;
     using Symbol::getConstType;

@@ -6,12 +6,12 @@
 namespace dia
 {
 /// @brief Symbols with SymTagTypedef tags introduce names for other types.
-class Typedef : protected Symbol
+class Typedef : public Symbol
 {
 public:
     Typedef() = default;
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Typedef);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getBaseType;
     using Symbol::getClassParent;

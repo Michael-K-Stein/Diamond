@@ -7,12 +7,12 @@ namespace dia
 {
 /// @brief Each parameter of a function is identified by a SymTagFunctionArgType
 /// symbol.
-class FunctionArgType : protected Symbol
+class FunctionArgType : public Symbol
 {
 public:
     FunctionArgType() = default;
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, FunctionArgType);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getClassParent;
     using Symbol::getClassParentId;

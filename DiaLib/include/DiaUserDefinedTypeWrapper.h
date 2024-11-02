@@ -1,5 +1,7 @@
 #pragma once
+#include "AnyString.h"
 #include "SymbolTypes/DiaUDT.h"
+#include <set>
 
 namespace dia
 {
@@ -11,23 +13,16 @@ class UserDefinedType : public Udt
 {
 public:
     using Udt::Udt;
-    TRIVIAL_CONVERT(Udt, UserDefinedType);
+    USING_BASE_OPERATORS(Udt);
 
     using Udt::calcHash;
 
     DiaSymbolEnumerator<Data> enumerateMembers() const;
 
-    bool operator==(const UserDefinedType& other) const { return calcHash() == other.calcHash(); }
+    std::set<UserDefinedType> queryDependencies() const;
+    std::set<UserDefinedType> queryForwardDependencies() const;
 
-    bool operator!=(const UserDefinedType& other) const { return !(*this == other); }
-
-    bool operator<(const UserDefinedType& other) const { return calcHash() < other.calcHash(); }
-
-    bool operator<=(const UserDefinedType& other) const { return !(*this > other); }
-
-    bool operator>(const UserDefinedType& other) const { return calcHash() > other.calcHash(); }
-
-    bool operator>=(const UserDefinedType& other) const { return !(*this < other); }
+    Data getMember(const AnyString& memberName) const;
 
 protected:
     using Udt::get;

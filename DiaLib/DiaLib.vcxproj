@@ -143,11 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DiaHashing.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="include\AnyString.h" />
     <ClInclude Include="include\BstrWrapper.h" />
     <ClInclude Include="include\ComWrapper.h" />
-    <ClInclude Include="include\DiaDataMember.h" />
     <ClInclude Include="include\DiaDataSource.h" />
     <ClInclude Include="include\DiaPrint.h" />
     <ClInclude Include="include\DiaSymbol.h" />
@@ -156,7 +156,7 @@
     <ClInclude Include="include\DiaTypeResolution.h" />
     <ClInclude Include="include\DiaUserDefinedTypeWrapper.h" />
     <ClInclude Include="include\Exceptions.h" />
-    <ClInclude Include="include\Hashing.h" />
+    <ClInclude Include="include\HashUtils.h" />
     <ClInclude Include="include\SymbolPathHelper.h" />
     <ClInclude Include="include\SymbolTypes\DiaArray.h" />
     <ClInclude Include="include\SymbolTypes\DiaBaseType.h" />
@@ -175,16 +175,14 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DiaHashing.cpp" />
     <ClCompile Include="DiaLib.cpp" />
-    <ClCompile Include="include\SymbolTypes\DiaData.cpp" />
-    <ClCompile Include="include\SymbolTypes\DiaUDT.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\DiaDataMember.cpp" />
     <ClCompile Include="src\DiaDataSource.cpp" />
     <ClCompile Include="src\DiaSymbol.cpp" />
     <ClCompile Include="src\DiaSymbolFuncs.cpp" />

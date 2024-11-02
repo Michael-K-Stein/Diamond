@@ -1,7 +1,7 @@
 #pragma once
-#include "DiaDataMember.h"
 #include "DiaSymbol.h"
 #include "Exceptions.h"
+#include "SymbolTypes/DiaData.h"
 #include "SymbolTypes/DiaSymbolTypes.h"
 #include <atlbase.h>
 #include <cstddef>  // For std::ptrdiff_t
@@ -145,6 +145,8 @@ public:
     Iterator begin();
     Iterator end();
 
+    size_t count() const;
+
     operator const std::vector<T>()
     {
         std::vector<T> myVector{};
@@ -231,6 +233,13 @@ inline typename DiaSymbolEnumerator<T>::Iterator DiaSymbolEnumerator<T>::end()
 }
 
 template <typename T>
+inline size_t DiaSymbolEnumerator<T>::count() const
+{
+    auto copiedEnumerator = *this;
+    return std::distance(copiedEnumerator.begin(), copiedEnumerator.end());
+}
+
+template <typename T>
 inline void DiaSymbolEnumerator<T>::move(DiaSymbolEnumerator&& other) noexcept
 {
     _ASSERT(this != &other);
@@ -248,7 +257,7 @@ inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol, enum SymTagE
 template <typename T>
 inline DiaSymbolEnumerator<T> enumerate(const Symbol& parentSymbol, enum SymTagEnum symTag, LPCOLESTR name)
 {
-    return enumerate<T>(parentSymbol, symTag, name, nsNone);
+    return enumerate<T>(parentSymbol, symTag, name, nsfCaseSensitive);
 }
 
 template <typename T>

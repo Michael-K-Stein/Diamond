@@ -69,9 +69,6 @@
     <ClInclude Include="include\ComWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\DiaDataMember.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\DiaDataSource.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -96,7 +93,7 @@
     <ClInclude Include="include\Exceptions.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Hashing.h">
+    <ClInclude Include="include\HashUtils.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\SymbolPathHelper.h">
@@ -114,15 +111,15 @@
     <ClInclude Include="include\SymbolTypes\DiaTypedef.h">
       <Filter>include\SymbolTypes</Filter>
     </ClInclude>
+    <ClInclude Include="DiaHashing.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiaLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DiaDataMember.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\DiaDataSource.cpp">
@@ -149,10 +146,7 @@
     <ClCompile Include="src\DiaSymbolTypes\DiaSymbolPrint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\SymbolTypes\DiaUDT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\SymbolTypes\DiaData.cpp">
+    <ClCompile Include="DiaHashing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

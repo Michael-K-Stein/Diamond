@@ -9,12 +9,11 @@ namespace dia
 /// @brief All variables, such as parameters, local variables, global variables,
 /// and class members, are identified by `SymTagData` symbols. Constant values
 /// (`LocIsConstant`) are also identified with this type.
-class Data : protected Symbol
+class Data : public Symbol
 {
 public:
     Data() = default;
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Data);
 
     using Symbol::getAccess;
     using Symbol::getAddressOffset;
@@ -50,23 +49,5 @@ public:
     size_t calcHash() const;
 };
 }  // namespace dia
-
-namespace std
-{
-template <>
-struct hash<dia::Data>
-{
-    size_t operator()(const dia::Data& v) const
-    {
-        size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAccess(), GET_BIT_POSITION_OR_ZERO(v),
-                     GET_CLASS_PARENT_OR_EMPTY(v), GET_COMPILER_GENERATED_OR_FALSE(v), v.getConstType(), v.getDataKind(), GET_AGGREGATED_OR_FALSE(v),
-                     GET_SPLITTED_OR_FALSE(v), GET_LENGTH_OR_ZERO(v), v.getLocationType(), v.getName(), v.getOffset(), GET_SLOT_OR_ZERO(v),
-                     v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType());
-
-        return calculatedHash;
-    }
-};
-}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::Data& data);

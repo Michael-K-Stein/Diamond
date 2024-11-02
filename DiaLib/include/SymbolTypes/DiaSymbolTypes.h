@@ -16,54 +16,66 @@
         fromType::operator=(std::move(other));                                                                                                       \
         return *this;                                                                                                                                \
     }
+#define USING_BASE_OPERATORS(baseType)                                                                                                               \
+    using baseType::operator==;                                                                                                                      \
+    using baseType::operator!=;                                                                                                                      \
+    using baseType::operator!;                                                                                                                       \
+    using baseType::operator<;                                                                                                                       \
+    using baseType::operator<=;                                                                                                                      \
+    using baseType::operator>;                                                                                                                       \
+    using baseType::operator>=;
+
+#define XFOR_DIA_SYMBOL_TYPE(opperation)                                                                                                             \
+    opperation(Symbol);                                                                                                                              \
+    opperation(Null);                                                                                                                                \
+    opperation(Exe);                                                                                                                                 \
+    opperation(Compiland);                                                                                                                           \
+    opperation(CompilandDetails);                                                                                                                    \
+    opperation(CompilandEnv);                                                                                                                        \
+    opperation(Function);                                                                                                                            \
+    opperation(Block);                                                                                                                               \
+    opperation(Data);                                                                                                                                \
+    opperation(Annotation);                                                                                                                          \
+    opperation(Label);                                                                                                                               \
+    opperation(PublicSymbol);                                                                                                                        \
+    opperation(Udt);                                                                                                                                 \
+    opperation(Enum);                                                                                                                                \
+    opperation(FunctionType);                                                                                                                        \
+    opperation(Pointer);                                                                                                                             \
+    opperation(Array);                                                                                                                               \
+    opperation(BaseType);                                                                                                                            \
+    opperation(Typedef);                                                                                                                             \
+    opperation(BaseClass);                                                                                                                           \
+    opperation(Friend);                                                                                                                              \
+    opperation(FunctionArgType);                                                                                                                     \
+    opperation(FuncDebugStart);                                                                                                                      \
+    opperation(FuncDebugEnd);                                                                                                                        \
+    opperation(UsingNamespace);                                                                                                                      \
+    opperation(VTableShape);                                                                                                                         \
+    opperation(VTable);                                                                                                                              \
+    opperation(Custom);                                                                                                                              \
+    opperation(Thunk);                                                                                                                               \
+    opperation(CustomType);                                                                                                                          \
+    opperation(ManagedType);                                                                                                                         \
+    opperation(Dimension);                                                                                                                           \
+    opperation(CallSite);                                                                                                                            \
+    opperation(InlineSite);                                                                                                                          \
+    opperation(BaseInterface);                                                                                                                       \
+    opperation(VectorType);                                                                                                                          \
+    opperation(MatrixType);                                                                                                                          \
+    opperation(HLSLType);                                                                                                                            \
+    opperation(Caller);                                                                                                                              \
+    opperation(Callee);                                                                                                                              \
+    opperation(Export);                                                                                                                              \
+    opperation(HeapAllocationSite);                                                                                                                  \
+    opperation(CoffGroup);                                                                                                                           \
+    opperation(Inlinee);                                                                                                                             \
+    opperation(TaggedUnionCase);
 
 namespace dia
 {
-class Symbol;
-class Null;
-class Exe;
-class Compiland;
-class CompilandDetails;
-class CompilandEnv;
-class Function;
-class Block;
-class Data;
-class Annotation;
-class Label;
-class PublicSymbol;
-class Udt;
-class Enum;
-class FunctionType;
-class Pointer;
-class Array;
-class BaseType;
-class Typedef;
-class BaseClass;
-class Friend;
-class FunctionArgType;
-class FuncDebugStart;
-class FuncDebugEnd;
-class UsingNamespace;
-class VTableShape;
-class VTable;
-class Custom;
-class Thunk;
-class CustomType;
-class ManagedType;
-class Dimension;
-class CallSite;
-class InlineSite;
-class BaseInterface;
-class VectorType;
-class MatrixType;
-class HLSLType;
-class Caller;
-class Callee;
-class Export;
-class HeapAllocationSite;
-class CoffGroup;
-class Inlinee;
-class TaggedUnionCase;
+#define __FORWARD_DECLARE_DIA_TYPE_CLASS(className) class className;
+XFOR_DIA_SYMBOL_TYPE(__FORWARD_DECLARE_DIA_TYPE_CLASS);
 
 // Enumeration for function call type
 enum class CvCall : uint8_t

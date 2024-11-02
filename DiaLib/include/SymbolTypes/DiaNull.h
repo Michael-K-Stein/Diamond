@@ -5,11 +5,11 @@
 namespace dia
 {
 /// @brief Indicates that the symbol has no type.
-class Null : protected Symbol
+class Null : public Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Null);
+    USING_BASE_OPERATORS(Symbol);
 };
 }  // namespace dia
 

@@ -1,11 +1,13 @@
 #include "pch.h"
 //
 #include "BstrWrapper.h"
+#include "DiaHashing.h"
 #include "DiaPrint.h"
 #include "DiaSymbol.h"
 #include "DiaTypeResolution.h"
 #include "DiaUserDefinedTypeWrapper.h"
 #include "Exceptions.h"
+#include "HashUtils.h"
 #include "SymbolTypes/DiaArray.h"
 #include "SymbolTypes/DiaBaseType.h"
 #include "SymbolTypes/DiaData.h"
@@ -24,7 +26,7 @@ Symbol::Symbol(const Symbol& other)
 {
 }
 
-Symbol Symbol::operator=(const Symbol& other)
+Symbol& Symbol::operator=(const Symbol& other)
 {
     ComWrapper::operator=(other);
     return *this;
@@ -35,7 +37,7 @@ Symbol::Symbol(Symbol&& other) noexcept
 {
 }
 
-Symbol Symbol::operator=(Symbol&& other) noexcept
+Symbol& Symbol::operator=(Symbol&& other) noexcept
 {
     ComWrapper::operator=(std::move(other));
     return *this;

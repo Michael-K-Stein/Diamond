@@ -3,38 +3,13 @@
 #include "ComWrapper.h"
 #include "DiaSymbolFuncs.h"
 #include "Exceptions.h"
-#include "Hashing.h"
+#include "HashUtils.h"
 #include <atlbase.h>
 #include <dia2.h>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-
-#define GET_ATTRIBUTE_OR_DEFAULT(_symbol, attribute)                                                                                                 \
-    (                                                                                                                                                \
-        [](const auto& symbol)                                                                                                                       \
-        {                                                                                                                                            \
-            try                                                                                                                                      \
-            {                                                                                                                                        \
-                return symbol.##attribute##();                                                                                                       \
-            }                                                                                                                                        \
-            catch (const dia::InvalidUsageException&)                                                                                                \
-            {                                                                                                                                        \
-                return decltype(symbol.##attribute##()){};                                                                                           \
-            }                                                                                                                                        \
-        })(_symbol)
-
-#define GET_CLASS_PARENT_OR_EMPTY(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getClassParent)
-#define GET_CLASS_PARENT_ID_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getClassParentId)
-#define GET_TOKEN_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getToken)
-#define GET_SLOT_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getSlot)
-#define GET_LENGTH_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getLength)
-#define GET_SPLITTED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getIsSplitted)
-#define GET_AGGREGATED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getIsAggregated)
-#define GET_COMPILER_GENERATED_OR_FALSE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getCompilerGenerated)
-#define GET_BIT_POSITION_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getBitPosition)
-#define GET_RANK_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getRank)
 
 // Forward decleration for tests
 namespace CTests
@@ -73,10 +48,10 @@ public:
     Symbol() = default;
     // Copy semantics
     Symbol(const Symbol& other);
-    Symbol operator=(const Symbol& other);
+    Symbol& operator=(const Symbol& other);
     // Move semantics
     Symbol(Symbol&& other) noexcept;
-    Symbol operator=(Symbol&& other) noexcept;
+    Symbol& operator=(Symbol&& other) noexcept;
 
     using ComWrapper::ComWrapper;
     using ComWrapper::makeFromRaw;
@@ -125,7 +100,7 @@ public:
 #ifndef Py_PYTHON_H
     // In Python builds, we are going to allow the CPython code free access to the member functions, since the "wrapping" will actually be done in the
     // CPython extension.
-public:
+protected:
 #endif
 
     auto getType() const { return dia::getType(*this); }
@@ -579,6 +554,13 @@ public:
 
     auto getWasInlined() const { return dia::getWasInlined(*this); }
 
+    // Implicit cnversion operators
+#define __DECLARE_AND_DEFINE_IMPLICIT_CAST_OPERATIONS(className)                                                                                     \
+    operator className&() { return static_cast<className&>(*this); }                                                                                 \
+    operator className&&()& { return reinterpret_cast<className&&>(static_cast<Symbol&&>(*this)); }                                                  \
+    operator className&&()&& { return reinterpret_cast<className&&>(*this); }
+    XFOR_DIA_SYMBOL_TYPE(__DECLARE_AND_DEFINE_IMPLICIT_CAST_OPERATIONS);
+
 private:
     using SymbolEnum = DiaSymbolEnumerator<Symbol>;
     using LineEnum   = DiaSymbolEnumerator<Symbol>;  // TODO: Should be
@@ -596,6 +578,22 @@ private:
     // For tests
     friend class CTests::FindStructs;
 };
+
+template <typename ToTypeT>
+std::vector<ToTypeT> convertSymbolVector(const std::vector<Symbol>& v)
+{
+    std::vector<ToTypeT> out{};
+    std::transform(v.begin(), v.end(), std::back_inserter(out), [](const dia::Symbol& x) { return static_cast<const ToTypeT&>(x); });
+    return out;
+}
+
+template <typename ToTypeT>
+std::vector<ToTypeT> convertSymbolVector(std::vector<Symbol>&& v)
+{
+    std::vector<ToTypeT> out{};
+    std::transform(v.begin(), v.end(), std::back_inserter(out), [](const dia::Symbol& x) { return static_cast<const ToTypeT&>(x); });
+    return out;
+}
 
 // Specialized template for types derived from Symbol
 template <typename T>

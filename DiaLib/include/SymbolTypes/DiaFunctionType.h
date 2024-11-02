@@ -10,11 +10,11 @@ namespace dia
 /// @brief Each unique function signature is identified by a SymTagFunctionType
 /// symbol. Each parameter is identified as a class child symbol with a
 /// SymTagFunctionArgType tag.
-class FunctionType : protected Symbol
+class FunctionType : public Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, FunctionType);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getCallingConvention;
     using Symbol::getClassParent;

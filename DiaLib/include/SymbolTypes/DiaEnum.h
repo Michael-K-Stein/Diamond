@@ -8,11 +8,11 @@
 namespace dia
 {
 /// @brief Enumerations are identified by SymTagEnum symbols. Each enumeration value appears as a class child with a SymTagConstant tag.
-class Enum : protected Symbol
+class Enum : public Symbol
 {
 public:
     using Symbol::Symbol;
-    TRIVIAL_CONVERT(Symbol, Enum);
+    USING_BASE_OPERATORS(Symbol);
 
     using Symbol::getBaseType;
     using Symbol::getClassParent;
@@ -40,21 +40,5 @@ public:
     const std::vector<Data> getValues() const { return DiaSymbolEnumerator<Data>::enumerate(static_cast<const Symbol&>(*this), SymTagData); };
 };
 }  // namespace dia
-
-namespace std
-{
-template <>
-struct hash<dia::Enum>
-{
-    size_t operator()(const dia::Enum& v) const
-    {
-        size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getBaseType(), v.getClassParent(), v.getConstructor(),
-                     v.getConstType(), v.getHasAssignmentOperator(), v.getHasCastOperator(), v.getHasNestedTypes(), v.getLength(), v.getName(),
-                     v.getNested(), v.getOverloadedOperator(), v.getPacked(), v.getScoped(), v.getUnalignedType(), v.getVolatileType());
-        return calculatedHash;
-    }
-};
-}  // namespace std
 
 std::wostream& operator<<(std::wostream& os, const dia::Enum& udt);

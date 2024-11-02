@@ -38,15 +38,15 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
         const auto unicodeStringStructSymbol = dataSource.getStruct(L"_UNICODE_STRING");
-        std::vector<dia::DataMember> members{};
+        std::vector<dia::Data> members{};
         for (const auto& member : unicodeStringStructSymbol.enumerateMembers())
         {
             members.push_back(member);
         }
 
-        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getFieldName()});
-        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getFieldName()});
-        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getFieldName()});
+        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getName()});
+        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getName()});
+        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getName()});
     }
 
     TEST_METHOD(ProperStructMemberTypes)
@@ -54,21 +54,21 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
         const auto unicodeStringStructSymbol = dataSource.getStruct(L"_UNICODE_STRING");
-        std::vector<dia::DataMember> members{};
+        std::vector<dia::Data> members{};
         for (const auto& member : unicodeStringStructSymbol.enumerateMembers())
         {
             members.push_back(member);
         }
 
-        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getFieldName()});
-        Assert::AreEqual(std::wstring{L"USHORT"}, std::wstring{members[0].getFieldCType().getTypeName()});
+        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getName()});
+        Assert::AreEqual(std::wstring{L"USHORT"}, std::wstring{members[0].getType().getTypeName()});
 
-        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getFieldName()});
-        Assert::AreEqual(std::wstring{L"USHORT"}, std::wstring{members[1].getFieldCType().getTypeName()});
+        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getName()});
+        Assert::AreEqual(std::wstring{L"USHORT"}, std::wstring{members[1].getType().getTypeName()});
 
-        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getFieldName()});
+        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getName()});
         // PWSTR == WCHAR*
-        Assert::AreEqual(std::wstring{L"WCHAR*"}, std::wstring{members[2].getFieldCType().getTypeName()});
+        Assert::AreEqual(std::wstring{L"WCHAR*"}, std::wstring{members[2].getType().getTypeName()});
     }
 
     TEST_METHOD(ProperStructMemberOffsets)
@@ -76,19 +76,19 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
         const auto unicodeStringStructSymbol = dataSource.getStruct(L"_UNICODE_STRING");
-        std::vector<dia::DataMember> members{};
+        std::vector<dia::Data> members{};
         for (const auto& member : unicodeStringStructSymbol.enumerateMembers())
         {
             members.push_back(member);
         }
 
-        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getFieldName()});
+        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getName()});
         Assert::AreEqual(static_cast<LONG>(0), members[0].getOffset());
 
-        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getFieldName()});
+        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getName()});
         Assert::AreEqual(static_cast<LONG>(sizeof(USHORT)), members[1].getOffset());
 
-        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getFieldName()});
+        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getName()});
         // We use sizeof(void*) here for compatibility with x86, where this will be at offset 4 since there won't be any padding added before the
         // pointer.
         Assert::AreEqual(static_cast<LONG>(sizeof(void*)), members[2].getOffset());
@@ -99,22 +99,22 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
         const auto unicodeStringStructSymbol = dataSource.getStruct(L"_UNICODE_STRING");
-        std::vector<dia::DataMember> members{};
+        std::vector<dia::Data> members{};
         for (const auto& member : unicodeStringStructSymbol.enumerateMembers())
         {
             members.push_back(member);
         }
 
-        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getFieldName()});
-        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(USHORT)), members[0].getFieldCType().getLength());
+        Assert::AreEqual(std::wstring{L"Length"}, std::wstring{members[0].getName()});
+        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(USHORT)), members[0].getType().getLength());
 
-        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getFieldName()});
-        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(USHORT)), members[1].getFieldCType().getLength());
+        Assert::AreEqual(std::wstring{L"MaximumLength"}, std::wstring{members[1].getName()});
+        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(USHORT)), members[1].getType().getLength());
 
-        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getFieldName()});
+        Assert::AreEqual(std::wstring{L"Buffer"}, std::wstring{members[2].getName()});
         // We use sizeof(void*) here for compatibility with x86, where this will be at offset 4 since there won't be any padding added before the
         // pointer.
-        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(void*)), members[2].getFieldCType().getLength());
+        Assert::AreEqual(static_cast<ULONGLONG>(sizeof(void*)), members[2].getType().getLength());
     }
 
     TEST_METHOD(ProperStructTotalSize)

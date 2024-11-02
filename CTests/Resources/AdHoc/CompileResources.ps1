@@ -25,6 +25,7 @@ function Build-Resource {
             '/I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um"';
             '/I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared"';
             "/I`"$MSVCDir\include`"";
+            "/I`"$MSVCDir\atlmfc\include`"";
             '/c';
             '/Zi';
             '/Od';

@@ -14,7 +14,7 @@
         }                                                                                                                                            \
         else if (S_FALSE == hResult)                                                                                                                 \
         {                                                                                                                                            \
-            __debugbreak();                                                                                                                          \
+            /* __debugbreak(); */                                                                                                                    \
             throw dia::InvalidUsageException("Queried property that is not available for the symbol!");                                              \
         }                                                                                                                                            \
     } while (0)

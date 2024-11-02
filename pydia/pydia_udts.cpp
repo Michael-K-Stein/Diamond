@@ -124,7 +124,7 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
             PyErr_SetString(PyExc_MemoryError, "Failed to create DiaStruct object.");
             return NULL;
         }
-        pyStruct->diaUserDefinedType = new (std::nothrow) dia::Struct(symbol);
+        pyStruct->diaUserDefinedType = new (std::nothrow) dia::Struct(static_cast<dia::Struct&>(symbol));
         pySymbol                     = reinterpret_cast<PyObject*>(pyStruct);
         break;
     }
@@ -137,7 +137,7 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
             PyErr_SetString(PyExc_MemoryError, "Failed to create DiaClass object.");
             return NULL;
         }
-        pyClass->diaUserDefinedType = new (std::nothrow) dia::Class(symbol);
+        pyClass->diaUserDefinedType = new (std::nothrow) dia::Class(static_cast<dia::Class&>(symbol));
         pySymbol                    = reinterpret_cast<PyObject*>(pyClass);
         break;
     }
@@ -150,7 +150,7 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
             PyErr_SetString(PyExc_MemoryError, "Failed to create DiaUnion object.");
             return NULL;
         }
-        pyUnion->diaUserDefinedType = new (std::nothrow) dia::Union(symbol);
+        pyUnion->diaUserDefinedType = new (std::nothrow) dia::Union(static_cast<dia::Union&>(symbol));
         pySymbol                    = reinterpret_cast<PyObject*>(pyUnion);
         break;
     }
@@ -163,7 +163,7 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
             PyErr_SetString(PyExc_MemoryError, "Failed to create DiaInterface object.");
             return NULL;
         }
-        pyInterface->diaUserDefinedType = new (std::nothrow) dia::Interface(symbol);
+        pyInterface->diaUserDefinedType = new (std::nothrow) dia::Interface(static_cast<dia::Interface&>(symbol));
         pySymbol                        = reinterpret_cast<PyObject*>(pyInterface);
         break;
     }
@@ -175,7 +175,7 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol)
             PyErr_SetString(PyExc_MemoryError, "Failed to create DiaTaggedUnion object.");
             return NULL;
         }
-        pyTaggedUnion->diaUserDefinedType = new (std::nothrow) dia::TaggedUnion(symbol);
+        pyTaggedUnion->diaUserDefinedType = new (std::nothrow) dia::TaggedUnion(static_cast<dia::TaggedUnion&>(symbol));
         pySymbol                          = reinterpret_cast<PyObject*>(pyTaggedUnion);
         break;
     }
