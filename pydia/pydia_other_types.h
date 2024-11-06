@@ -18,11 +18,7 @@
 
 #define XFOR_TRIVIAL_PYDIA_CLASSES(opperation)                                                                                                       \
     opperation(Exe);                                                                                                                                 \
-    opperation(Function);                                                                                                                            \
-    opperation(FunctionType);                                                                                                                        \
-    opperation(FunctionArgType);                                                                                                                     \
-    opperation(Null);                                                                                                                                \
-    opperation(Typedef);
+    opperation(Null);
 
 #define __TRIVIAL_PYDIA_TYPE_WRAPPER_DEFINITION(className)                                                                                           \
     typedef struct                                                                                                                                   \

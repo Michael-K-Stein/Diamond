@@ -5,12 +5,15 @@
 #include <objbase.h>
 
 // C pydia imports
+#include "pydia_all_types.h"
 #include "pydia_datasource.h"
 #include "pydia_enum.h"
 #include "pydia_exceptions.h"
+#include "pydia_other_types.h"
 #include "pydia_symbol.h"
 #include "pydia_symbol_private.h"
 #include "pydia_trivial_init.h"
+#include "pydia_typedef.h"
 #include "pydia_udts.h"
 
 // C++ DiaSymbolMaster imports
@@ -22,6 +25,7 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* arg
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
 static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getTypedefs(PyDiaDataSource* self);
 
 static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
 {
@@ -104,7 +108,9 @@ static PyMethodDef PyDiaDataSource_methods[] = {
     {"get_exports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports."},
     {"get_enum", (PyCFunction)PyDiaDataSource_getEnum, METH_VARARGS, "Get enum by name."},
     {"get_struct", (PyCFunction)PyDiaDataSource_getStruct, METH_VARARGS, "Get struct by name."},
-    {NULL, NULL, 0, NULL}};
+    {"get_typedefs", (PyCFunction)PyDiaDataSource_getTypedefs, METH_NOARGS, "Get all typedefs."},
+    {NULL, NULL, 0, NULL},
+};
 
 // Define the Python DiaDataSource type object
 PyTypeObject PyDiaDataSource_Type = {
@@ -226,24 +232,18 @@ static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* arg
 
     for (size_t i = 0; i < exports.size(); ++i)
     {
-        PyDiaSymbol* sym = PyObject_New(PyDiaSymbol, &PyDiaSymbol_Type);
+
+        PyObject* sym = PyDiaSymbol_FromSymbol(std::move(exports[i]), self);
         if (!sym)
         {
             Py_DECREF(resultList);  // Clean up the result list
             return NULL;            // Return NULL on failure
         }
 
-        Py_INCREF(self);
-        sym->dataSource = self;
-        sym->diaSymbol  = new (std::nothrow) dia::Symbol(exports[i]);
-
         // Set the item in the list, transferring ownership
-        if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
+        if (0 > PyList_SetItem(resultList, i, sym))
         {
-            self->diaDataSource = nullptr;
-            Py_DECREF(self);
-            delete sym->diaSymbol;  // Clean up
-            delete sym;             // Clean up
+            Py_DECREF(sym);
             Py_DECREF(resultList);  // Clean up the result list
             return NULL;            // Return NULL on failure
         }
@@ -330,6 +330,38 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
         PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaStruct.");
         return NULL;
     }
+}
+
+static PyObject* PyDiaDataSource_getTypedefs(PyDiaDataSource* self)
+{
+    const auto unsafeFunc = [&]() -> PyObject*
+    {
+        auto typedefs        = self->diaDataSource->getTypedefs();
+
+        PyObject* resultList = PyList_New(typedefs.size());
+        if (!resultList)
+        {
+            PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for typedefs list.");
+            return NULL;  // Return NULL on failure
+        }
+
+        for (size_t i = 0; i < typedefs.size(); ++i)
+        {
+            PyDiaTypedef* sym = reinterpret_cast<PyDiaTypedef*>(PyDiaTypedef_FromTypedefSymbol(std::move(typedefs[i]), self));
+
+            // Set the item in the list, transferring ownership
+            if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
+            {
+                Py_DECREF(resultList);  // Clean up the result list
+                return NULL;            // Return NULL on failure
+            }
+        }
+
+        return resultList;
+    };
+
+    PYDIA_SAFE_TRY({ return unsafeFunc(); });
+    Py_UNREACHABLE();
 }
 
 PyDiaDataSource* PyDiaDataSource_FromInitializerList(PyObject* initializerList)

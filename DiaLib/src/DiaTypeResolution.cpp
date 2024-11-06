@@ -8,18 +8,18 @@ namespace dia
 {
 static const wchar_t* SYM_TAG_BASE_TYPE_NAMES[] = {
     L"NoType",  // = 0,
-    L"VOID",    // = 1,
-    L"CHAR",    // = 2,
-    L"WCHAR",   // = 3,
+    L"Void",    // = 1,
+    L"Char",    // = 2,
+    L"WChar",   // = 3,
     L"Unknown4",  L"Unknown5",
-    L"INT",      // = 6,
-    L"UINT",     // = 7,
-    L"float",    // = 8,
-    L"BCD",      // = 9,
-    L"BOOLEAN",  // = 10,
+    L"Int",    // = 6,
+    L"UInt",   // = 7,
+    L"Float",  // = 8,
+    L"BCD",    // = 9,
+    L"Bool",   // = 10,
     L"Unknown11", L"Unknown12",
-    L"LONG",   // = 13,
-    L"ULONG",  // = 14,
+    L"Long",   // = 13,
+    L"ULong",  // = 14,
     L"Unknown15", L"Unknown16", L"Unknown17", L"Unknown18", L"Unknown19", L"Unknown20", L"Unknown21", L"Unknown22", L"Unknown23", L"Unknown24",
     L"Currency",  // = 25,
     L"Date",      // = 26,
@@ -27,7 +27,7 @@ static const wchar_t* SYM_TAG_BASE_TYPE_NAMES[] = {
     L"Complex",   // = 28,
     L"Bit",       // = 29,
     L"BSTR",      // = 30,
-    L"HRESULT",   // = 31,
+    L"Hresult",   // = 31,
     L"Char16",    // = 32,  // char16_t
     L"Char32",    // = 33,  // char32_t
     L"Char8",     // = 34,  // char8_t

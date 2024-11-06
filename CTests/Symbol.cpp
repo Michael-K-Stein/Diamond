@@ -39,7 +39,7 @@ public:
         const auto originalSymbol  = dataSource.getStruct(structName);
         const auto symId           = originalSymbol.getSymIndexId();
 
-        const auto foundSymbol     = dataSource.getSymbolById(symId);
+        const auto foundSymbol     = dataSource.getSession().getSymbolById(symId);
 
         Assert::AreEqual(originalSymbol.calcHash(), foundSymbol.calcHash());
         Assert::AreEqual(originalSymbol.getSymTag(), foundSymbol.getSymTag());
@@ -63,8 +63,8 @@ public:
         const auto otherSymId           = otherSymbol.getSymIndexId();
         Assert::AreNotEqual(symId, otherSymId);
 
-        const auto foundSymbol      = dataSource.getSymbolById(symId);
-        const auto otherFoundSymbol = dataSource.getSymbolById(otherSymId);
+        const auto foundSymbol      = dataSource.getSession().getSymbolById(symId);
+        const auto otherFoundSymbol = dataSource.getSession().getSymbolById(otherSymId);
 
         Assert::AreEqual(originalSymbol.calcHash(), foundSymbol.calcHash());
         Assert::AreEqual(originalSymbol.getSymTag(), foundSymbol.getSymTag());

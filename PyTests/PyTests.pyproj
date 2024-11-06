@@ -32,6 +32,9 @@
   <ItemGroup>
     <Compile Include="common.py" />
     <Compile Include="PyTests.py" />
+    <Compile Include="test_basictype.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test_datasource.py">
       <SubType>Code</SubType>
     </Compile>

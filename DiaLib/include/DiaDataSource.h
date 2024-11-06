@@ -60,6 +60,7 @@ public:
     const std::vector<Symbol> getInterfaces() const;
     const std::vector<Symbol> getUnions() const;
     const std::vector<Symbol> getTaggedUnions() const;
+    const std::vector<Typedef> getTypedefs() const;
 
     UserDefinedType getStruct(const AnyString& structName) const;
 

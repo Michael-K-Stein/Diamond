@@ -7,6 +7,7 @@
 #include "Exceptions.h"
 #include "SymbolPathHelper.h"
 #include "SymbolTypes/DiaEnum.h"
+#include "SymbolTypes/DiaTypedef.h"
 #include <codecvt>
 #include <fstream>
 #include <iostream>
@@ -175,6 +176,8 @@ const std::vector<Symbol> DataSource::getInterfaces() const { return getUserDefi
 const std::vector<Symbol> DataSource::getUnions() const { return getUserDefinedTypes(UdtUnion); }
 
 const std::vector<Symbol> DataSource::getTaggedUnions() const { return getUserDefinedTypes(UdtTaggedUnion); }
+
+const std::vector<Typedef> DataSource::getTypedefs() const { return convertSymbolVector<Typedef>(getSymbols(SymTagTypedef)); }
 
 const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
 {

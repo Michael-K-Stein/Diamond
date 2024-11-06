@@ -19,22 +19,16 @@
     <Filter Include="Header Files\dia_types\dia_udts">
       <UniqueIdentifier>{ef7abfec-9342-4615-92ae-e5ea9799363e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dia_types">
+      <UniqueIdentifier>{a20c8d24-fb9c-4de0-85e7-8f8ba8083c54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pydiamodule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dia_types\pydia_datasource.cpp">
-      <Filter>Header Files\dia_types</Filter>
-    </ClCompile>
-    <ClCompile Include="pydia_enum.cpp">
-      <Filter>Header Files\dia_types</Filter>
-    </ClCompile>
     <ClCompile Include="pydia_wrapping_types.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pydia_other_types.cpp">
-      <Filter>Header Files\dia_types</Filter>
     </ClCompile>
     <ClCompile Include="pydia_helper_routines.cpp">
       <Filter>Source Files</Filter>
@@ -42,26 +36,47 @@
     <ClCompile Include="pydia_exceptions.h.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_data.cpp">
-      <Filter>Header Files\dia_types</Filter>
-    </ClCompile>
-    <ClCompile Include="pydia_udt.cpp">
-      <Filter>Header Files\dia_types</Filter>
-    </ClCompile>
-    <ClCompile Include="pydia_symbol.cpp">
-      <Filter>Header Files\dia_types</Filter>
-    </ClCompile>
     <ClCompile Include="pydia_udts.cpp">
       <Filter>Header Files\dia_types\dia_udts</Filter>
     </ClCompile>
+    <ClCompile Include="pydia_array.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
     <ClCompile Include="pydia_basetype.cpp">
-      <Filter>Header Files\dia_types</Filter>
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="dia_types\pydia_datasource.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_data.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_other_types.cpp">
+      <Filter>Source Files\dia_types</Filter>
     </ClCompile>
     <ClCompile Include="pydia_pointer.cpp">
-      <Filter>Header Files\dia_types</Filter>
+      <Filter>Source Files\dia_types</Filter>
     </ClCompile>
-    <ClCompile Include="pydia_array.cpp">
-      <Filter>Header Files\dia_types</Filter>
+    <ClCompile Include="pydia_symbol.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_udt.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_enum.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="pydia_typedef.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="dia_types\pydia_functiontype.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="dia_types\pydia_functionargtype.cpp">
+      <Filter>Source Files\dia_types</Filter>
+    </ClCompile>
+    <ClCompile Include="dia_types\pydia_function.cpp">
+      <Filter>Source Files\dia_types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +138,18 @@
       <Filter>Header Files\dia_types</Filter>
     </ClInclude>
     <ClInclude Include="pydia_array.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_typedef.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="dia_types\pydia_functiontype.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="dia_types\pydia_functionargtype.h">
+      <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="dia_types\pydia_function.h">
       <Filter>Header Files\dia_types</Filter>
     </ClInclude>
   </ItemGroup>

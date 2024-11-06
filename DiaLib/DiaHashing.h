@@ -5,6 +5,8 @@
 #include "SymbolTypes/DiaData.h"
 #include "SymbolTypes/DiaEnum.h"
 #include "SymbolTypes/DiaFunction.h"
+#include "SymbolTypes/DiaFunctionArgType.h"
+#include "SymbolTypes/DiaFunctionType.h"
 #include "SymbolTypes/DiaSymbolTypes.h"
 #include "SymbolTypes/DiaUDT.h"
 
@@ -32,6 +34,12 @@ template <>
 struct hash<dia::Function>
 {
     size_t operator()(const dia::Function& v) const;
+};
+
+template <>
+struct hash<dia::FunctionType>
+{
+    size_t operator()(const dia::FunctionType& v) const;
 };
 
 template <>

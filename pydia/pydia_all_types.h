@@ -19,7 +19,7 @@
     opperation(Data);                                                                                                                                \
     opperation(Enum);                                                                                                                                \
     opperation(Udt);                                                                                                                                 \
-    opperation(BaseType);                                                                                                                                \
+    opperation(BaseType);                                                                                                                            \
     opperation(Typedef);                                                                                                                             \
     opperation(UserDefinedType);
 
@@ -33,3 +33,4 @@ struct PyDiaAbstractGenerator;
 
 XFOR_ALL_PYDIA_CLASSES(DEFINE_ENUMERATOR);
 XFOR_ALL_PYDIA_CLASSES(DECLARE_PYDIA_SYMBOL_FROM_SYMBOL_TRIVIAL_CONVERSION);
+DEFINE_ENUMERATOR(Symbol);

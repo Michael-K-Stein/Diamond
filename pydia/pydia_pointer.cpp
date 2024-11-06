@@ -35,8 +35,6 @@ static PyMethodDef PyDiaPointer_methods[] = {
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
-// Define the Python DiaEnum type object
-
+// Define the Python DiaFunction type object
 PYDIA_SYMBOL_TYPE_DEFINITION(Pointer, PyDiaPointer_methods);
-
 TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Pointer);

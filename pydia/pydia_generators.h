@@ -125,7 +125,7 @@ PyTypeObject PyDiaAbstractGenerator_Type = {
 };
 
 // Generic enumerator for implementations
-DEFINE_ENUMERATOR(Symbol);
+// DEFINE_ENUMERATOR(Symbol);
 
 // Allocates a new SymbolGenerator. For use by internal methods which return a generator
 template <typename K, typename T>

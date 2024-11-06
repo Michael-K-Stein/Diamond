@@ -45,23 +45,3 @@ public:
 }  // namespace dia
 
 std::wostream& operator<<(std::wostream& os, const dia::FunctionType& func);
-
-namespace std
-{
-template <>
-struct hash<dia::FunctionType>
-{
-    size_t operator()(const dia::FunctionType& v) const
-    {
-        size_t calculatedHash = 0;
-        hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getCallingConvention(), v.getConstType(), v.getCount(),
-                     v.getObjectPointerType(), v.getThisAdjust(), v.getUnalignedType(), v.getVolatileType());
-        for (const auto& param : v)
-        {
-            hash_combine(calculatedHash, hash<dia::FunctionArgType>()(param));
-        }
-
-        return calculatedHash;
-    }
-};
-}  // namespace std

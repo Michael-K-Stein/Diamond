@@ -28,6 +28,26 @@
         } while (0);                                                                                                                                 \
     })
 
+#define PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE(unsafeCode, notAvailableHandler)                                                                         \
+    do                                                                                                                                               \
+    {                                                                                                                                                \
+        const auto __safeTryCode = [&]()                                                                                                             \
+        {                                                                                                                                            \
+            try                                                                                                                                      \
+            {                                                                                                                                        \
+                do                                                                                                                                   \
+                {                                                                                                                                    \
+                    unsafeCode;                                                                                                                      \
+                } while (0);                                                                                                                         \
+            }                                                                                                                                        \
+            catch ([[maybe_unused]] const dia::PropertyNotAvailableException& e)                                                                     \
+            {                                                                                                                                        \
+                notAvailableHandler;                                                                                                                 \
+            }                                                                                                                                        \
+        };                                                                                                                                           \
+        PYDIA_SAFE_TRY({ return __safeTryCode(); });                                                                                                 \
+    } while (0)
+
 
 #define XFOR_TRIVIAL_PYDIA_ERRORS(opperation)                                                                                                        \
     opperation(InvalidUsage);                                                                                                                        \

@@ -5,25 +5,6 @@
 #include <stdexcept>
 #include <string>
 
-#define CHECK_DIACOM_EXCEPTION(message, hResult)                                                                                                     \
-    do                                                                                                                                               \
-    {                                                                                                                                                \
-        if (E_INVALIDARG == hResult)                                                                                                                 \
-        {                                                                                                                                            \
-            /* __debugbreak(); */                                                                                                                    \
-            throw dia::InvalidUsageException("Invalid arguments passed!");                                                                           \
-        }                                                                                                                                            \
-        if (FAILED(hResult))                                                                                                                         \
-        {                                                                                                                                            \
-            throw DiaComException(message, hResult);                                                                                                 \
-        }                                                                                                                                            \
-        if (S_FALSE == hResult)                                                                                                                      \
-        {                                                                                                                                            \
-            /* __debugbreak(); */                                                                                                                    \
-            throw dia::InvalidUsageException("Queried property that is not available for the symbol!");                                              \
-        }                                                                                                                                            \
-    } while (0)
-
 class DiaSymbolMasterException : public std::exception
 {
 public:
@@ -140,5 +121,31 @@ public:
     using std::logic_error::logic_error;
 };
 
+class PropertyNotAvailableException : public InvalidUsageException
+{
+public:
+    using InvalidUsageException::InvalidUsageException;
+};
 
 }  // namespace dia
+
+static inline void CHECK_DIACOM_EXCEPTION(const char* message, HRESULT hResult)
+{
+    do
+    {
+        if (E_INVALIDARG == hResult)
+        {
+            /* __debugbreak(); */
+            throw dia::InvalidUsageException("Invalid arguments passed!");
+        }
+        if (FAILED(hResult))
+        {
+            throw DiaComException(message, hResult);
+        }
+        if (S_FALSE == hResult)
+        {
+            /* __debugbreak(); */
+            throw dia::PropertyNotAvailableException("Queried property that is not available for the symbol!");
+        }
+    } while (0);
+}

@@ -26,7 +26,7 @@ PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSour
 // Auto decleration of trivial conversions like PyDiaSymbol_FromSymbol for all types
 #define DECLARE_PYDIA_SYMBOL_FROM_SYMBOL_TRIVIAL_CONVERSION(diaTypeName)                                                                             \
     PyObject* PyDia##diaTypeName##_From##diaTypeName##Symbol(dia::##diaTypeName&& symbol, PyDiaDataSource* dataSource);                              \
-    static inline PyObject* PyDiaSymbol_FromSymbol(dia::##diaTypeName&& symbol, PyDiaDataSource* dataSource)                                         \
+    static inline PyObject* PyDiaSymbol_FromSymbol(dia::##diaTypeName&& symbol, PyDiaDataSource* dataSource)                               \
     {                                                                                                                                                \
         return PyDia##diaTypeName##_From##diaTypeName##Symbol(std::move(symbol), dataSource);                                                        \
     }

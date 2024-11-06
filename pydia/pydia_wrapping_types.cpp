@@ -1,22 +1,62 @@
 #include "pydia_wrapping_types.h"
 #include <DiaSymbolFuncs.h>
+#include <DiaTypeResolution.h>
 #include <cvconst.h>
+#include <pydia_exceptions.h>
 
-PyObject* g_diaBasicTypeEnumWrappings      = NULL;
-PyObject* g_diaLocationTypeEnumWrappings   = NULL;
-PyObject* g_diaDataKindEnumWrappings       = NULL;
-PyObject* g_diaUdtKindEnumWrappings        = NULL;
-PyObject* g_diaAccessModifierEnumWrappings = NULL;
+PyObject* g_diaBasicTypeEnumWrappings         = NULL;
+PyObject* g_diaLocationTypeEnumWrappings      = NULL;
+PyObject* g_diaDataKindEnumWrappings          = NULL;
+PyObject* g_diaUdtKindEnumWrappings           = NULL;
+PyObject* g_diaAccessModifierEnumWrappings    = NULL;
+PyObject* g_diaCallingConventionEnumWrappings = NULL;
 
 PyObject* getDiaBasicTypeEnumWrappings() { return g_diaBasicTypeEnumWrappings; }
 
-PyObject* getDiaLocationTypeEnumWrappings() { return g_diaLocationTypeEnumWrappings; }
+using EnumWrapperGetterFunction = PyObject* (*)();
 
-PyObject* getDiaDataKindEnumWrappings() { return g_diaDataKindEnumWrappings; }
+template <typename EnumT>
+static PyObject* PyDiaEnumObject_FromEnumValue(EnumWrapperGetterFunction getterFunction, const EnumT& enumValue)
+{
+    auto safeExecution = [&]() -> PyObject*
+    {
+        PyObject* enumEntryInstance = PyObject_CallFunction(getterFunction(), "(i)", enumValue);
 
-PyObject* getDiaUdtKindEnumWrappings() { return g_diaUdtKindEnumWrappings; }
+        Py_XINCREF(enumEntryInstance);  // Increase reference count to return a new reference
+        return enumEntryInstance;
+    };
 
-PyObject* getDiaAccessModifierEnumWrappings() { return g_diaAccessModifierEnumWrappings; }
+    PYDIA_SAFE_TRY({ return safeExecution(); });
+    Py_UNREACHABLE();
+}
+
+PyObject* PyDiaBasicType_FromBasicType(enum BasicType basicType) { return PyDiaEnumObject_FromEnumValue(getDiaBasicTypeEnumWrappings, basicType); }
+
+static PyObject* getDiaLocationTypeEnumWrappings() { return g_diaLocationTypeEnumWrappings; }
+
+PyObject* PyDiaLocationType_FromLocationType(enum LocationType v) { return PyDiaEnumObject_FromEnumValue(getDiaLocationTypeEnumWrappings, v); }
+
+static PyObject* getDiaDataKindEnumWrappings() { return g_diaDataKindEnumWrappings; }
+
+PyObject* PyDiaDataKind_FromDataKind(enum DataKind v) { return PyDiaEnumObject_FromEnumValue(getDiaDataKindEnumWrappings, v); }
+
+static PyObject* getDiaUdtKindEnumWrappings() { return g_diaUdtKindEnumWrappings; }
+
+PyObject* PyDiaUdtKind_FromUdtKind(enum UdtKind v) { return PyDiaEnumObject_FromEnumValue(getDiaUdtKindEnumWrappings, v); }
+
+static PyObject* getDiaAccessModifierEnumWrappings() { return g_diaAccessModifierEnumWrappings; }
+
+PyObject* PyDiaAccessModifier_FromAccessModifier(enum AccessModifier v)
+{
+    return PyDiaEnumObject_FromEnumValue(getDiaAccessModifierEnumWrappings, v);
+}
+
+static PyObject* getDiaCallingConventionEnumWrappings() { return g_diaCallingConventionEnumWrappings; }
+
+PyObject* PyDiaCallingConvention_FromCallingConvention(dia::CvCall callingConvention)
+{
+    return PyDiaEnumObject_FromEnumValue(getDiaCallingConventionEnumWrappings, callingConvention);
+}
 
 static PyObject* createEnumObject(PyObject* module, const char* name, std::initializer_list<std::pair<const char*, int>> items)
 {
@@ -31,7 +71,18 @@ static PyObject* createEnumObject(PyObject* module, const char* name, std::initi
         PyDict_SetItemString(pyEnumDict, item.first, PyLong_FromLong(item.second));
     }
 
+    PyObject* pyEnumModule = PyImport_ImportModule("enum");
+    if (pyEnumModule == NULL)
+    {
+        Py_CLEAR(pyEnumDict);
+    }
 
+    PyObject* pyEnumType = PyObject_CallMethod(pyEnumModule, "IntEnum", "sO", name, pyEnumDict);
+
+    Py_CLEAR(pyEnumDict);
+    Py_CLEAR(pyEnumModule);
+
+#if 0
     // Create a new PyTypeObject for the enum
     PyTypeObject* pyEnumType = (PyTypeObject*)PyType_Type.tp_alloc(&PyType_Type, 0);
     if (!pyEnumType)
@@ -52,8 +103,9 @@ static PyObject* createEnumObject(PyObject* module, const char* name, std::initi
         Py_DECREF(pyEnumType);
         return NULL;
     }
-
     Py_INCREF(pyEnumType);
+#endif
+
     PyModule_AddObject(module, name, (PyObject*)pyEnumType);
     return (PyObject*)pyEnumType;
 }
