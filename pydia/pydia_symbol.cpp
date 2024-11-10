@@ -489,7 +489,7 @@ PyObject* PyDiaSymbol_getCompilerName(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Call getCompilerName and convert to Python string
         const BstrWrapper compilerName = self->diaSymbol->getCompilerName();
-        return BstrWrapperToPyObject(compilerName);
+        return PyObject_FromBstrWrapper(compilerName);
     });
     Py_UNREACHABLE();
 }
@@ -591,8 +591,8 @@ PyObject* PyDiaSymbol_getCallingConvention(const PyDiaSymbol* self)
 #if 0
 // The DiaLib version of this is not implemented either :(
 
-// Method: PyDiaSymbol_data_bytes
-PyObject* PyDiaSymbol_data_bytes(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getDataBytes
+PyObject* PyDiaSymbol_getDataBytes(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -826,11 +826,9 @@ PyObject* PyDiaSymbol_getGuid(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         // Call getGuid and convert to Python string (UUID)
-        const GUID guid = self->diaSymbol->getGuid();
-        char guidString[37];
-        snprintf(guidString, sizeof(guidString), "%08lX-%04X-%04X-%04X-%012llX", guid.Data1, guid.Data2, guid.Data3,
-                 (guid.Data4[0] << 8) | guid.Data4[1], *(reinterpret_cast<const ULONGLONG*>(&guid.Data4[2])));
-        return PyUnicode_FromString(guidString);
+        const GUID guid       = self->diaSymbol->getGuid();
+        const auto guidString = dia::convertGuidToString(guid);
+        return PyUnicode_FromString(guidString.c_str());
     });
     Py_UNREACHABLE();
 }
@@ -1078,8 +1076,8 @@ PyObject* PyDiaSymbol_isIntro(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_accelerator_group_shared_local
-PyObject* PyDiaSymbol_is_accelerator_group_shared_local(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isAcceleratorGroupSharedLocal
+PyObject* PyDiaSymbol_isAcceleratorGroupSharedLocal(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1089,8 +1087,8 @@ PyObject* PyDiaSymbol_is_accelerator_group_shared_local(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_accelerator_pointer_tag_live_range
-PyObject* PyDiaSymbol_is_accelerator_pointer_tag_live_range(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isAcceleratorPointerTagLiveRange
+PyObject* PyDiaSymbol_isAcceleratorPointerTagLiveRange(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1100,8 +1098,8 @@ PyObject* PyDiaSymbol_is_accelerator_pointer_tag_live_range(const PyDiaSymbol* s
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_accelerator_stub_function
-PyObject* PyDiaSymbol_is_accelerator_stub_function(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isAcceleratorStubFunction
+PyObject* PyDiaSymbol_isAcceleratorStubFunction(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1133,8 +1131,8 @@ PyObject* PyDiaSymbol_isCtypes(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_cvtcil
-PyObject* PyDiaSymbol_is_cvtcil(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isConvertedCil
+PyObject* PyDiaSymbol_isConvertedCil(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1144,8 +1142,8 @@ PyObject* PyDiaSymbol_is_cvtcil(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_constructor_virtual_base
-PyObject* PyDiaSymbol_is_constructor_virtual_base(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isConstructorVirtualBase
+PyObject* PyDiaSymbol_isConstructorVirtualBase(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1155,8 +1153,8 @@ PyObject* PyDiaSymbol_is_constructor_virtual_base(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_cxx_return_udt
-PyObject* PyDiaSymbol_is_cxx_return_udt(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isCxxReturnUdt
+PyObject* PyDiaSymbol_isCxxReturnUdt(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1166,8 +1164,8 @@ PyObject* PyDiaSymbol_is_cxx_return_udt(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_data_aligned
-PyObject* PyDiaSymbol_is_data_aligned(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isDataAligned
+PyObject* PyDiaSymbol_isDataAligned(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -1177,8 +1175,8 @@ PyObject* PyDiaSymbol_is_data_aligned(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_hlsl_data
-PyObject* PyDiaSymbol_is_hlsl_data(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isHlslData
+PyObject* PyDiaSymbol_isHlslData(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1188,8 +1186,8 @@ PyObject* PyDiaSymbol_is_hlsl_data(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_hotpatchable
-PyObject* PyDiaSymbol_is_hotpatchable(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isHotpatchable
+PyObject* PyDiaSymbol_isHotpatchable(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1199,8 +1197,8 @@ PyObject* PyDiaSymbol_is_hotpatchable(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_interface_udt
-PyObject* PyDiaSymbol_is_interface_udt(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isInterfaceUdt
+PyObject* PyDiaSymbol_isInterfaceUdt(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1210,8 +1208,8 @@ PyObject* PyDiaSymbol_is_interface_udt(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_ltcg
-PyObject* PyDiaSymbol_is_ltcg(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isLtcg
+PyObject* PyDiaSymbol_isLtcg(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1221,8 +1219,8 @@ PyObject* PyDiaSymbol_is_ltcg(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_location_control_flow_dependent
-PyObject* PyDiaSymbol_is_location_control_flow_dependent(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isLocationControlFlowDependent
+PyObject* PyDiaSymbol_isLocationControlFlowDependent(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1232,8 +1230,8 @@ PyObject* PyDiaSymbol_is_location_control_flow_dependent(const PyDiaSymbol* self
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_msil_netmodule
-PyObject* PyDiaSymbol_is_msil_netmodule(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isMsilNetmodule
+PyObject* PyDiaSymbol_isMsilNetmodule(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1243,8 +1241,8 @@ PyObject* PyDiaSymbol_is_msil_netmodule(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_matrix_row_major
-PyObject* PyDiaSymbol_is_matrix_row_major(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isMatrixRowMajor
+PyObject* PyDiaSymbol_isMatrixRowMajor(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1309,8 +1307,8 @@ PyObject* PyDiaSymbol_isPgo(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_pointer_based_on_symbol_value
-PyObject* PyDiaSymbol_is_pointer_based_on_symbol_value(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isPointerBasedOnSymbolValue
+PyObject* PyDiaSymbol_isPointerBasedOnSymbolValue(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1331,8 +1329,8 @@ PyObject* PyDiaSymbol_isPointerToDataMember(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_pointer_to_member_function
-PyObject* PyDiaSymbol_is_pointer_to_member_function(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isPointerToMemberFunction
+PyObject* PyDiaSymbol_isPointerToMemberFunction(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1342,8 +1340,8 @@ PyObject* PyDiaSymbol_is_pointer_to_member_function(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_ref_udt
-PyObject* PyDiaSymbol_is_ref_udt(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isRefUdt
+PyObject* PyDiaSymbol_isRefUdt(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1353,8 +1351,8 @@ PyObject* PyDiaSymbol_is_ref_udt(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_return_value
-PyObject* PyDiaSymbol_is_return_value(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isReturnValue
+PyObject* PyDiaSymbol_isReturnValue(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1364,8 +1362,8 @@ PyObject* PyDiaSymbol_is_return_value(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_safe_buffers
-PyObject* PyDiaSymbol_is_safe_buffers(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isSafeBuffers
+PyObject* PyDiaSymbol_isSafeBuffers(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1375,8 +1373,8 @@ PyObject* PyDiaSymbol_is_safe_buffers(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_sdl
-PyObject* PyDiaSymbol_is_sdl(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isSdl
+PyObject* PyDiaSymbol_isSdl(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1430,8 +1428,8 @@ PyObject* PyDiaSymbol_isStripped(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_value_udt
-PyObject* PyDiaSymbol_is_value_udt(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isValueUdt
+PyObject* PyDiaSymbol_isValueUdt(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1441,8 +1439,8 @@ PyObject* PyDiaSymbol_is_value_udt(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_virtual_inheritance
-PyObject* PyDiaSymbol_is_virtual_inheritance(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isVirtualInheritance
+PyObject* PyDiaSymbol_isVirtualInheritance(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1452,8 +1450,8 @@ PyObject* PyDiaSymbol_is_virtual_inheritance(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_is_winrt_pointer
-PyObject* PyDiaSymbol_is_winrt_pointer(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isWinrtPointer
+PyObject* PyDiaSymbol_isWinrtPointer(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1513,7 +1511,7 @@ PyObject* PyDiaSymbol_getLibraryName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper libraryName = self->diaSymbol->getLibraryName();
-        return BstrWrapperToPyObject(libraryName);
+        return PyObject_FromBstrWrapper(libraryName);
     });
     Py_UNREACHABLE();
 }
@@ -1675,7 +1673,7 @@ PyObject* PyDiaSymbol_getName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper name = self->diaSymbol->getName();
-        return BstrWrapperToPyObject(name);
+        return PyObject_FromBstrWrapper(name);
     });
     Py_UNREACHABLE();
 }
@@ -1746,8 +1744,8 @@ PyObject* PyDiaSymbol_isNotReached(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_number_of_accelerator_pointer_tags
-PyObject* PyDiaSymbol_number_of_accelerator_pointer_tags(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getNumberOfAcceleratorPointerTags
+PyObject* PyDiaSymbol_getNumberOfAcceleratorPointerTags(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1757,8 +1755,8 @@ PyObject* PyDiaSymbol_number_of_accelerator_pointer_tags(const PyDiaSymbol* self
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_number_of_columns
-PyObject* PyDiaSymbol_number_of_columns(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getNumberOfColumns
+PyObject* PyDiaSymbol_getNumberOfColumns(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1826,7 +1824,7 @@ PyObject* PyDiaSymbol_getObjectFileName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper objectFileName = self->diaSymbol->getObjectFileName();
-        return BstrWrapperToPyObject(objectFileName);
+        return PyObject_FromBstrWrapper(objectFileName);
     });
     Py_UNREACHABLE();
 }
@@ -1930,8 +1928,8 @@ PyObject* PyDiaSymbol_getPgoDynamicInstructionCount(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_pgo_edge_count
-PyObject* PyDiaSymbol_pgo_edge_count(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getPgoEdgeCount
+PyObject* PyDiaSymbol_getPgoEdgeCount(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1941,8 +1939,8 @@ PyObject* PyDiaSymbol_pgo_edge_count(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_pgo_entry_count
-PyObject* PyDiaSymbol_pgo_entry_count(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getPgoEntryCount
+PyObject* PyDiaSymbol_getPgoEntryCount(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1963,8 +1961,8 @@ PyObject* PyDiaSymbol_isPacked(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_param_base_pointer_register_id
-PyObject* PyDiaSymbol_param_base_pointer_register_id(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getParamBasePointerRegisterId
+PyObject* PyDiaSymbol_getParamBasePointerRegisterId(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1974,19 +1972,19 @@ PyObject* PyDiaSymbol_param_base_pointer_register_id(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_phase_name
-PyObject* PyDiaSymbol_phase_name(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getPhaseName
+PyObject* PyDiaSymbol_getPhaseName(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper phaseName = self->diaSymbol->getPhaseName();
-        return BstrWrapperToPyObject(phaseName);
+        return PyObject_FromBstrWrapper(phaseName);
     });
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_platform
-PyObject* PyDiaSymbol_platform(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getPlatform
+PyObject* PyDiaSymbol_getPlatform(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -1996,8 +1994,8 @@ PyObject* PyDiaSymbol_platform(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_private_export
-PyObject* PyDiaSymbol_private_export(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_isPrivateExport
+PyObject* PyDiaSymbol_isPrivateExport(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE({
@@ -2156,7 +2154,7 @@ PyObject* PyDiaSymbol_getSourceFileName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper sourceFileName = self->diaSymbol->getSourceFileName();
-        return BstrWrapperToPyObject(sourceFileName);
+        return PyObject_FromBstrWrapper(sourceFileName);
     });
     Py_UNREACHABLE();
 }
@@ -2164,8 +2162,8 @@ PyObject* PyDiaSymbol_getSourceFileName(const PyDiaSymbol* self)
 #if 0
 // Looks complicated to implement, leaving this for now until I find a use for this method.
 
-// Method: PyDiaSymbol_src_line_on_type_defn
-PyObject* PyDiaSymbol_src_line_on_type_defn(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getSrcLineOnTypeDefn
+PyObject* PyDiaSymbol_getSrcLineOnTypeDefn(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2275,7 +2273,7 @@ PyObject* PyDiaSymbol_getSymbolsFileName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper symbolsFileName = self->diaSymbol->getSymbolsFileName();
-        return BstrWrapperToPyObject(symbolsFileName);
+        return PyObject_FromBstrWrapper(symbolsFileName);
     });
     Py_UNREACHABLE();
 }
@@ -2291,8 +2289,8 @@ PyObject* PyDiaSymbol_getTargetOffset(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_target_relative_virtual_address
-PyObject* PyDiaSymbol_target_relative_virtual_address(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getTargetRelativeVirtualAddress
+PyObject* PyDiaSymbol_getTargetRelativeVirtualAddress(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2302,8 +2300,8 @@ PyObject* PyDiaSymbol_target_relative_virtual_address(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_target_section
-PyObject* PyDiaSymbol_target_section(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getTargetSection
+PyObject* PyDiaSymbol_getTargetSection(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2313,8 +2311,8 @@ PyObject* PyDiaSymbol_target_section(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_target_virtual_address
-PyObject* PyDiaSymbol_target_virtual_address(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getTargetVirtualAddress
+PyObject* PyDiaSymbol_getTargetVirtualAddress(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2324,8 +2322,8 @@ PyObject* PyDiaSymbol_target_virtual_address(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_texture_slot
-PyObject* PyDiaSymbol_texture_slot(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getTextureSlot
+PyObject* PyDiaSymbol_getTextureSlot(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2446,24 +2444,13 @@ PyObject* PyDiaSymbol_getTypes(const PyDiaSymbol* self)
 }
 #endif
 
-// Method: PyDiaSymbol_uav_slot
-PyObject* PyDiaSymbol_uav_slot(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getUavSlot
+PyObject* PyDiaSymbol_getUavSlot(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const ULONG uavSlot = self->diaSymbol->getUavSlot();
         return PyLong_FromUnsignedLong(uavSlot);
-    });
-    Py_UNREACHABLE();
-}
-
-// Method: PyDiaSymbol_udt_kind
-PyObject* PyDiaSymbol_udt_kind(const PyDiaSymbol* self)
-{
-    PYDIA_ASSERT_SYMBOL_POINTERS(self);
-    PYDIA_SAFE_TRY({
-        const UdtKind udtKind = self->diaSymbol->getUdtKind();
-        return PyLong_FromUnsignedLong(static_cast<unsigned long>(udtKind));
     });
     Py_UNREACHABLE();
 }
@@ -2485,7 +2472,7 @@ PyObject* PyDiaSymbol_getUndecoratedName(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper undecoratedName = self->diaSymbol->getUndecoratedName();
-        return BstrWrapperToPyObject(undecoratedName);
+        return PyObject_FromBstrWrapper(undecoratedName);
     });
     Py_UNREACHABLE();
 }
@@ -2496,7 +2483,7 @@ PyObject* PyDiaSymbol_getUndecoratedNameEx(const PyDiaSymbol* self, DWORD option
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper undecoratedNameEx = self->diaSymbol->getUndecoratedNameEx(options);
-        return BstrWrapperToPyObject(undecoratedNameEx);
+        return PyObject_FromBstrWrapper(undecoratedNameEx);
     });
     Py_UNREACHABLE();
 }
@@ -2512,8 +2499,8 @@ PyObject* PyDiaSymbol_getUnmodifiedType(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_unmodified_type_id
-PyObject* PyDiaSymbol_unmodified_type_id(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getUnmodifiedTypeId
+PyObject* PyDiaSymbol_getUnmodifiedTypeId(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2529,13 +2516,13 @@ PyObject* PyDiaSymbol_isUnused(const PyDiaSymbol* self)
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
         const BstrWrapper unused = self->diaSymbol->getUnused();
-        return BstrWrapperToPyObject(unused);
+        return PyObject_FromBstrWrapper(unused);
     });
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_upper_bound
-PyObject* PyDiaSymbol_upper_bound(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getUpperBound
+PyObject* PyDiaSymbol_getUpperBound(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2545,8 +2532,8 @@ PyObject* PyDiaSymbol_upper_bound(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-// Method: PyDiaSymbol_upper_bound_id
-PyObject* PyDiaSymbol_upper_bound_id(const PyDiaSymbol* self)
+// Method: PyDiaSymbol_getUpperBoundId
+PyObject* PyDiaSymbol_getUpperBoundId(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
@@ -2563,7 +2550,7 @@ PyObject* PyDiaSymbol_getValue(const PyDiaSymbol* self)
     PYDIA_SAFE_TRY({
         // Get the value from diaData and convert it to an appropriate Python object
         const auto value           = self->diaSymbol->getValue();
-        const auto variantPyObject = VariantToPyObject(value);
+        const auto variantPyObject = PyObject_FromVariant(value);
         return variantPyObject;
     });
     Py_UNREACHABLE();

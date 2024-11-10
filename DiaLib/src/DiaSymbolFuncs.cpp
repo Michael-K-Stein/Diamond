@@ -983,6 +983,9 @@ bool getIsCTypes(const Symbol& symbol)
     return FALSE != retVal;
 }
 
+/// @brief Retrieves a flag indicating whether the module was converted from a Common Intermediate Language (CIL) module to a native module.
+/// @param symbol A CompilandDetails instance to check.
+/// @return Returns TRUE if the module was converted from CIL to native code; otherwise, returns FALSE.
 bool getIsCVTCIL(const Symbol& symbol)
 {
     BOOL retVal       = 0;
@@ -1039,6 +1042,10 @@ bool getIsInterfaceUdt(const Symbol& symbol)
     return FALSE != retVal;
 }
 
+/// @brief Retrieves a flag that specifies whether the Compiland has been linked with the linker switch /LTCG (Link-time Code Generation), which aids
+/// in whole program optimization. This switch applies only to managed code.
+/// @param symbol Compiland to check.
+/// @return Returns TRUE if the compiland was linked with the /LTCG linker switch; otherwise, returns FALSE.
 bool getIsLTCG(const Symbol& symbol)
 {
     BOOL retVal       = 0;

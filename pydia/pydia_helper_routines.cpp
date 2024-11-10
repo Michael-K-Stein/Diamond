@@ -48,9 +48,9 @@ AnyString PyObjectToAnyString(PyObject* obj)
     return {};
 }
 
-PyObject* BstrWrapperToPyObject(const BstrWrapper& bstrWrapper) { return PyUnicode_FromWideChar(bstrWrapper.c_str(), bstrWrapper.length()); }
+PyObject* PyObject_FromBstrWrapper(const BstrWrapper& bstrWrapper) { return PyUnicode_FromWideChar(bstrWrapper.c_str(), bstrWrapper.length()); }
 
-PyObject* VariantToPyObject(const VARIANT& variantValue)
+PyObject* PyObject_FromVariant(const VARIANT& variantValue)
 {
     // Check the VARTYPE (type of data stored in the VARIANT)
     switch (variantValue.vt)

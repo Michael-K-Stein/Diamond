@@ -14,6 +14,6 @@
 
 AnyString PyObjectToAnyString(PyObject* obj);
 
-PyObject* BstrWrapperToPyObject(const BstrWrapper& bstrWrapper);
+PyObject* PyObject_FromBstrWrapper(const BstrWrapper& bstrWrapper);
 
-PyObject* VariantToPyObject(const VARIANT& variantValue);
+PyObject* PyObject_FromVariant(const VARIANT& variantValue);

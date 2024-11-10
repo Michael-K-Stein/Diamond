@@ -18,9 +18,9 @@
 TRIVIAL_INIT_DEINIT(Function);
 // Python method table for dia::Function
 static PyMethodDef PyDiaFunction_methods[] = {
-    {"get_access", (PyCFunction)PyDiaSymbol_getAccess, METH_NOARGS, "Get the access level of the function."},
-    {"get_address_offset", (PyCFunction)PyDiaSymbol_getAddressOffset, METH_NOARGS, "Get the address offset of the function."},
-    {"get_address_section", (PyCFunction)PyDiaSymbol_getAddressSection, METH_NOARGS, "Get the address section of the function."},
+    PyDiaSymbolMethodEntry_getAccess,
+    PyDiaSymbolMethodEntry_getAddressOffset,
+    PyDiaSymbolMethodEntry_getAddressSection,
     {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get the class parent of the function."},
     {"get_class_parent_id", (PyCFunction)PyDiaSymbol_getClassParentId, METH_NOARGS, "Get the class parent ID of the function."},
 
@@ -40,7 +40,6 @@ static PyMethodDef PyDiaFunction_methods[] = {
      "Get debug info about optimized code in the function."},
     {"has_interrupt_return", (PyCFunction)PyDiaSymbol_hasInterruptReturn, METH_NOARGS, "Check if the function returns with an interrupt."},
 
-    {"is_pure", (PyCFunction)PyDiaSymbol_isPure, METH_NOARGS, "Check if the function is pure."},
     {"is_far_return", (PyCFunction)PyDiaSymbol_isFarReturn, METH_NOARGS, "Check if the function uses a far return."},
     {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the function is const-qualified."},
     {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the function is unaligned."},
