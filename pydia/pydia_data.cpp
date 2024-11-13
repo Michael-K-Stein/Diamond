@@ -18,6 +18,8 @@ TRIVIAL_INIT_DEINIT(Data);
 
 // Python method table for dia::Data
 static PyMethodDef PyDiaData_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
     {"get_access", (PyCFunction)PyDiaSymbol_getAccess, METH_NOARGS, "Get the access level of the data."},
     {"get_address_offset", (PyCFunction)PyDiaSymbol_getAddressOffset, METH_NOARGS, "Get the address offset of the data."},
     {"get_address_section", (PyCFunction)PyDiaSymbol_getAddressSection, METH_NOARGS, "Get the address section of the data."},

@@ -22,6 +22,10 @@ TRIVIAL_INIT_DEINIT(Enum);
 
 // Python method table for dia::Enum
 static PyMethodDef PyDiaEnum_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
+
     {"get_base_type", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get BasicType of the enum."},
     {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the enum."},
     {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get class in which this enum declaration resides."},

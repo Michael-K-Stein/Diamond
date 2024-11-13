@@ -6,6 +6,7 @@
 
 PyObject* g_diaBasicTypeEnumWrappings         = NULL;
 PyObject* g_diaLocationTypeEnumWrappings      = NULL;
+PyObject* g_diaStorageModifierEnumWrappings   = NULL;
 PyObject* g_diaDataKindEnumWrappings          = NULL;
 PyObject* g_diaUdtKindEnumWrappings           = NULL;
 PyObject* g_diaAccessModifierEnumWrappings    = NULL;
@@ -35,6 +36,13 @@ PyObject* PyDiaBasicType_FromBasicType(enum BasicType basicType) { return PyDiaE
 static PyObject* getDiaLocationTypeEnumWrappings() { return g_diaLocationTypeEnumWrappings; }
 
 PyObject* PyDiaLocationType_FromLocationType(enum LocationType v) { return PyDiaEnumObject_FromEnumValue(getDiaLocationTypeEnumWrappings, v); }
+
+static PyObject* getDiaStorageModifierEnumWrappings() { return g_diaStorageModifierEnumWrappings; }
+
+PyObject* PyDiaStorageModifier_FromStorageModifier(dia::StorageModifier v)
+{
+    return PyDiaEnumObject_FromEnumValue(getDiaStorageModifierEnumWrappings, v);
+}
 
 static PyObject* getDiaDataKindEnumWrappings() { return g_diaDataKindEnumWrappings; }
 
@@ -137,6 +145,31 @@ PyObject* createDiaEnumWrappings(PyObject* module)
                                                                     {"Constant", LocIsConstant},
                                                                     {"RegRelAliasIndir", LocIsRegRelAliasIndir},
                                                                     {"LocTypeMax", LocTypeMax}})))
+    {
+        return NULL;
+    }
+
+    if (NULL == (g_diaStorageModifierEnumWrappings =
+                     createEnumObject(module, "StorageModifier",
+                                      {{"Invalid", static_cast<int>(dia::StorageModifier::Invalid)},
+                                       {"Const", static_cast<int>(dia::StorageModifier::Const)},
+                                       {"Volatile", static_cast<int>(dia::StorageModifier::Volatile)},
+                                       {"Unaligned", static_cast<int>(dia::StorageModifier::Unaligned)},
+                                       {"HlslUniform", static_cast<int>(dia::StorageModifier::HlslUniform)},
+                                       {"HlslLine", static_cast<int>(dia::StorageModifier::HlslLine)},
+                                       {"HlslTriangle", static_cast<int>(dia::StorageModifier::HlslTriangle)},
+                                       {"HlslLineAdj", static_cast<int>(dia::StorageModifier::HlslLineAdj)},
+                                       {"HlslTriangleAdj", static_cast<int>(dia::StorageModifier::HlslTriangleAdj)},
+                                       {"HlslLinear", static_cast<int>(dia::StorageModifier::HlslLinear)},
+                                       {"HlslCentroid", static_cast<int>(dia::StorageModifier::HlslCentroid)},
+                                       {"HlslConstInterp", static_cast<int>(dia::StorageModifier::HlslConstInterp)},
+                                       {"HlslNoPerspective", static_cast<int>(dia::StorageModifier::HlslNoPerspective)},
+                                       {"HlslSample", static_cast<int>(dia::StorageModifier::HlslSample)},
+                                       {"HlslCenter", static_cast<int>(dia::StorageModifier::HlslCenter)},
+                                       {"HlslSnorm", static_cast<int>(dia::StorageModifier::HlslSnorm)},
+                                       {"HlslUnorm", static_cast<int>(dia::StorageModifier::HlslUnorm)},
+                                       {"HlslPrecise", static_cast<int>(dia::StorageModifier::HlslPrecise)},
+                                       {"HlslUavGloballyCoherent", static_cast<int>(dia::StorageModifier::HlslUavGloballyCoherent)}})))
     {
         return NULL;
     }

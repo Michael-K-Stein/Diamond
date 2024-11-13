@@ -20,6 +20,10 @@ TRIVIAL_INIT_DEINIT(FunctionArgType);
 
 // Python method table for dia::FunctionArgType
 static PyMethodDef PyDiaFunctionArgType_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
+
     {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get the class parent of the function argument."},
     {"get_class_parent_id", (PyCFunction)PyDiaSymbol_getClassParentId, METH_NOARGS, "Get the class parent ID of the function argument."},
     {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the function argument."},

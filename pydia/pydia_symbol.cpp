@@ -17,6 +17,7 @@
 #include <DiaUserDefinedTypeWrapper.h>
 #include <SymbolTypes/DiaArray.h>
 #include <SymbolTypes/DiaBaseType.h>
+#include <set>
 
 #define PYDIA_ASSERT_SYMBOL_POINTERS(__self)                                                                                                         \
     do                                                                                                                                               \
@@ -1637,24 +1638,24 @@ PyObject* PyDiaSymbol_getMemorySpaceKind(const PyDiaSymbol* self)
     Py_UNREACHABLE();
 }
 
-#if 0  // TODO: Implement dia::Symbol::getModifierValues()
-// Method: PyDiaSymbol_getModifierValues 
+// Method: PyDiaSymbol_getModifierValues
 PyObject* PyDiaSymbol_getModifierValues(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
     PYDIA_SAFE_TRY({
-        const std::vector<ULONG> modifierValues = self->diaSymbol->getModifierValues();
-        PyObject* pyList                        = PyList_New(modifierValues.size());
-        for (size_t i = 0; i < modifierValues.size(); ++i)
+        const std::set<dia::StorageModifier> modifierValues = self->diaSymbol->getModifierValues();
+        PyObject* pyList                                    = PyTuple_New(modifierValues.size());
+        Py_ssize_t index                                    = 0;
+        for (const auto& modifier : modifierValues)
         {
-            PyObject* pyValue = PyLong_FromUnsignedLong(modifierValues[i]);
-            PyList_SetItem(pyList, i, pyValue);  // Steals reference to pyValue
+            PyObject* pyValue = PyDiaStorageModifier_FromStorageModifier(modifier);
+            PyTuple_SetItem(pyList, index, pyValue);
+            ++index;
         }
         return pyList;
     });
     Py_UNREACHABLE();
 }
-#endif
 
 // Method: PyDiaSymbol_isMsil
 PyObject* PyDiaSymbol_isMsil(const PyDiaSymbol* self)

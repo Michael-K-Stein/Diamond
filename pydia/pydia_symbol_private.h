@@ -185,7 +185,12 @@ PyObject* PyDiaSymbol_getCallingConvention(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getCallingConvention = {"get_calling_convention", (PyCFunction)PyDiaSymbol_getCallingConvention,
                                                                   METH_NOARGS, "Get the calling convention of the symbol."};
 
-#if 0
+#if 0  // TODO: Implement
+
+PyObject* PyDiaSymbol_getSrcLineOnTypeDefn(const PyDiaSymbol* self);
+static PyMethodDef PyDiaSymbolMethodEntry_getSrcLineOnTypeDefn = {"get_src_line_on_type_defn", (PyCFunction)PyDiaSymbol_getSrcLineOnTypeDefn,
+                                                                  METH_NOARGS, "Get the source line on type definition of the symbol."};
+
 PyObject* PyDiaSymbol_getDataBytes(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getDataBytes = {"get_data_bytes", (PyCFunction)PyDiaSymbol_getDataBytes, METH_NOARGS,
                                                           "Get the data bytes of the symbol."};
@@ -686,6 +691,7 @@ PyObject* PyDiaSymbol_getTypeId(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getTypeId = {"get_type_id", (PyCFunction)PyDiaSymbol_getTypeId, METH_NOARGS,
                                                        "Get the type ID of the symbol."};
 
+#if 0  // TODO: Not Implemented
 PyObject* PyDiaSymbol_getTypeIds(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getTypeIds = {"get_type_ids", (PyCFunction)PyDiaSymbol_getTypeIds, METH_NOARGS,
                                                         "Get the type IDs associated with the symbol."};
@@ -693,6 +699,7 @@ static PyMethodDef PyDiaSymbolMethodEntry_getTypeIds = {"get_type_ids", (PyCFunc
 PyObject* PyDiaSymbol_getTypes(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getTypes = {"get_types", (PyCFunction)PyDiaSymbol_getTypes, METH_NOARGS,
                                                       "Get the types associated with the symbol."};
+#endif
 
 PyObject* PyDiaSymbol_isUnaligned(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_isUnaligned = {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS,
@@ -787,10 +794,6 @@ static PyMethodDef PyDiaSymbolMethodEntry_getPlatform = {"get_platform", (PyCFun
 PyObject* PyDiaSymbol_getRegisterId(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getRegisterId = {"get_register_id", (PyCFunction)PyDiaSymbol_getRegisterId, METH_NOARGS,
                                                            "Get the register ID of the symbol."};
-
-PyObject* PyDiaSymbol_getSrcLineOnTypeDefn(const PyDiaSymbol* self);
-static PyMethodDef PyDiaSymbolMethodEntry_getSrcLineOnTypeDefn = {"get_src_line_on_type_defn", (PyCFunction)PyDiaSymbol_getSrcLineOnTypeDefn,
-                                                                  METH_NOARGS, "Get the source line on type definition of the symbol."};
 
 PyObject* PyDiaSymbol_getTargetRelativeVirtualAddress(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getTargetRelativeVirtualAddress = {"get_target_relative_virtual_address",

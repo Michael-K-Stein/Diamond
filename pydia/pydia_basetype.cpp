@@ -20,6 +20,11 @@ TRIVIAL_INIT_DEINIT(BaseType);
 
 // Python method table for dia::BaseType
 static PyMethodDef PyDiaBaseType_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
+
+
     {"get_base_type", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get BasicType of the base type."},
     {"get_length", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the base type."},
     {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the base type."},

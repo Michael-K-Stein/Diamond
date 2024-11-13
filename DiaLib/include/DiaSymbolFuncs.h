@@ -5,6 +5,7 @@
 #include <atlbase.h>
 #include <dia2.h>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,33 @@ enum class AccessModifier : DWORD
     Protected = CV_protected,
     Public    = CV_public,
 };
+enum class StorageModifier : USHORT
+{
+    Invalid = CV_MOD_INVALID,
+
+    // Standard modifiers.
+    Const     = CV_MOD_CONST,
+    Volatile  = CV_MOD_VOLATILE,
+    Unaligned = CV_MOD_UNALIGNED,
+
+    // HLSL modifiers.
+    HlslUniform             = CV_MOD_HLSL_UNIFORM,
+    HlslLine                = CV_MOD_HLSL_LINE,
+    HlslTriangle            = CV_MOD_HLSL_TRIANGLE,
+    HlslLineAdj             = CV_MOD_HLSL_LINEADJ,
+    HlslTriangleAdj         = CV_MOD_HLSL_TRIANGLEADJ,
+    HlslLinear              = CV_MOD_HLSL_LINEAR,
+    HlslCentroid            = CV_MOD_HLSL_CENTROID,
+    HlslConstInterp         = CV_MOD_HLSL_CONSTINTERP,
+    HlslNoPerspective       = CV_MOD_HLSL_NOPERSPECTIVE,
+    HlslSample              = CV_MOD_HLSL_SAMPLE,
+    HlslCenter              = CV_MOD_HLSL_CENTER,
+    HlslSnorm               = CV_MOD_HLSL_SNORM,
+    HlslUnorm               = CV_MOD_HLSL_UNORM,
+    HlslPrecise             = CV_MOD_HLSL_PRECISE,
+    HlslUavGloballyCoherent = CV_MOD_HLSL_UAV_GLOBALLY_COHERENT,
+};
+
 using DataBytes = std::vector<BYTE>;
 using RVA       = DWORD;
 using VA        = DWORD;
@@ -892,8 +920,8 @@ ULONG getMemorySpaceKind(const Symbol& symbol);
 
 /// @brief Retrieves the modifier values.
 /// @param symbol The symbol of which to get the modifier values.
-/// @return The modifier values.
-const std::vector<ULONG> getModifierValues(const Symbol& symbol);
+/// @return The modifiers relevant to this symbol.
+const std::set<StorageModifier> getModifierValues(const Symbol& symbol);
 
 /// @brief Retrieves whether the symbol is MSIL.
 /// @param symbol The symbol of which to get the MSIL status.

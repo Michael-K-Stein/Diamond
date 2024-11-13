@@ -20,6 +20,9 @@ TRIVIAL_INIT_DEINIT(Pointer);
 
 // Python method table for dia::Pointer
 static PyMethodDef PyDiaPointer_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
     {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the data is const-qualified."},
     {"is_reference", (PyCFunction)PyDiaSymbol_isReference, METH_NOARGS, "Check if the pointer is a reference."},
     {"is_rvalue_reference", (PyCFunction)PyDiaSymbol_isRValueReference, METH_NOARGS, "Check if the pointer is an r-value reference."},

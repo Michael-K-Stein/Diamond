@@ -22,6 +22,8 @@ static PyObject* PyDiaFunctionType_enumerateParameters(PyDiaFunctionType* self);
 
 // Python method table for dia::FunctionType
 static PyMethodDef PyDiaFunctionType_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
 
     {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the symbol."},
     {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the symbol."},

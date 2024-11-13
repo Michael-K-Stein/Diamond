@@ -37,6 +37,8 @@ static int PyDiaUdt_init(PyDiaUdt* self, PyObject* args, PyObject* kwds)
 
 // Python method table for dia::Udt
 static PyMethodDef PyDiaUdt_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
     {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the UDT."},
     {"get_value", (PyCFunction)PyDiaSymbol_getValue, METH_NOARGS, "Get the value of the UDT."},
     {NULL, NULL, 0, NULL}  // Sentinel

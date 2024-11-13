@@ -18,6 +18,10 @@
 TRIVIAL_INIT_DEINIT(Function);
 // Python method table for dia::Function
 static PyMethodDef PyDiaFunction_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
+
     PyDiaSymbolMethodEntry_getAccess,
     PyDiaSymbolMethodEntry_getAddressOffset,
     PyDiaSymbolMethodEntry_getAddressSection,

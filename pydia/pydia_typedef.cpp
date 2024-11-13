@@ -19,6 +19,8 @@ TRIVIAL_INIT_DEINIT(Typedef);
 
 // Python method table for dia::Typedef
 static PyMethodDef PyDiaTypedef_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
     {"get_base_type", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get the base type of the typedef."},
     {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get the class parent of the typedef."},
     {"get_class_parent_id", (PyCFunction)PyDiaSymbol_getClassParentId, METH_NOARGS, "Get the class parent ID of the typedef."},

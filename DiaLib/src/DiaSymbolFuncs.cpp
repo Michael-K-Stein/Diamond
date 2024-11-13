@@ -5,6 +5,7 @@
 #include "DiaSymbolFuncs.h"
 #include "Exceptions.h"
 #include "SymbolTypes/DiaSymbolTypes.h"
+#include <set>
 
 namespace dia
 {
@@ -1294,15 +1295,28 @@ DWORD getMemorySpaceKind(const Symbol& symbol)
     return retVal;
 }
 
-#if 0
-const Symbol getModifierValues(const Symbol& symbol)
+const std::set<StorageModifier> getModifierValues(const Symbol& symbol)
 {
-    IDiaSymbol* retVal = nullptr;
-    const auto result = symbol.get()->get_modifierValues(&retVal);
+    // TODO: This violates the convention of only calling the relevant low-level COM function.
+    const auto modifiersCount = getNumberOfModifiers(symbol);
+    auto rawModifiers         = std::make_unique<WORD[]>(modifiersCount);
+    // Sanity to avoid integer overflow
+    _ASSERT_EXPR((size_t)((size_t)sizeof(WORD) * (size_t)modifiersCount) ==
+                     (unsigned short)((unsigned short)sizeof(WORD) * (unsigned short)modifiersCount),
+                 "Integer overflow sanity check failed!");
+    RtlZeroMemory(rawModifiers.get(), sizeof(WORD) * modifiersCount);
+    DWORD validModifiersCount = 0;
+    const auto result         = symbol.get()->get_modifierValues(modifiersCount, &validModifiersCount, rawModifiers.get());
     CHECK_DIACOM_EXCEPTION("get_modifierValues failed!", result);
-    return Symbol{retVal};
+    _ASSERT_EXPR(modifiersCount == validModifiersCount, "Amount of modifiers returned does not match amount of modifiers expected!");
+
+    // Initialize using range iteration
+    static_assert(sizeof(StorageModifier) == sizeof(WORD), "StorageModifier enum class must be the same size as a WORD");
+    std::set<StorageModifier> modifiers{reinterpret_cast<StorageModifier*>(rawModifiers.get()),
+                                        reinterpret_cast<StorageModifier*>(rawModifiers.get()) + validModifiersCount};
+
+    return modifiers;
 }
-#endif
 
 bool getNested(const Symbol& symbol)
 {

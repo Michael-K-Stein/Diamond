@@ -20,6 +20,10 @@ TRIVIAL_INIT_DEINIT(Array);
 
 // Python method table for dia::Array
 static PyMethodDef PyDiaArray_methods[] = {
+    PyDiaSymbolMethodEntry_getModifierValues,
+
+
+
     {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the data is const-qualified."},
     {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the data is unaligned."},
     {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the data is volatile-qualified."},

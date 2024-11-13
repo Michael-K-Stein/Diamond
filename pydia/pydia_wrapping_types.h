@@ -11,3 +11,4 @@ PyObject* PyDiaAccessModifier_FromAccessModifier(enum AccessModifier v);
 PyObject* PyDiaUdtKind_FromUdtKind(enum UdtKind v);
 PyObject* PyDiaDataKind_FromDataKind(enum DataKind v);
 PyObject* PyDiaLocationType_FromLocationType(enum LocationType v);
+PyObject* PyDiaStorageModifier_FromStorageModifier(dia::StorageModifier v);
