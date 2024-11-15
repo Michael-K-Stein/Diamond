@@ -50,6 +50,8 @@ AnyString PyObjectToAnyString(PyObject* obj)
 
 PyObject* PyObject_FromBstrWrapper(const BstrWrapper& bstrWrapper) { return PyUnicode_FromWideChar(bstrWrapper.c_str(), bstrWrapper.length()); }
 
+PyObject* PyObject_FromWstring(const std::wstring& string) { return PyUnicode_FromWideChar(string.c_str(), string.length()); }
+
 PyObject* PyObject_FromVariant(const VARIANT& variantValue)
 {
     // Check the VARTYPE (type of data stored in the VARIANT)

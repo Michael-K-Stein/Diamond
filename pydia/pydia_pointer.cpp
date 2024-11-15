@@ -17,24 +17,19 @@
 
 TRIVIAL_INIT_DEINIT(Pointer);
 
-
-// Python method table for dia::Pointer
 static PyMethodDef PyDiaPointer_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
-
-
-    {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the data is const-qualified."},
-    {"is_reference", (PyCFunction)PyDiaSymbol_isReference, METH_NOARGS, "Check if the pointer is a reference."},
-    {"is_rvalue_reference", (PyCFunction)PyDiaSymbol_isRValueReference, METH_NOARGS, "Check if the pointer is an r-value reference."},
-    {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the data is unaligned."},
-    {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the data is volatile-qualified."},
-    {"get_length", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the pointer."},
-    {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the pointer."},
-    {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the pointer."},
-    {"get_sym_index_id", (PyCFunction)PyDiaSymbol_getSymIndexId, METH_NOARGS, "Get the symbol index ID of the pointer."},
-    {"get_sym_tag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the symbol tag of the pointer."},
-    {"get_type", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the pointer."},
-    {"get_type_id", (PyCFunction)PyDiaSymbol_getTypeId, METH_NOARGS, "Get the type ID of the pointer."},
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_isReference,
+    PyDiaSymbolMethodEntry_isRValueReference,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_isVolatile,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_getType,
+    PyDiaSymbolMethodEntry_getTypeId,
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 

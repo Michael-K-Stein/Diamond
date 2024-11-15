@@ -200,7 +200,7 @@ static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
 
     for (size_t i = 0; i < functions.size(); ++i)
     {
-        PyObject* functionStr = PyUnicode_FromWideChar(functions[i].getName().c_str(), functions[i].getName().length());
+        PyObject* functionStr = PyObject_FromWstring(functions[i].getName());
         if (!functionStr)
         {
             Py_DECREF(resultList);

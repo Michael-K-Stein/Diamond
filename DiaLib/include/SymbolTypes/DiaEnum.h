@@ -37,7 +37,7 @@ public:
     using Symbol::getUnalignedType;
     using Symbol::getVolatileType;
 
-    const std::vector<Data> getValues() const { return DiaSymbolEnumerator<Data>::enumerate(static_cast<const Symbol&>(*this), SymTagData); };
+    const auto getValues() const { return DiaSymbolEnumerator<Data>::enumerate(static_cast<const Symbol&>(*this), SymTagData); };
 };
 }  // namespace dia
 

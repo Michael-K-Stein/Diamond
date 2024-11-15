@@ -10,16 +10,13 @@
 
 typedef struct
 {
-    int Initialized;
+    BOOLEAN Initialized;
 } PyDiaModuleState;
 
-static void pydia_cleanup(void* module);
-static PyDiaModuleState* get_pydia_module_state(PyObject* module);
-
-static PyDiaModuleState* get_pydia_module_state(PyObject* module) { return (PyDiaModuleState*)PyModule_GetState(module); }
+static void pydia_cleanup(PyObject* module);
+static PyDiaModuleState* pydia_getModuleState(PyObject* module);
 
 static PyMethodDef PyDiaMethods[] = {
-    //{"system", pydia_system, METH_VARARGS, "Execute a shell command."},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -27,18 +24,17 @@ static struct PyModuleDef pydiamodule = {
     PyModuleDef_HEAD_INIT,
     "pydia",                  /* name of module */
     NULL,                     /* module documentation, may be NULL */
-    sizeof(PyDiaModuleState), /* size of per-interpreter state of the module,
-                or -1 if the module keeps state in global variables. */
+    sizeof(PyDiaModuleState), /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
     PyDiaMethods,
     NULL,
     NULL,
     NULL,
-    pydia_cleanup,
+    (freefunc)pydia_cleanup,
 };
 
-static void pydia_cleanup(void* module)
+static void pydia_cleanup(PyObject* module)
 {
-    PyDiaModuleState* moduleState = get_pydia_module_state((PyObject*)module);
+    const auto moduleState = pydia_getModuleState(module);
     if (0 == moduleState->Initialized)
     {
         return;
@@ -46,6 +42,8 @@ static void pydia_cleanup(void* module)
 
     CoUninitialize();
 }
+
+static PyDiaModuleState* pydia_getModuleState(PyObject* module) { return (PyDiaModuleState*)PyModule_GetState(module); }
 
 PyMODINIT_FUNC PyInit_pydia(void)
 {
@@ -67,17 +65,15 @@ PyMODINIT_FUNC PyInit_pydia(void)
         return NULL;
     }
 
-    // Get the module state (assuming get_pydia_module_state is properly
-    // defined)
-    moduleState = get_pydia_module_state((PyObject*)module);
-    if (moduleState == NULL)
+    moduleState = pydia_getModuleState(module);
+    if (NULL == moduleState)
     {
         PyErr_SetString(PyExc_RuntimeError, "Failed to allocate module state.");
         return NULL;
     }
 
     // Set the initialized state to false
-    moduleState->Initialized = 0;
+    moduleState->Initialized = FALSE;
 
     // Initialize COM library
     hresult = CoInitialize(NULL);
@@ -88,23 +84,23 @@ PyMODINIT_FUNC PyInit_pydia(void)
         return NULL;
     }
 
-    if (0 > pydia_initialize_pydiaerrors(module))
+    if (NULL == pydia_initializeErrors(module))
     {
         return NULL;
     }
 
-    if (NULL == createDiaEnumWrappings(module))
+    if (NULL == pydia_createDiaEnumWrappings(module))
     {
         return NULL;
     }
 
-    if (NULL == registerPydiaClasses(module))
+    if (NULL == pydia_registerClasses(module))
     {
         return NULL;
     }
 
     // Mark the module as initialized
-    moduleState->Initialized = 1;
+    moduleState->Initialized = TRUE;
 
     return module;
 }

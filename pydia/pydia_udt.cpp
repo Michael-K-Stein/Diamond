@@ -37,10 +37,30 @@ static int PyDiaUdt_init(PyDiaUdt* self, PyObject* args, PyObject* kwds)
 
 // Python method table for dia::Udt
 static PyMethodDef PyDiaUdt_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
+    PyDiaSymbolMethodEntry_getValue,  // TODO: Is getValue valid for user defined types?
 
-    {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the UDT."},
-    {"get_value", (PyCFunction)PyDiaSymbol_getValue, METH_NOARGS, "Get the value of the UDT."},
+    PyDiaSymbolMethodEntry_getClassParent,
+    PyDiaSymbolMethodEntry_getClassParentId,
+    PyDiaSymbolMethodEntry_hasConstructor,
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_hasAssignmentOperator,
+    PyDiaSymbolMethodEntry_hasCastOperator,
+    PyDiaSymbolMethodEntry_hasNestedTypes,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getName,
+    PyDiaSymbolMethodEntry_isNested,
+    PyDiaSymbolMethodEntry_hasOverloadedOperator,
+    PyDiaSymbolMethodEntry_isPacked,
+    PyDiaSymbolMethodEntry_isScoped,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_getUdtKind,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_getVirtualTableShape,
+    PyDiaSymbolMethodEntry_getVirtualTableShapeId,
+    PyDiaSymbolMethodEntry_isVolatile,
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 

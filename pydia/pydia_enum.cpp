@@ -22,32 +22,29 @@ TRIVIAL_INIT_DEINIT(Enum);
 
 // Python method table for dia::Enum
 static PyMethodDef PyDiaEnum_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
+    PyDiaSymbolMethodEntry_getBaseType,
+    PyDiaSymbolMethodEntry_getName,
+    PyDiaSymbolMethodEntry_getClassParent,
+    PyDiaSymbolMethodEntry_getClassParentId,
+    PyDiaSymbolMethodEntry_hasConstructor,
+    PyDiaSymbolMethodEntry_hasAssignmentOperator,
+    PyDiaSymbolMethodEntry_hasCastOperator,
+    PyDiaSymbolMethodEntry_hasNestedTypes,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_isNested,
+    PyDiaSymbolMethodEntry_hasOverloadedOperator,
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_isPacked,
+    PyDiaSymbolMethodEntry_isScoped,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_isVolatile,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_getType,
+    PyDiaSymbolMethodEntry_getTypeId,
 
-
-
-    {"get_base_type", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get BasicType of the enum."},
-    {"get_name", (PyCFunction)PyDiaSymbol_getName, METH_NOARGS, "Get the name of the enum."},
-    {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get class in which this enum declaration resides."},
-    {"get_class_parent_id", (PyCFunction)PyDiaSymbol_getClassParentId, METH_NOARGS, "Get the class parent ID of the enum."},
-    {"has_constructor", (PyCFunction)PyDiaSymbol_hasConstructor, METH_NOARGS, "Check if the enum has a constructor."},
-    {"has_assignment_operator", (PyCFunction)PyDiaSymbol_hasAssignmentOperator, METH_NOARGS, "Check if the enum has an assignment operator."},
-    {"has_cast_operator", (PyCFunction)PyDiaSymbol_hasCastOperator, METH_NOARGS, "Check if the enum has a cast operator."},
-    {"has_nested_types", (PyCFunction)PyDiaSymbol_hasNestedTypes, METH_NOARGS, "Check if the enum has nested types."},
-    {"get_length", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the enum."},
-    {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the enum."},
-    {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the enum."},
-    {"is_nested", (PyCFunction)PyDiaSymbol_isNested, METH_NOARGS, "Get nested types within the enum."},
-    {"has_overloaded_operator", (PyCFunction)PyDiaSymbol_hasOverloadedOperator, METH_NOARGS, "Check if the enum has an overloaded operator."},
-    {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the enum is const-qualified."},
-    {"is_packed", (PyCFunction)PyDiaSymbol_isPacked, METH_NOARGS, "Check if the enum is packed."},
-    {"is_scoped", (PyCFunction)PyDiaSymbol_isScoped, METH_NOARGS, "Check if the enum is scoped."},
-    {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the enum is unaligned."},
-    {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the enum is volatile-qualified."},
-    {"get_sym_index_id", (PyCFunction)PyDiaSymbol_getSymIndexId, METH_NOARGS, "Get the symbol index ID of the enum."},
-    {"get_sym_tag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the symbol tag of the enum."},
-    {"get_type", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the enum."},
-    {"get_type_id", (PyCFunction)PyDiaSymbol_getTypeId, METH_NOARGS, "Get the type ID of the enum."},
     {"get_values", (PyCFunction)PyDiaEnum_getValues, METH_NOARGS, "Get the values associated with the enum."},
     {NULL, NULL, 0, NULL}  // Sentinel
 };
@@ -57,49 +54,27 @@ static PyMethodDef PyDiaEnum_methods[] = {
 PYDIA_SYMBOL_TYPE_DEFINITION(Enum, PyDiaEnum_methods);
 TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Enum);
 
+// TODO: This can probably be made generic for all "data child" enumerations
+
+
 static PyObject* PyDiaEnum_getValues(PyDiaEnum* self)
 {
-    try
-    {
-        // Retrieve the enumeration values
-        const auto enumValues = self->diaEnum->getValues();
+    _ASSERT(NULL != self);
+    _ASSERT(NULL != self->diaEnum);
 
-        // Create a new Python list to hold the enum values
-        PyObject* pyList = PyList_New(enumValues.size());
-        if (!pyList)
+    auto safeExecution = [&]() -> PyObject*
+    {
+        auto rawEnumerator            = self->diaEnum->getValues();
+        PyDiaDataGenerator* generator = (PyDiaDataGenerator*)PyDiaSymbolGenerator_create<PyDiaEnum, dia::Data>(self, std::move(rawEnumerator));
+        if (!generator)
         {
-            PyErr_SetString(PyExc_MemoryError, "Failed to create list for enum values.");
-            return NULL;
+            PyErr_SetString(PyExc_RuntimeError, "Failed to create generator.");
+            return NULL;  // Failed to allocate generator
         }
 
-        // Populate the Python list with PyDiaData objects
-        for (size_t i = 0; i < enumValues.size(); ++i)
-        {
-            const dia::Data& value = enumValues[i];
+        return (PyObject*)generator;
+    };
 
-            // Create a new PyDiaData object
-            PyDiaData* pyData = PyObject_New(PyDiaData, &PyDiaData_Type);
-            if (!pyData)
-            {
-                Py_DECREF(pyList);
-                PyErr_SetString(PyExc_MemoryError, "Failed to create DiaData object.");
-                return NULL;
-            }
-
-            // Initialize the PyDiaData object with the corresponding dia::Data object
-            pyData->diaData = new dia::Data(value);
-
-            // Set the PyDiaData object in the list
-            PyList_SET_ITEM(pyList, i, reinterpret_cast<PyObject*>(pyData));
-            // Reference Management: PyList_SET_ITEM steals the reference to pyData, so no Py_DECREF for pyData is necessary after insertion.
-        }
-
-        return pyList;
-    }
-    catch (const std::exception& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
+    PYDIA_SAFE_TRY({ return safeExecution(); });
     Py_UNREACHABLE();
 }

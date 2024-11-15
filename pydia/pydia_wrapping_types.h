@@ -3,7 +3,10 @@
 
 #include <DiaSymbolFuncs.h>
 
-PyObject* createDiaEnumWrappings(PyObject* module);
+/// @brief Initialize the C-Python wrapping Enums for the DIA SDK enums
+/// @param module The pydia module
+/// @return The same module on success, NULL on failure.
+PyObject* pydia_createDiaEnumWrappings(PyObject* module);
 
 PyObject* PyDiaBasicType_FromBasicType(enum BasicType basicType);
 PyObject* PyDiaCallingConvention_FromCallingConvention(dia::CvCall callingConvention);

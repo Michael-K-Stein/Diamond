@@ -90,35 +90,11 @@ static PyObject* createEnumObject(PyObject* module, const char* name, std::initi
     Py_CLEAR(pyEnumDict);
     Py_CLEAR(pyEnumModule);
 
-#if 0
-    // Create a new PyTypeObject for the enum
-    PyTypeObject* pyEnumType = (PyTypeObject*)PyType_Type.tp_alloc(&PyType_Type, 0);
-    if (!pyEnumType)
-    {
-        Py_DECREF(pyEnumDict);
-        return NULL;
-    }
-
-    pyEnumType->tp_name      = name;
-    pyEnumType->tp_basicsize = sizeof(PyObject);
-    pyEnumType->tp_flags     = Py_TPFLAGS_DEFAULT;
-    pyEnumType->tp_dict      = pyEnumDict;
-
-    // Finalize the type so it can be used as a proper Python object
-    if (PyType_Ready(pyEnumType) < 0)
-    {
-        Py_DECREF(pyEnumDict);
-        Py_DECREF(pyEnumType);
-        return NULL;
-    }
-    Py_INCREF(pyEnumType);
-#endif
-
-    PyModule_AddObject(module, name, (PyObject*)pyEnumType);
-    return (PyObject*)pyEnumType;
+    PyModule_AddObject(module, name, pyEnumType);
+    return pyEnumType;
 }
 
-PyObject* createDiaEnumWrappings(PyObject* module)
+PyObject* pydia_createDiaEnumWrappings(PyObject* module)
 {
     if (NULL ==
         (g_diaBasicTypeEnumWrappings = createEnumObject(

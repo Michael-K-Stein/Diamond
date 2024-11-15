@@ -59,4 +59,4 @@
 extern PyObject* PyDiaError;
 XFOR_TRIVIAL_PYDIA_ERRORS(__DECLARE_TRIVIAL_PYDIA_ERROR);
 
-int pydia_initialize_pydiaerrors(PyObject* module);
+PyObject* pydia_initializeErrors(PyObject* module);

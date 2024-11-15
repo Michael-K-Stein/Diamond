@@ -17,23 +17,17 @@
 
 TRIVIAL_INIT_DEINIT(BaseType);
 
-
-// Python method table for dia::BaseType
 static PyMethodDef PyDiaBaseType_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
 
-
-
-
-    {"get_base_type", (PyCFunction)PyDiaSymbol_getBaseType, METH_NOARGS, "Get BasicType of the base type."},
-    {"get_length", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the length of the base type."},
-    {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the base type."},
-    {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the base type."},
-    {"get_sym_index_id", (PyCFunction)PyDiaSymbol_getSymIndexId, METH_NOARGS, "Get the symbol index ID of the base type."},
-    {"get_sym_tag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the symbol tag of the base type."},
-    {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the data is unaligned."},
-    {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the data is const-qualified."},
-    {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the data is volatile-qualified."},
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_isVolatile,
+    PyDiaSymbolMethodEntry_getBaseType,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 

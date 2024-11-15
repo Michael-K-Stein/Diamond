@@ -22,31 +22,20 @@ static PyObject* PyDiaFunctionType_enumerateParameters(PyDiaFunctionType* self);
 
 // Python method table for dia::FunctionType
 static PyMethodDef PyDiaFunctionType_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
-
-
-    {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the symbol."},
-    {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the symbol."},
-
-    {"get_sym_index_id", (PyCFunction)PyDiaSymbol_getSymIndexId, METH_NOARGS, "Get the symbol index ID of the symbol."},
-    {"get_sym_tag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the symbol tag of the symbol."},
-
-    {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the data is unaligned."},
-    {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the data is volatile-qualified."},
-
-    {"get_calling_convention", (PyCFunction)PyDiaSymbol_getCallingConvention, METH_NOARGS, "Get the calling convention of the function type."},
-
-    {"get_class_parent", (PyCFunction)PyDiaSymbol_getClassParent, METH_NOARGS, "Get the class parent of the function type."},
-    {"get_class_parent_id", (PyCFunction)PyDiaSymbol_getClassParentId, METH_NOARGS, "Get the class parent ID of the function type."},
-
-    {"get_count", (PyCFunction)PyDiaSymbol_getCount, METH_NOARGS, "Get the count of elements associated with the function type."},
-    {"get_object_pointer_type", (PyCFunction)PyDiaSymbol_getObjectPointerType, METH_NOARGS,
-     "Get the object pointer type associated with the function type."},
-
-    {"get_this_adjust", (PyCFunction)PyDiaSymbol_getThisAdjust, METH_NOARGS, "Get the 'this' pointer adjustment value for the function type."},
-
-    {"get_type", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the function type."},
-    {"get_type_id", (PyCFunction)PyDiaSymbol_getTypeId, METH_NOARGS, "Get the type ID of the function type."},
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_isVolatile,
+    PyDiaSymbolMethodEntry_getCallingConvention,
+    PyDiaSymbolMethodEntry_getClassParent,
+    PyDiaSymbolMethodEntry_getClassParentId,
+    PyDiaSymbolMethodEntry_getCount,
+    PyDiaSymbolMethodEntry_getObjectPointerType,
+    PyDiaSymbolMethodEntry_getThisAdjust,
+    PyDiaSymbolMethodEntry_getType,
+    PyDiaSymbolMethodEntry_getTypeId,
 
     {"enumerate_parameters", (PyCFunction)PyDiaFunctionType_enumerateParameters, METH_NOARGS, "Enumerate the parameters of the function type."},
     {NULL, NULL, 0, NULL}  // Sentinel

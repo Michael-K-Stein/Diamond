@@ -17,27 +17,21 @@
 
 TRIVIAL_INIT_DEINIT(Array);
 
-
-// Python method table for dia::Array
 static PyMethodDef PyDiaArray_methods[] = {
-    PyDiaSymbolMethodEntry_getModifierValues,
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_isVolatile,
 
-
-
-    {"is_const", (PyCFunction)PyDiaSymbol_isConst, METH_NOARGS, "Check if the data is const-qualified."},
-    {"is_unaligned", (PyCFunction)PyDiaSymbol_isUnaligned, METH_NOARGS, "Check if the data is unaligned."},
-    {"is_volatile", (PyCFunction)PyDiaSymbol_isVolatile, METH_NOARGS, "Check if the data is volatile-qualified."},
-    {"get_index_type", (PyCFunction)PyDiaSymbol_getArrayIndexType, METH_NOARGS, "Get the type of the index of the array."},
-    {"get_index_type_id", (PyCFunction)PyDiaSymbol_getArrayIndexTypeId, METH_NOARGS, "Get the id of type of the index of the array."},
-    {"get_length", (PyCFunction)PyDiaSymbol_getLength, METH_NOARGS, "Get the suze, in bytes, of the array."},
-    {"get_count", (PyCFunction)PyDiaSymbol_getCount, METH_NOARGS, "Get the number of elements in the array."},
-    {"get_lexical_parent", (PyCFunction)PyDiaSymbol_getLexicalParent, METH_NOARGS, "Get the lexical parent of the array."},
-    {"get_lexical_parent_id", (PyCFunction)PyDiaSymbol_getLexicalParentId, METH_NOARGS, "Get the lexical parent ID of the array."},
-    {"get_rank", (PyCFunction)PyDiaSymbol_getRank, METH_NOARGS, "Get the rank of a FORTRAN multidimensional array."},
-    {"get_sym_index_id", (PyCFunction)PyDiaSymbol_getSymIndexId, METH_NOARGS, "Get the symbol index ID of the array."},
-    {"get_sym_tag", (PyCFunction)PyDiaSymbol_getSymTag, METH_NOARGS, "Get the symbol tag of the array."},
-    {"get_type", (PyCFunction)PyDiaSymbol_getType, METH_NOARGS, "Get the type of the array."},
-    {"get_type_id", (PyCFunction)PyDiaSymbol_getTypeId, METH_NOARGS, "Get the type ID of the array."},
+    PyDiaSymbolMethodEntry_getArrayIndexType,
+    PyDiaSymbolMethodEntry_getArrayIndexTypeId,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_getCount,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_getType,
+    PyDiaSymbolMethodEntry_getTypeId,
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 

@@ -13,7 +13,6 @@
 // Helper function to convert Python string to AnyString
 
 AnyString PyObjectToAnyString(PyObject* obj);
-
 PyObject* PyObject_FromBstrWrapper(const BstrWrapper& bstrWrapper);
-
+PyObject* PyObject_FromWstring(const std::wstring& string);
 PyObject* PyObject_FromVariant(const VARIANT& variantValue);

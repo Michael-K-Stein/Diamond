@@ -39,7 +39,7 @@ static inline void registerPyClassRegistrationFunction(PyClassRegistrationFuncti
         PyModule_AddObject(module, #className, (PyObject*)&(PyDia##className##_Type));                                                               \
     } while (0)
 
-static PyObject* registerPydiaClasses(PyObject* module)
+static PyObject* pydia_registerClasses(PyObject* module)
 {
     XFOR_EACH_PYDIA_CLASS(__REGISTER_PYDIA_CLASS)
 

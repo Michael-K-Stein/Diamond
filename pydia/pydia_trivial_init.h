@@ -74,7 +74,7 @@
             return retVal;                                                                                                                           \
         }                                                                                                                                            \
                                                                                                                                                      \
-        /* Check if diaData allocation succeeded */                                                                                                  \
+        /* Check if allocation succeeded */                                                                                                          \
         if (!self->dia##fieldName)                                                                                                                   \
         {                                                                                                                                            \
             PyErr_SetString(PyExc_MemoryError, "Failed to create " #diaName " object.");                                                             \

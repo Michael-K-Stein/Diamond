@@ -73,7 +73,7 @@
       <Filter>Source Files\dia_types</Filter>
     </ClCompile>
     <ClCompile Include="pydia_udts.cpp">
-      <Filter>Header Files\dia_types</Filter>
+      <Filter>Source Files\dia_types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
