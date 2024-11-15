@@ -1,6 +1,6 @@
 # pydia
 
-## The ultimate Python wrapper for the Microsoft's DIA SDK (Debug Interface Access)
+## The ultimate Python wrapper for the [Microsoft's DIA SDK (Debug Interface Access)](https://learn.microsoft.com/en-us/visualstudio/debugger/debug-interface-access/debug-interface-access-sdk)
 
 ---
 
