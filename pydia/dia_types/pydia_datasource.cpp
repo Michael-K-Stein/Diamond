@@ -266,30 +266,17 @@ static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
     // Try to retrieve the enum using the provided name
     try
     {
-        const auto& enumSymbol = self->diaDataSource->getEnum(PyObjectToAnyString(pyEnumName));
-
-        // Allocate a new PyDiaEnum object
-        PyDiaEnum* pyEnum = PyObject_New(PyDiaEnum, &PyDiaEnum_Type);
-        if (!pyEnum)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Failed to create DiaEnum object.");
-            return NULL;
-        }
-
-        // Initialize the PyDiaEnum object with the dia::Enum object
-        pyEnum->diaEnum = new (std::nothrow) dia::Enum(enumSymbol);
-        if (!pyEnum->diaEnum)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for DiaEnum.");
-            Py_DECREF(pyEnum);  // Release allocated PyDiaEnum object
-            return NULL;
-        }
-
-        return (PyObject*)pyEnum;
+        auto enumSymbol = self->diaDataSource->getEnum(PyObjectToAnyString(pyEnumName));
+        return PyDiaEnum_FromEnumSymbol(std::move(enumSymbol), self);
     }
     catch (const dia::SymbolNotFoundException& e)
     {
         PyErr_SetString(PyExc_ValueError, e.what());
+        return NULL;
+    }
+    catch (const std::runtime_error& e)
+    {
+        PyErr_SetString(PyExc_RuntimeError, e.what());
         return NULL;
     }
     catch (const std::bad_alloc&)
@@ -297,6 +284,7 @@ static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
         PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaEnum.");
         return NULL;
     }
+    Py_UNREACHABLE();
 }
 
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args)
@@ -317,7 +305,6 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
     try
     {
         auto structSymbol = self->diaDataSource->getStruct(PyObjectToAnyString(pyStructName));
-        _ASSERT(NULL != &structSymbol);
         return PyDiaUdt_FromSymbol(std::move(static_cast<dia::Symbol&>(structSymbol)), self);
     }
     catch (const dia::SymbolNotFoundException& e)
@@ -325,9 +312,14 @@ static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args
         PyErr_SetString(PyExc_ValueError, e.what());
         return NULL;
     }
+    catch (const std::runtime_error& e)
+    {
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+        return NULL;
+    }
     catch (const std::bad_alloc&)
     {
-        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaStruct.");
+        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed!");
         return NULL;
     }
 }

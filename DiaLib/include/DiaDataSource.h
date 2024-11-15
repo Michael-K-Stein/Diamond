@@ -47,7 +47,7 @@ public:
     const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const;
     const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const;
 
-    const Enum getEnum(const AnyString& enumName) const;
+    Enum getEnum(const AnyString& enumName) const;
     const std::vector<Symbol> getUntypedSymbols() const;
     const std::vector<Symbol> getCompilands() const;
     const std::vector<Symbol> getCompilandDetails() const;

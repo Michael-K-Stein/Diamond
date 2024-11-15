@@ -139,10 +139,10 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
 
-        const auto enumSymbol               = dataSource.getEnum("_POOL_TYPE");
-        const auto enumValues               = enumSymbol.getValues();
+        const auto enumSymbol                   = dataSource.getEnum("_POOL_TYPE");
+        const std::vector<dia::Data> enumValues = enumSymbol.getValues();
 
-        const wchar_t* expectedEnumValues[] = {
+        const wchar_t* expectedEnumValues[]     = {
             L"NonPagedPool",
             L"NonPagedPoolExecute",
             L"PagedPool",
@@ -211,10 +211,10 @@ public:
         const std::wstring pdbFilePath = std::filesystem::absolute(LOCAL_NTDLL_PDB_FILE_PATH);
         dia::DataSource dataSource{pdbFilePath};
 
-        const auto enumSymbol           = dataSource.getEnum("_POOL_TYPE");
-        const auto enumValues           = enumSymbol.getValues();
+        const auto enumSymbol                   = dataSource.getEnum("_POOL_TYPE");
+        const std::vector<dia::Data> enumValues = enumSymbol.getValues();
 
-        const LONG expectedEnumValues[] = {
+        const LONG expectedEnumValues[]         = {
             0x0, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x0, 0x2, 0x4, 0x6, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x200, 0x204, 0x220,
         };
 

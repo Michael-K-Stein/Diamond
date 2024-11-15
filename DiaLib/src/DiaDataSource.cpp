@@ -141,7 +141,7 @@ const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLES
     return items;
 }
 
-const Enum DataSource::getEnum(const AnyString& enumName) const
+Enum DataSource::getEnum(const AnyString& enumName) const
 {
     const auto rawEnumSymbols = getSymbols(SymTagEnum, enumName.c_str());
     if (rawEnumSymbols.size() < 1)

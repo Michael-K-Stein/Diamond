@@ -55,8 +55,6 @@ PYDIA_SYMBOL_TYPE_DEFINITION(Enum, PyDiaEnum_methods);
 TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Enum);
 
 // TODO: This can probably be made generic for all "data child" enumerations
-
-
 static PyObject* PyDiaEnum_getValues(PyDiaEnum* self)
 {
     _ASSERT(NULL != self);

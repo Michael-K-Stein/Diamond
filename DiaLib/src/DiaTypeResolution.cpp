@@ -43,7 +43,7 @@ std::wstring resolveBaseTypeName(enum BasicType baseType)
     return SYM_TAG_BASE_TYPE_NAMES[static_cast<DWORD>(baseType)];
 }
 
-std::wstring resolveBaseTypeNameWithLength(enum BasicType baseType, ULONGLONG length)
+static std::wstring resolveBaseTypeNameWithLength(enum BasicType baseType, ULONGLONG length)
 {
     if (baseType >= SYM_TAG_BASE_TYPE_NAMES_COUNT)
     {
@@ -81,6 +81,12 @@ std::wstring resolveBaseTypeNameWithLength(enum BasicType baseType, ULONGLONG le
             throw std::runtime_error("Invalid type length!");
         }
         break;
+    case btWChar:
+        if (sizeof(WCHAR) != length)
+        {
+            throw std::runtime_error("Invalid type length!");
+        }
+        return L"WCHAR";
     default:
         return resolveBaseTypeName(baseType);
     }

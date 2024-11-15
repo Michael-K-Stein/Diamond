@@ -32,6 +32,7 @@
 PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
 {
     // Create a new PyDiaData object
+    _ASSERT_EXPR(nullptr != dataSource, L"Cannot initialize a PyDiaSymbol without a dataSource!");
 
     const auto symTag  = symbol.getSymTag();
 
