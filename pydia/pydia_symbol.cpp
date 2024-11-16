@@ -214,9 +214,9 @@ static void PyDiaSymbol_dealloc(PyDiaSymbol* self)
         self->dataSource      = nullptr;
         Py_DECREF(dataSource);
     }
-    if (_Py_TYPE(((PyObject*)((self))))->tp_free)
+    if (Py_TYPE(((PyObject*)((self))))->tp_free)
     {
-        _Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
+        Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
     }
 }
 

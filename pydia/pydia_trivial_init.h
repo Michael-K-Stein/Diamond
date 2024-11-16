@@ -48,6 +48,7 @@
                                                                                                                                                      \
                                /* Create the data object with dataSource and index */                                                                \
                                _ASSERT_EXPR(nullptr != dataSource->diaDataSource, L"DataSource must have a valid internal state!");                  \
+                               _ASSERT_EXPR(nullptr != dataSource->diaGlobalScope, L"DataSource must have a valid internal state!");                 \
                                self->dia##fieldName = new (std::nothrow) dia::##fieldName(dataSource->diaDataSource->getSymbolByHash(symbolHash));   \
                                if (!!self->dia##fieldName)                                                                                           \
                                {                                                                                                                     \

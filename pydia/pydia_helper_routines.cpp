@@ -1,4 +1,6 @@
 #include "pydia_helper_routines.h"
+#include <datetime.h>     // For PyDateTime_FromDateAndTime
+#include <propvarutil.h>  // For VariantToDouble
 
 // Helper function to convert Python string to std::wstring
 AnyString PyObjectToAnyString(PyObject* obj)
@@ -54,7 +56,6 @@ PyObject* PyObject_FromWstring(const std::wstring& string) { return PyUnicode_Fr
 
 PyObject* PyObject_FromVariant(const VARIANT& variantValue)
 {
-    // Check the VARTYPE (type of data stored in the VARIANT)
     switch (variantValue.vt)
     {
     case VT_I4:  // LONG
@@ -66,6 +67,12 @@ PyObject* PyObject_FromVariant(const VARIANT& variantValue)
     case VT_UI1:  // BYTE
         return PyLong_FromUnsignedLong(variantValue.bVal);
 
+    case VT_I1:  // CHAR (signed byte)
+        return PyLong_FromLong(variantValue.cVal);
+
+    case VT_UI2:  // USHORT
+        return PyLong_FromUnsignedLong(variantValue.uiVal);
+
     case VT_R4:  // FLOAT
         return PyFloat_FromDouble(static_cast<double>(variantValue.fltVal));
 
@@ -75,12 +82,14 @@ PyObject* PyObject_FromVariant(const VARIANT& variantValue)
     case VT_BOOL:  // VARIANT_BOOL (True or False)
         return PyBool_FromLong(variantValue.boolVal != VARIANT_FALSE);
 
-    case VT_BSTR:
-    {  // BSTR (string)
-        // BSTR is a COM string type that needs to be converted to a Python string
+    case VT_BSTR:  // BSTR (string)
+    {
+        if (!variantValue.bstrVal)
+        {
+            Py_RETURN_NONE;  // Handle NULL BSTR as None
+        }
         PyObject* pyStr = PyUnicode_FromWideChar(variantValue.bstrVal, SysStringLen(variantValue.bstrVal));
-        // Free the BSTR to avoid memory leaks (SysFreeString)
-        SysFreeString(variantValue.bstrVal);
+        SysFreeString(variantValue.bstrVal);  // Free the BSTR
         return pyStr;
     }
 
@@ -99,13 +108,52 @@ PyObject* PyObject_FromVariant(const VARIANT& variantValue)
     case VT_UINT:  // UINT
         return PyLong_FromUnsignedLong(variantValue.uintVal);
 
+    case VT_DECIMAL:  // DECIMAL
+    {
+        double decimalValue;
+        if (VariantToDouble(variantValue, &decimalValue) == S_OK)  // Convert DECIMAL to double
+        {
+            return PyFloat_FromDouble(decimalValue);
+        }
+        PyErr_SetString(PyExc_TypeError, "Failed to convert DECIMAL to double.");
+        return NULL;
+    }
+
+    case VT_DATE:  // DATE (COM date type)
+    {
+        // Convert DATE (OLE Automation date) to Python datetime
+        SYSTEMTIME sysTime;
+        if (VariantTimeToSystemTime(variantValue.date, &sysTime))
+        {
+            return PyDateTime_FromDateAndTime(sysTime.wYear, sysTime.wMonth, sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
+                                              sysTime.wMilliseconds * 1000);
+        }
+        PyErr_SetString(PyExc_ValueError, "Invalid DATE value in VARIANT.");
+        return NULL;
+    }
+
     case VT_EMPTY:  // No value
+    case VT_NULL:   // SQL-style NULL
         Py_RETURN_NONE;
 
-        // Add more cases here if needed for additional VARIANT types
+    case VT_VARIANT | VT_BYREF:  // Reference to another VARIANT
+        if (variantValue.pvarVal)
+        {
+            return PyObject_FromVariant(*variantValue.pvarVal);
+        }
+        Py_RETURN_NONE;
+
+    case VT_ARRAY:  // SAFEARRAY
+        PyErr_SetString(PyExc_NotImplementedError, "SAFEARRAY handling is not yet implemented.");
+        return NULL;
+
+    case VT_UNKNOWN:   // IUnknown pointer
+    case VT_DISPATCH:  // IDispatch pointer
+        PyErr_SetString(PyExc_NotImplementedError, "COM object handling is not yet implemented.");
+        return NULL;
 
     default:
-        PyErr_SetString(PyExc_TypeError, "Unsupported data type in VARIANT.");
+        PyErr_Format(PyExc_TypeError, "Unsupported data type '%hu' in VARIANT.", variantValue.vt);
         return NULL;
     }
 

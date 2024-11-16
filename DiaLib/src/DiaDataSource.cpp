@@ -85,65 +85,38 @@ Symbol DataSource::getSymbolByHash(size_t symbolHash) const
     throw dia::SymbolNotFoundException("No symbol was found matching the given hash!");
 }
 
-const std::vector<Symbol> DataSource::getExports() const
-{
-    auto exports = m_session.getExports();
-    std::vector<Symbol> items{};
-    for (const auto& item : exports)
-    {
-        items.push_back(item);
-    }
-    return items;
-}
+DiaSymbolEnumerator<Symbol> DataSource::getExports() const { return m_session.getExports(); }
 
-const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
+DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
 {
     if (SymTagExport == symTag)
     {
         throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
-    std::vector<Symbol> items{};
-    auto exports = enumerate<Symbol>(getGlobalScope(), symTag);
-    for (const auto& item : exports)
-    {
-        items.push_back(item);
-    }
-    return items;
+    return enumerate<Symbol>(getGlobalScope(), symTag);
 }
 
-const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const
+DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const
 {
     if (SymTagExport == symTag)
     {
         throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
-    std::vector<Symbol> items{};
-    auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName);
-    for (const auto& item : exports)
-    {
-        items.push_back(item);
-    }
-    return items;
+    return enumerate<Symbol>(getGlobalScope(), symTag, symbolName);
 }
 
-const std::vector<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const
+DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const
 {
     if (SymTagExport == symTag)
     {
         throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
-    std::vector<Symbol> items{};
-    auto exports = enumerate<Symbol>(getGlobalScope(), symTag, symbolName, nameComparisonFlags);
-    for (const auto& item : exports)
-    {
-        items.push_back(item);
-    }
-    return items;
+    return enumerate<Symbol>(getGlobalScope(), symTag, symbolName, nameComparisonFlags);
 }
 
 Enum DataSource::getEnum(const AnyString& enumName) const
 {
-    const auto rawEnumSymbols = getSymbols(SymTagEnum, enumName.c_str());
+    const auto rawEnumSymbols = std::vector<Symbol>{getSymbols(SymTagEnum, enumName.c_str())};
     if (rawEnumSymbols.size() < 1)
     {
         throw SymbolNotFoundException("Enum by name not found!");
@@ -155,13 +128,13 @@ Enum DataSource::getEnum(const AnyString& enumName) const
     return static_cast<const Enum&>(rawEnumSymbols.at(0));
 }
 
-const std::vector<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
+DiaSymbolEnumerator<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
 
-const std::vector<Symbol> DataSource::getCompilands() const { return getSymbols(SymTagCompiland); }
+DiaSymbolEnumerator<Symbol> DataSource::getCompilands() const { return getSymbols(SymTagCompiland); }
 
-const std::vector<Symbol> DataSource::getCompilandDetails() const { return getSymbols(SymTagCompilandDetails); }
+DiaSymbolEnumerator<Symbol> DataSource::getCompilandDetails() const { return getSymbols(SymTagCompilandDetails); }
 
-const std::vector<Symbol> DataSource::getCompilandEnvs() const { return getSymbols(SymTagCompilandEnv); }
+DiaSymbolEnumerator<Symbol> DataSource::getCompilandEnvs() const { return getSymbols(SymTagCompilandEnv); }
 
 const std::vector<Function> DataSource::getFunctions() const { return convertSymbolVector<Function>(getSymbols(SymTagFunction)); }
 
@@ -169,17 +142,17 @@ const std::vector<UserDefinedType> DataSource::getUserDefinedTypes() const { ret
 
 const std::vector<Struct> DataSource::getStructs() const { return convertSymbolVector<Struct>(getUserDefinedTypes(UdtStruct)); }
 
-const std::vector<Symbol> DataSource::getClasses() const { return getUserDefinedTypes(UdtClass); }
+std::vector<Symbol> DataSource::getClasses() const { return getUserDefinedTypes(UdtClass); }
 
-const std::vector<Symbol> DataSource::getInterfaces() const { return getUserDefinedTypes(UdtInterface); }
+std::vector<Symbol> DataSource::getInterfaces() const { return getUserDefinedTypes(UdtInterface); }
 
-const std::vector<Symbol> DataSource::getUnions() const { return getUserDefinedTypes(UdtUnion); }
+std::vector<Symbol> DataSource::getUnions() const { return getUserDefinedTypes(UdtUnion); }
 
-const std::vector<Symbol> DataSource::getTaggedUnions() const { return getUserDefinedTypes(UdtTaggedUnion); }
+std::vector<Symbol> DataSource::getTaggedUnions() const { return getUserDefinedTypes(UdtTaggedUnion); }
 
 const std::vector<Typedef> DataSource::getTypedefs() const { return convertSymbolVector<Typedef>(getSymbols(SymTagTypedef)); }
 
-const std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
+std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
 {
     std::vector<Symbol> items{};
     const auto userDefinedTypes = getUserDefinedTypes();
@@ -217,7 +190,7 @@ UserDefinedType DataSource::getStruct(const AnyString& structName) const
     return static_cast<const UserDefinedType&>(items.at(0));
 }
 
-Symbol& DataSource::getGlobalScope() const { return m_session.getGlobalScope(); }
+const Symbol& DataSource::getGlobalScope() const { return m_session.getGlobalScope(); }
 
 void DataSource::openSession()
 {

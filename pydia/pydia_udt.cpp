@@ -21,7 +21,7 @@ static void PyDiaUdt_dealloc(PyDiaUdt* self)
     {
         delete self->diaUdt;
     }
-    _Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
+    Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
 }
 
 static int PyDiaUdt_init(PyDiaUdt* self, PyObject* args, PyObject* kwds)

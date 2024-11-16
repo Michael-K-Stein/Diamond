@@ -41,34 +41,34 @@ public:
 
     Symbol getSymbolByHash(size_t symbolHash) const;
 
-    const std::vector<Symbol> getExports() const;
+    DiaSymbolEnumerator<Symbol> getExports() const;
 
-    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag) const;
-    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const;
-    const std::vector<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const;
+    DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag) const;
+    DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const;
+    DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const;
 
     Enum getEnum(const AnyString& enumName) const;
-    const std::vector<Symbol> getUntypedSymbols() const;
-    const std::vector<Symbol> getCompilands() const;
-    const std::vector<Symbol> getCompilandDetails() const;
-    const std::vector<Symbol> getCompilandEnvs() const;
+    DiaSymbolEnumerator<Symbol> getUntypedSymbols() const;
+    DiaSymbolEnumerator<Symbol> getCompilands() const;
+    DiaSymbolEnumerator<Symbol> getCompilandDetails() const;
+    DiaSymbolEnumerator<Symbol> getCompilandEnvs() const;
     const std::vector<Function> getFunctions() const;
     const std::vector<UserDefinedType> getUserDefinedTypes() const;
-    const std::vector<Symbol> getUserDefinedTypes(enum UdtKind kind) const;
+    std::vector<Symbol> getUserDefinedTypes(enum UdtKind kind) const;
     const std::vector<Struct> getStructs() const;
-    const std::vector<Symbol> getClasses() const;
-    const std::vector<Symbol> getInterfaces() const;
-    const std::vector<Symbol> getUnions() const;
-    const std::vector<Symbol> getTaggedUnions() const;
+    std::vector<Symbol> getClasses() const;
+    std::vector<Symbol> getInterfaces() const;
+    std::vector<Symbol> getUnions() const;
+    std::vector<Symbol> getTaggedUnions() const;
     const std::vector<Typedef> getTypedefs() const;
 
     UserDefinedType getStruct(const AnyString& structName) const;
 
     bool sessionOpened() const { return !(!m_session); }
 
-private:
-    Symbol& getGlobalScope() const;
+    const Symbol& getGlobalScope() const;
 
+private:
     void openSession();
     void loadDataFromArbitraryFile(const std::wstring& filePath);
 

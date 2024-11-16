@@ -21,7 +21,7 @@
 #include <pydia_helper_routines.h>
 
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args);
-static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getSymbols(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
 static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args);
@@ -33,7 +33,7 @@ static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
     {
         delete self->diaDataSource;
     }
-    _Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
+    Py_TYPE(((PyObject*)((self))))->tp_free((PyObject*)self);
 }
 
 // Updated initialization function
@@ -48,8 +48,12 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
             // Check if we have any arguments
             if (PyTuple_Size(args) == 0)
             {
-                // Use the default constructor
+                PyErr_SetString(PyExc_TypeError, "DataSource requires at least one argument.");
+                return -1;
+#if 0  // Haven't found a valid use case for this...
+       // Use the default constructor
                 tempDataSource = new (std::nothrow) dia::DataSource();
+#endif
             }
             else if (PyTuple_Size(args) == 1)
             {
@@ -95,8 +99,24 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
         return -1;
     }
 
+    auto capturedGlobalScope{tempDataSource->getGlobalScope()};
+    auto tempGlobalScope = PyDiaSymbol_FromSymbol(std::move(capturedGlobalScope), self);
+    // Check if the DataSource was created successfully
+    if (!tempGlobalScope)
+    {
+        if (tempDataSource)
+        {
+            delete tempDataSource;
+        }
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DataSource object with provided arguments.");
+        return -1;
+    }
+
     // Assign the created DataSource to the member variable
-    self->diaDataSource = tempDataSource;
+    self->diaDataSource  = tempDataSource;
+    tempDataSource       = nullptr;
+    self->diaGlobalScope = (PyDiaSymbol*)tempGlobalScope;
+    tempGlobalScope      = nullptr;
 
     return 0;
 }
@@ -105,7 +125,7 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
 static PyMethodDef PyDiaDataSource_methods[] = {
     {"load_data_from_pdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file."},
     {"get_functions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions."},
-    {"get_exports", (PyCFunction)PyDiaDataSource_getExports, METH_VARARGS, "Get all exports."},
+    {"get_symbols", (PyCFunction)PyDiaDataSource_getSymbols, METH_VARARGS, "Get all symbols of specified type."},
     {"get_enum", (PyCFunction)PyDiaDataSource_getEnum, METH_VARARGS, "Get enum by name."},
     {"get_struct", (PyCFunction)PyDiaDataSource_getStruct, METH_VARARGS, "Get struct by name."},
     {"get_typedefs", (PyCFunction)PyDiaDataSource_getTypedefs, METH_NOARGS, "Get all typedefs."},
@@ -212,44 +232,33 @@ static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
     return resultList;
 }
 
-static PyObject* PyDiaDataSource_getExports(PyDiaDataSource* self, PyObject* args)
+static PyObject* PyDiaDataSource_getSymbols(PyDiaDataSource* self, PyObject* args)
 {
-    int symTagInt;
+    int symTagInt = 0;
     if (!PyArg_ParseTuple(args, "i", &symTagInt))
     {
         PyErr_SetString(PyExc_ValueError, "Expected an integer for the SymTagEnum.");
         return NULL;
     }
 
-    enum SymTagEnum symTag           = static_cast<enum SymTagEnum>(symTagInt);
-    std::vector<dia::Symbol> exports = self->diaDataSource->getSymbols(symTag);
-
-    PyObject* resultList             = PyList_New(exports.size());
-    if (!resultList)
+    auto safeExecution = [&]() -> PyObject*
     {
-        return NULL;  // Return NULL on failure
-    }
+        enum SymTagEnum symTag = static_cast<enum SymTagEnum>(symTagInt);
+        auto rawEnumerator     = self->diaDataSource->getSymbols(symTag);
 
-    for (size_t i = 0; i < exports.size(); ++i)
-    {
-
-        PyObject* sym = PyDiaSymbol_FromSymbol(std::move(exports[i]), self);
-        if (!sym)
+        PyDiaDataGenerator* generator =
+            (PyDiaDataGenerator*)PyDiaSymbolGenerator_create<PyDiaSymbol, dia::Symbol>(self->diaGlobalScope, std::move(rawEnumerator));
+        if (!generator)
         {
-            Py_DECREF(resultList);  // Clean up the result list
-            return NULL;            // Return NULL on failure
+            PyErr_SetString(PyExc_RuntimeError, "Failed to create generator.");
+            return NULL;  // Failed to allocate generator
         }
 
-        // Set the item in the list, transferring ownership
-        if (0 > PyList_SetItem(resultList, i, sym))
-        {
-            Py_DECREF(sym);
-            Py_DECREF(resultList);  // Clean up the result list
-            return NULL;            // Return NULL on failure
-        }
-    }
+        return (PyObject*)generator;
+    };
 
-    return resultList;
+    PYDIA_SAFE_TRY({ return safeExecution(); });
+    Py_UNREACHABLE();
 }
 
 static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
