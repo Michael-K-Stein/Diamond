@@ -1,6 +1,7 @@
 #pragma once
 #include "Exceptions.h"
 #include "HashUtils.h"
+#include "SymbolTypes/DiaAnnotation.h"
 #include "SymbolTypes/DiaArray.h"
 #include "SymbolTypes/DiaData.h"
 #include "SymbolTypes/DiaEnum.h"
@@ -12,6 +13,13 @@
 
 namespace std
 {
+
+template <>
+struct hash<VARIANT>
+{
+    size_t operator()(const VARIANT& v) const;
+};
+
 template <>
 struct hash<dia::Enum>
 {

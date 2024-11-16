@@ -120,9 +120,23 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>$(ProjectName)_d</TargetName>
+    <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='pydia_d|Win32'">
     <TargetName>$(ProjectName)_d</TargetName>
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CTest|x64'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CTest|Win32'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -271,10 +285,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dia_types\pydia_annotation.cpp" />
+    <ClCompile Include="dia_types\pydia_compiland.cpp" />
     <ClCompile Include="dia_types\pydia_datasource.cpp" />
     <ClCompile Include="dia_types\pydia_function.cpp" />
     <ClCompile Include="dia_types\pydia_functionargtype.cpp" />
     <ClCompile Include="dia_types\pydia_functiontype.cpp" />
+    <ClCompile Include="dia_types\pydia_publicsymbol.cpp" />
     <ClCompile Include="pydiamodule.cpp" />
     <ClCompile Include="pydia_array.cpp" />
     <ClCompile Include="pydia_basetype.cpp" />
@@ -291,10 +308,13 @@
     <ClCompile Include="pydia_wrapping_types.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dia_types\pydia_annotation.h" />
+    <ClInclude Include="dia_types\pydia_compiland.h" />
     <ClInclude Include="dia_types\pydia_datasource.h" />
     <ClInclude Include="dia_types\pydia_function.h" />
     <ClInclude Include="dia_types\pydia_functionargtype.h" />
     <ClInclude Include="dia_types\pydia_functiontype.h" />
+    <ClInclude Include="dia_types\pydia_publicsymbol.h" />
     <ClInclude Include="pydia_all_types.h" />
     <ClInclude Include="pydia_array.h" />
     <ClInclude Include="pydia_basetype.h" />

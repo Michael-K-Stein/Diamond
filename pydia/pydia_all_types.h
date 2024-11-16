@@ -21,6 +21,9 @@
     opperation(Udt);                                                                                                                                 \
     opperation(BaseType);                                                                                                                            \
     opperation(Typedef);                                                                                                                             \
+    opperation(Compiland);                                                                                                                           \
+    opperation(PublicSymbol);                                                                                                                        \
+    opperation(Annotation);                                                                                                                          \
     opperation(UserDefinedType);
 
 // Forward decleration

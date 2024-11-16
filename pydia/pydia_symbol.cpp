@@ -29,6 +29,29 @@
 #define PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE_RETURN_FALSE(unsafeCode)                                                                                 \
     PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE(unsafeCode, { return PyBool_FromLong(false); })
 
+static PyObject* PyDiaRawSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
+{
+    PyDiaSymbol* pySymbol = PyObject_New(PyDiaSymbol, &PyDiaSymbol_Type);
+    if (!pySymbol)
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DiaSymbol object.");
+        return NULL;
+    }
+
+    pySymbol->diaSymbol = new (std::nothrow) dia::Symbol(symbol);
+    if (!(pySymbol->diaSymbol))
+    {
+        PyErr_SetString(PyExc_MemoryError, "Failed to create DiaSymbol's internal state.");
+        return NULL;
+    }
+
+    Py_INCREF(dataSource);
+    pySymbol->dataSource = dataSource;
+
+    Py_INCREF(pySymbol);
+    return reinterpret_cast<PyObject*>(pySymbol);
+}
+
 PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
 {
     // Create a new PyDiaData object
@@ -76,8 +99,21 @@ PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSour
     case SymTagTypedef:
         pySymbol = PyDiaTypedef_FromTypedefSymbol(std::move(symbol), dataSource);
         break;
+    case SymTagCompiland:
+        pySymbol = PyDiaCompiland_FromCompilandSymbol(std::move(symbol), dataSource);
+        break;
     default:
+    case SymTagAnnotation:
+        pySymbol = PyDiaAnnotation_FromAnnotationSymbol(std::move(symbol), dataSource);
+        break;
+    case SymTagPublicSymbol:
+        pySymbol = PyDiaPublicSymbol_FromPublicSymbolSymbol(std::move(symbol), dataSource);
+        break;
+#ifdef _DEBUG
+        pySymbol = PyDiaRawSymbol_FromSymbol(std::move(symbol), dataSource);
+#else
         return PyErr_Format(PyExc_TypeError, "Unrecognized SymTag \"%lu\".", static_cast<unsigned long>(symTag));
+#endif
         break;
     }
 
@@ -195,7 +231,212 @@ static int PyDiaSymbol_init(PyDiaSymbol* self, PyObject* args, PyObject* kwds)
     return 0;
 };
 
+static PyMethodDef PyDiaSymbol_methods[] = {
+    PyDiaSymbolMethodEntry_getAccess,
+    PyDiaSymbolMethodEntry_getSymIndexId,
+    PyDiaSymbolMethodEntry_isScoped,
+    PyDiaSymbolMethodEntry_getClassParent,
+    PyDiaSymbolMethodEntry_getClassParentId,
+    PyDiaSymbolMethodEntry_isVolatile,
+    PyDiaSymbolMethodEntry_getLength,
+    PyDiaSymbolMethodEntry_isAddressTaken,
+    PyDiaSymbolMethodEntry_getAge,
+    PyDiaSymbolMethodEntry_getArrayIndexType,
+    PyDiaSymbolMethodEntry_getArrayIndexTypeId,
+    PyDiaSymbolMethodEntry_getBackendBuild,
+    PyDiaSymbolMethodEntry_getBackendMajor,
+    PyDiaSymbolMethodEntry_getBackendMinor,
+    PyDiaSymbolMethodEntry_getBackendQfe,
+    PyDiaSymbolMethodEntry_getBaseDataOffset,
+    PyDiaSymbolMethodEntry_getBaseDataSlot,
+    PyDiaSymbolMethodEntry_getBaseSymbol,
+    PyDiaSymbolMethodEntry_getBaseSymbolId,
+    PyDiaSymbolMethodEntry_getBaseType,
+    PyDiaSymbolMethodEntry_getBitPosition,
+    PyDiaSymbolMethodEntry_getBindId,
+    PyDiaSymbolMethodEntry_getBindSlot,
+    PyDiaSymbolMethodEntry_isCode,
+    PyDiaSymbolMethodEntry_getCoffGroup,
+    PyDiaSymbolMethodEntry_isCompilerGenerated,
+    PyDiaSymbolMethodEntry_getCompilerName,
+    PyDiaSymbolMethodEntry_isConst,
+    PyDiaSymbolMethodEntry_isConstantExport,
+    PyDiaSymbolMethodEntry_hasConstructor,
+    PyDiaSymbolMethodEntry_getCount,
+    PyDiaSymbolMethodEntry_getCountLiveRanges,
+    PyDiaSymbolMethodEntry_hasCustomCallingConvention,
+    PyDiaSymbolMethodEntry_getCallingConvention,
+#if 0  // TODO: Implement
+    PyDiaSymbolMethodEntry_getSrcLineOnTypeDefn,
+    PyDiaSymbolMethodEntry_getDataBytes,
+#endif
+    PyDiaSymbolMethodEntry_isDataExport,
+    PyDiaSymbolMethodEntry_getDataKind,
+    PyDiaSymbolMethodEntry_isEditAndContinueEnabled,
+    PyDiaSymbolMethodEntry_getExceptionHandlerAddressOffset,
+    PyDiaSymbolMethodEntry_getExceptionHandlerAddressSection,
+    PyDiaSymbolMethodEntry_getExceptionHandlerRelativeVirtualAddress,
+    PyDiaSymbolMethodEntry_getExceptionHandlerVirtualAddress,
+    PyDiaSymbolMethodEntry_isExportWithExplicitOrdinal,
+    PyDiaSymbolMethodEntry_isExportForwarder,
+    PyDiaSymbolMethodEntry_isFarReturn,
+    PyDiaSymbolMethodEntry_getFinalLiveStaticSize,
+    PyDiaSymbolMethodEntry_isFramePointerPresent,
+    PyDiaSymbolMethodEntry_getFrameSize,
+    PyDiaSymbolMethodEntry_getFrontEndBuild,
+    PyDiaSymbolMethodEntry_getFrontEndMajor,
+    PyDiaSymbolMethodEntry_getFrontEndMinor,
+    PyDiaSymbolMethodEntry_getFrontEndQfe,
+    PyDiaSymbolMethodEntry_isFunction,
+    PyDiaSymbolMethodEntry_getGuid,
+    PyDiaSymbolMethodEntry_hasAlloca,
+    PyDiaSymbolMethodEntry_hasAssignmentOperator,
+    PyDiaSymbolMethodEntry_hasCastOperator,
+    PyDiaSymbolMethodEntry_hasControlFlowCheck,
+    PyDiaSymbolMethodEntry_hasDebugInfo,
+    PyDiaSymbolMethodEntry_hasEh,
+    PyDiaSymbolMethodEntry_hasEha,
+    PyDiaSymbolMethodEntry_hasInlineAsm,
+    PyDiaSymbolMethodEntry_hasLongJump,
+    PyDiaSymbolMethodEntry_hasManagedCode,
+    PyDiaSymbolMethodEntry_hasNestedTypes,
+    PyDiaSymbolMethodEntry_hasSeh,
+    PyDiaSymbolMethodEntry_hasSecurityChecks,
+    PyDiaSymbolMethodEntry_hasSetJump,
+    PyDiaSymbolMethodEntry_hasValidPgoCounts,
+    PyDiaSymbolMethodEntry_getHfaDouble,
+    PyDiaSymbolMethodEntry_getHfaFloat,
+    PyDiaSymbolMethodEntry_getIndirectVirtualBaseClass,
+    PyDiaSymbolMethodEntry_hasInlineSpecifier,
+    PyDiaSymbolMethodEntry_hasInterruptReturn,
+    PyDiaSymbolMethodEntry_isIntrinsic,
+    PyDiaSymbolMethodEntry_isIntro,
+    PyDiaSymbolMethodEntry_isAggregated,
+    PyDiaSymbolMethodEntry_isCtypes,
+    PyDiaSymbolMethodEntry_isConstructorVirtualBase,
+    PyDiaSymbolMethodEntry_isCxxReturnUdt,
+    PyDiaSymbolMethodEntry_isDataAligned,
+    PyDiaSymbolMethodEntry_isHlslData,
+    PyDiaSymbolMethodEntry_isMultipleInheritance,
+    PyDiaSymbolMethodEntry_isNaked,
+    PyDiaSymbolMethodEntry_isOptimizedAway,
+    PyDiaSymbolMethodEntry_isOptimizedForSpeed,
+    PyDiaSymbolMethodEntry_isPgo,
+    PyDiaSymbolMethodEntry_isPointerToDataMember,
+    PyDiaSymbolMethodEntry_isSingleInheritance,
+    PyDiaSymbolMethodEntry_isSplitted,
+    PyDiaSymbolMethodEntry_isStatic,
+    PyDiaSymbolMethodEntry_isStripped,
+    PyDiaSymbolMethodEntry_getLanguage,
+    PyDiaSymbolMethodEntry_getLexicalParent,
+    PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getLibraryName,
+    PyDiaSymbolMethodEntry_getLiveRangeLength,
+    PyDiaSymbolMethodEntry_getLiveRangeStartAddressOffset,
+    PyDiaSymbolMethodEntry_getLiveRangeStartAddressSection,
+    PyDiaSymbolMethodEntry_getLiveRangeStartRelativeVirtualAddress,
+    PyDiaSymbolMethodEntry_getLocalBasePointerRegisterId,
+    PyDiaSymbolMethodEntry_getLocationType,
+    PyDiaSymbolMethodEntry_getLowerBound,
+    PyDiaSymbolMethodEntry_getLowerBoundId,
+    PyDiaSymbolMethodEntry_getMachineType,
+    PyDiaSymbolMethodEntry_isManaged,
+    PyDiaSymbolMethodEntry_getMemorySpaceKind,
+    PyDiaSymbolMethodEntry_getModifierValues,
+    PyDiaSymbolMethodEntry_isMsil,
+    PyDiaSymbolMethodEntry_getName,
+    PyDiaSymbolMethodEntry_isNested,
+    PyDiaSymbolMethodEntry_isNoInline,
+    PyDiaSymbolMethodEntry_isNoNameExport,
+    PyDiaSymbolMethodEntry_isNoReturn,
+    PyDiaSymbolMethodEntry_hasNoStackOrdering,
+    PyDiaSymbolMethodEntry_isNotReached,
+    PyDiaSymbolMethodEntry_getNumberOfModifiers,
+    PyDiaSymbolMethodEntry_getNumberOfRegisterIndices,
+    PyDiaSymbolMethodEntry_getObjectFileName,
+    PyDiaSymbolMethodEntry_getObjectPointerType,
+    PyDiaSymbolMethodEntry_getOemId,
+    PyDiaSymbolMethodEntry_getOemSymbolId,
+    PyDiaSymbolMethodEntry_getOffset,
+    PyDiaSymbolMethodEntry_getOffsetInUdt,
+    PyDiaSymbolMethodEntry_hasOptimizedCodeDebugInfo,
+    PyDiaSymbolMethodEntry_getOrdinal,
+    PyDiaSymbolMethodEntry_hasOverloadedOperator,
+    PyDiaSymbolMethodEntry_getPgoDynamicInstructionCount,
+    PyDiaSymbolMethodEntry_isPacked,
+    PyDiaSymbolMethodEntry_isPure,
+    PyDiaSymbolMethodEntry_getNumberOfRows,
+    PyDiaSymbolMethodEntry_isRValueReference,
+    PyDiaSymbolMethodEntry_getRank,
+    PyDiaSymbolMethodEntry_isReference,
+    PyDiaSymbolMethodEntry_getRegisterType,
+    PyDiaSymbolMethodEntry_getRelativeVirtualAddress,
+    PyDiaSymbolMethodEntry_isRestrictedType,
+    PyDiaSymbolMethodEntry_getSamplerSlot,
+    PyDiaSymbolMethodEntry_isSealed,
+    PyDiaSymbolMethodEntry_getSignature,
+    PyDiaSymbolMethodEntry_getSizeInUdt,
+    PyDiaSymbolMethodEntry_getSlot,
+    PyDiaSymbolMethodEntry_getSourceFileName,
+    PyDiaSymbolMethodEntry_getStaticSize,
+    PyDiaSymbolMethodEntry_hasStrictGsCheck,
+    PyDiaSymbolMethodEntry_getStride,
+    PyDiaSymbolMethodEntry_getSubType,
+    PyDiaSymbolMethodEntry_getSubTypeId,
+    PyDiaSymbolMethodEntry_getSymTag,
+    PyDiaSymbolMethodEntry_getSymbolsFileName,
+    PyDiaSymbolMethodEntry_getTargetOffset,
+    PyDiaSymbolMethodEntry_getThisAdjust,
+    PyDiaSymbolMethodEntry_getThunkOrdinal,
+    PyDiaSymbolMethodEntry_getTimeStamp,
+    PyDiaSymbolMethodEntry_getToken,
+    PyDiaSymbolMethodEntry_getType,
+    PyDiaSymbolMethodEntry_getTypeId,
+#if 0  // TODO: Implement
+    PyDiaSymbolMethodEntry_getTypeIds,
+    PyDiaSymbolMethodEntry_getTypes,
+#endif
+    PyDiaSymbolMethodEntry_isUnaligned,
+    PyDiaSymbolMethodEntry_getUndecoratedName,
+    PyDiaSymbolMethodEntry_getUndecoratedNameEx,
+    PyDiaSymbolMethodEntry_getUnmodifiedType,
+    PyDiaSymbolMethodEntry_isUnused,
+    PyDiaSymbolMethodEntry_getValue,
+    PyDiaSymbolMethodEntry_isVirtual,
+    PyDiaSymbolMethodEntry_getVirtualAddress,
+    PyDiaSymbolMethodEntry_getVirtualBaseClass,
+    PyDiaSymbolMethodEntry_getVirtualBaseDispIndex,
+    PyDiaSymbolMethodEntry_getVirtualBaseOffset,
+    PyDiaSymbolMethodEntry_getVirtualBasePointerOffset,
+    PyDiaSymbolMethodEntry_getVirtualBaseTableType,
+    PyDiaSymbolMethodEntry_getVirtualTableShape,
+    PyDiaSymbolMethodEntry_getVirtualTableShapeId,
+    PyDiaSymbolMethodEntry_getAddressOffset,
+    PyDiaSymbolMethodEntry_getAddressSection,
+    PyDiaSymbolMethodEntry_wasInlined,
+    PyDiaSymbolMethodEntry_getPgoEdgeCount,
+    PyDiaSymbolMethodEntry_getPgoEntryCount,
+    PyDiaSymbolMethodEntry_getParamBasePointerRegisterId,
+    PyDiaSymbolMethodEntry_getPhaseName,
+    PyDiaSymbolMethodEntry_getPlatform,
+    PyDiaSymbolMethodEntry_getRegisterId,
+    PyDiaSymbolMethodEntry_getTargetRelativeVirtualAddress,
+    PyDiaSymbolMethodEntry_getTargetSection,
+    PyDiaSymbolMethodEntry_getTargetVirtualAddress,
+    PyDiaSymbolMethodEntry_getTextureSlot,
+    PyDiaSymbolMethodEntry_getUdtKind,
+    PyDiaSymbolMethodEntry_getUpperBound,
+    PyDiaSymbolMethodEntry_getUpperBoundId,
+    {NULL, NULL, 0, NULL}  // Sentinel
+};
+
+#ifdef _DEBUG
+// Allow complete and unmonitored usage of the DiaLib private symbol functions in debug mode.
+PYDIA_SYMBOL_TYPE_DEFINITION(Symbol, PyDiaSymbol_methods);
+#else
+// In release mode, users should never directly access DiaLib methods without pydia checking that the type is valid.
 PYDIA_SYMBOL_TYPE_DEFINITION(Symbol, 0);
+#endif
 
 // Method: PyDiaSymbol_getClassParent
 PyObject* PyDiaSymbol_getClassParent(const PyDiaSymbol* self)
@@ -1644,6 +1885,9 @@ PyObject* PyDiaSymbol_getMemorySpaceKind(const PyDiaSymbol* self)
 PyObject* PyDiaSymbol_getModifierValues(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
+    pydia_showDeprecationWarning(
+        "The newer DXC compiler no longer produces PDBs. The HLSL elements only have valid values on PDBs produced by the older fxc.exe compiler.\n"
+        "Please use `is_const`, `is_unaligned`, `is_volatile` for C/C++ types instead.");
     PYDIA_SAFE_TRY({
         const std::set<dia::StorageModifier> modifierValues = self->diaSymbol->getModifierValues();
         PyObject* pyList                                    = PyTuple_New(modifierValues.size());
@@ -1773,6 +2017,9 @@ PyObject* PyDiaSymbol_getNumberOfColumns(const PyDiaSymbol* self)
 PyObject* PyDiaSymbol_getNumberOfModifiers(const PyDiaSymbol* self)
 {
     PYDIA_ASSERT_SYMBOL_POINTERS(self);
+    pydia_showDeprecationWarning(
+        "The newer DXC compiler no longer produces PDBs. The HLSL elements only have valid values on PDBs produced by the older fxc.exe compiler.\n"
+        "Please use `is_const`, `is_unaligned`, `is_volatile` for C/C++ types instead.");
     PYDIA_SAFE_TRY({
         const ULONG numModifiers = self->diaSymbol->getNumberOfModifiers();
         return PyLong_FromUnsignedLong(numModifiers);

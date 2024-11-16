@@ -16,5 +16,8 @@
     opperation(Union);                                                                                                                               \
     opperation(Class);                                                                                                                               \
     opperation(BaseType);                                                                                                                            \
-    opperation(Typedef);                                                                                                                               \
+    opperation(Typedef);                                                                                                                             \
+    opperation(Compiland);                                                                                                                           \
+    opperation(PublicSymbol);                                                                                                                        \
+    opperation(Annotation);                                                                                                                          \
     opperation(Interface);

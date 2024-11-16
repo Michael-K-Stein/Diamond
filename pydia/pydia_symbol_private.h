@@ -441,7 +441,7 @@ static PyMethodDef PyDiaSymbolMethodEntry_getLexicalParentId = {"get_lexical_par
 
 PyObject* PyDiaSymbol_getLibraryName(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getLibraryName = {"get_library_name", (PyCFunction)PyDiaSymbol_getLibraryName, METH_NOARGS,
-                                                            "Get the library name of the symbol."};
+                                                            "Get the name of the library from which this symbol was loaded."};
 
 PyObject* PyDiaSymbol_getLiveRangeLength(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getLiveRangeLength = {"get_live_range_length", (PyCFunction)PyDiaSymbol_getLiveRangeLength, METH_NOARGS,
@@ -493,7 +493,7 @@ static PyMethodDef PyDiaSymbolMethodEntry_getMemorySpaceKind = {"get_memory_spac
 
 PyObject* PyDiaSymbol_getModifierValues(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getModifierValues = {"get_modifier_values", (PyCFunction)PyDiaSymbol_getModifierValues, METH_NOARGS,
-                                                               "Get the modifier values of the symbol."};
+                                                               "Get the modifier values affecting the symbol."};
 
 PyObject* PyDiaSymbol_isMsil(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_isMsil = {"is_msil", (PyCFunction)PyDiaSymbol_isMsil, METH_NOARGS,
@@ -508,6 +508,7 @@ static PyMethodDef PyDiaSymbolMethodEntry_isNested = {"is_nested", (PyCFunction)
 PyObject* PyDiaSymbol_isNoInline(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_isNoInline = {"is_no_inline", (PyCFunction)PyDiaSymbol_isNoInline, METH_NOARGS,
                                                         "Check if the symbol has no inline specifier."};
+
 PyObject* PyDiaSymbol_isNoNameExport(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_isNoNameExport = {"is_no_name_export", (PyCFunction)PyDiaSymbol_isNoNameExport, METH_NOARGS,
                                                             "Check if the symbol has no name export."};

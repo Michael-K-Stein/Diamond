@@ -4,6 +4,7 @@
 #include <cvconst.h>
 #include <pydia_exceptions.h>
 
+PyObject* g_diaSymTagEnumWrappings            = NULL;
 PyObject* g_diaBasicTypeEnumWrappings         = NULL;
 PyObject* g_diaLocationTypeEnumWrappings      = NULL;
 PyObject* g_diaStorageModifierEnumWrappings   = NULL;
@@ -12,9 +13,8 @@ PyObject* g_diaUdtKindEnumWrappings           = NULL;
 PyObject* g_diaAccessModifierEnumWrappings    = NULL;
 PyObject* g_diaCallingConventionEnumWrappings = NULL;
 
-PyObject* getDiaBasicTypeEnumWrappings() { return g_diaBasicTypeEnumWrappings; }
 
-using EnumWrapperGetterFunction = PyObject* (*)();
+using EnumWrapperGetterFunction               = PyObject* (*)();
 
 template <typename EnumT>
 static PyObject* PyDiaEnumObject_FromEnumValue(EnumWrapperGetterFunction getterFunction, const EnumT& enumValue)
@@ -30,6 +30,12 @@ static PyObject* PyDiaEnumObject_FromEnumValue(EnumWrapperGetterFunction getterF
     PYDIA_SAFE_TRY({ return safeExecution(); });
     Py_UNREACHABLE();
 }
+
+static PyObject* getDiaSymTagEnumWrappings() { return g_diaSymTagEnumWrappings; }
+
+PyObject* PyDiaSymTag_FromSymTag(enum SymTagEnum symTag) { return PyDiaEnumObject_FromEnumValue(getDiaSymTagEnumWrappings, symTag); }
+
+static PyObject* getDiaBasicTypeEnumWrappings() { return g_diaBasicTypeEnumWrappings; }
 
 PyObject* PyDiaBasicType_FromBasicType(enum BasicType basicType) { return PyDiaEnumObject_FromEnumValue(getDiaBasicTypeEnumWrappings, basicType); }
 
@@ -96,6 +102,56 @@ static PyObject* createEnumObject(PyObject* module, const char* name, std::initi
 
 PyObject* pydia_createDiaEnumWrappings(PyObject* module)
 {
+    if (NULL == (g_diaSymTagEnumWrappings = createEnumObject(module, "SymTag",
+                                                             {{"Null", SymTagNull},
+                                                              {"Exe", SymTagExe},
+                                                              {"Compiland", SymTagCompiland},
+                                                              {"CompilandDetails", SymTagCompilandDetails},
+                                                              {"CompilandEnv", SymTagCompilandEnv},
+                                                              {"Function", SymTagFunction},
+                                                              {"Block", SymTagBlock},
+                                                              {"Data", SymTagData},
+                                                              {"Annotation", SymTagAnnotation},
+                                                              {"Label", SymTagLabel},
+                                                              {"PublicSymbol", SymTagPublicSymbol},
+                                                              {"UDT", SymTagUDT},
+                                                              {"Enum", SymTagEnum},
+                                                              {"FunctionType", SymTagFunctionType},
+                                                              {"PointerType", SymTagPointerType},
+                                                              {"ArrayType", SymTagArrayType},
+                                                              {"BaseType", SymTagBaseType},
+                                                              {"Typedef", SymTagTypedef},
+                                                              {"BaseClass", SymTagBaseClass},
+                                                              {"Friend", SymTagFriend},
+                                                              {"FunctionArgType", SymTagFunctionArgType},
+                                                              {"FuncDebugStart", SymTagFuncDebugStart},
+                                                              {"FuncDebugEnd", SymTagFuncDebugEnd},
+                                                              {"UsingNamespace", SymTagUsingNamespace},
+                                                              {"VTableShape", SymTagVTableShape},
+                                                              {"VTable", SymTagVTable},
+                                                              {"Custom", SymTagCustom},
+                                                              {"Thunk", SymTagThunk},
+                                                              {"CustomType", SymTagCustomType},
+                                                              {"ManagedType", SymTagManagedType},
+                                                              {"Dimension", SymTagDimension},
+                                                              {"CallSite", SymTagCallSite},
+                                                              {"InlineSite", SymTagInlineSite},
+                                                              {"BaseInterface", SymTagBaseInterface},
+                                                              {"VectorType", SymTagVectorType},
+                                                              {"MatrixType", SymTagMatrixType},
+                                                              {"HLSLType", SymTagHLSLType},
+                                                              {"Caller", SymTagCaller},
+                                                              {"Callee", SymTagCallee},
+                                                              {"Export", SymTagExport},
+                                                              {"HeapAllocationSite", SymTagHeapAllocationSite},
+                                                              {"CoffGroup", SymTagCoffGroup},
+                                                              {"Inlinee", SymTagInlinee},
+                                                              {"TaggedUnionCase", SymTagTaggedUnionCase},
+                                                              {"Max", SymTagMax}})))
+    {
+        return NULL;
+    }
+
     if (NULL ==
         (g_diaBasicTypeEnumWrappings = createEnumObject(
              module, "BasicType",
@@ -120,7 +176,7 @@ PyObject* pydia_createDiaEnumWrappings(PyObject* module)
                                                                     {"MetaData", LocInMetaData},
                                                                     {"Constant", LocIsConstant},
                                                                     {"RegRelAliasIndir", LocIsRegRelAliasIndir},
-                                                                    {"LocTypeMax", LocTypeMax}})))
+                                                                    {"Max", LocTypeMax}})))
     {
         return NULL;
     }

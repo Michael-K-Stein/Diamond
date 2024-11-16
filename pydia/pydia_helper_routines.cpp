@@ -111,3 +111,12 @@ PyObject* PyObject_FromVariant(const VARIANT& variantValue)
 
     Py_UNREACHABLE();
 }
+
+void pydia_showDeprecationWarning(const char* warningMessage)
+{
+    if (PyErr_WarnEx(PyExc_DeprecationWarning, warningMessage, 1) < 0)
+    {
+        // Ignore error in raising warning
+        return;
+    }
+}

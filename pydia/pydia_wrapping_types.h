@@ -8,6 +8,7 @@
 /// @return The same module on success, NULL on failure.
 PyObject* pydia_createDiaEnumWrappings(PyObject* module);
 
+PyObject* PyDiaSymTag_FromSymTag(enum SymTagEnum symTag);
 PyObject* PyDiaBasicType_FromBasicType(enum BasicType basicType);
 PyObject* PyDiaCallingConvention_FromCallingConvention(dia::CvCall callingConvention);
 PyObject* PyDiaAccessModifier_FromAccessModifier(enum AccessModifier v);

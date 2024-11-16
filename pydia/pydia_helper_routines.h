@@ -16,3 +16,4 @@ AnyString PyObjectToAnyString(PyObject* obj);
 PyObject* PyObject_FromBstrWrapper(const BstrWrapper& bstrWrapper);
 PyObject* PyObject_FromWstring(const std::wstring& string);
 PyObject* PyObject_FromVariant(const VARIANT& variantValue);
+void pydia_showDeprecationWarning(const char* warningMessage = "This function is deprecated and will be removed in a future release.");

@@ -114,6 +114,7 @@ DEFINE_TRIVIAL_EXCEPTION(SymbolNotFoundException);
 DEFINE_TRIVIAL_EXCEPTION(TooManyMatchesForFindException);
 DEFINE_TRIVIAL_EXCEPTION(DataMemberDataKindMismatchException);
 DEFINE_TRIVIAL_EXCEPTION(InvalidFileFormatException);
+DEFINE_TRIVIAL_EXCEPTION(UnimplementedException);
 
 class InvalidUsageException : public std::logic_error
 {

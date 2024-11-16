@@ -36,6 +36,57 @@
 namespace std
 {
 
+size_t hash<VARIANT>::operator()(const VARIANT& v) const
+{
+    size_t calculatedHash = 0;
+    hash_combine(calculatedHash, v.vt);
+    const auto& variantValue = v;
+    switch (variantValue.vt)
+    {
+    case VT_I4:  // LONG
+        hash_combine(calculatedHash, variantValue.lVal);
+        break;
+    case VT_I2:  // SHORT
+        hash_combine(calculatedHash, variantValue.iVal);
+        break;
+    case VT_UI1:  // BYTE
+        hash_combine(calculatedHash, variantValue.bVal);
+        break;
+    case VT_R4:  // FLOAT
+        hash_combine(calculatedHash, static_cast<double>(variantValue.fltVal));
+        break;
+    case VT_R8:  // DOUBLE
+        hash_combine(calculatedHash, variantValue.dblVal);
+        break;
+    case VT_BOOL:  // VARIANT_BOOL (True or False)
+        hash_combine(calculatedHash, variantValue.boolVal != VARIANT_FALSE);
+        break;
+    case VT_BSTR:
+        hash_combine(calculatedHash, BstrWrapper{variantValue.bstrVal});
+        break;
+    case VT_I8:  // LONGLONG
+        hash_combine(calculatedHash, variantValue.llVal);
+        break;
+    case VT_UI4:  // ULONG
+        hash_combine(calculatedHash, variantValue.ulVal);
+        break;
+    case VT_UI8:  // ULONGLONG
+        hash_combine(calculatedHash, variantValue.ullVal);
+        break;
+    case VT_INT:  // INT
+        hash_combine(calculatedHash, variantValue.intVal);
+        break;
+    case VT_UINT:  // UINT
+        hash_combine(calculatedHash, variantValue.uintVal);
+        break;
+    case VT_EMPTY:  // No value
+        break;
+        // Add more cases here if needed for additional VARIANT types
+    default:
+        throw dia::UnimplementedException("Hashing has not been implemented for this VARIANT type!");
+    }
+    return calculatedHash;
+}
 
 size_t hash<dia::Enum>::operator()(const dia::Enum& v) const
 {
@@ -72,7 +123,7 @@ size_t hash<dia::Data>::operator()(const dia::Data& v) const
     hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), GET_ACCESS_OR_NONE(v), GET_BIT_POSITION_OR_ZERO(v),
                  GET_CLASS_PARENT_OR_EMPTY(v), GET_COMPILER_GENERATED_OR_FALSE(v), v.getConstType(), v.getDataKind(), GET_AGGREGATED_OR_FALSE(v),
                  GET_SPLITTED_OR_FALSE(v), GET_LENGTH_OR_ZERO(v), v.getLocationType(), v.getName(), GET_OFFSET_OR_ZERO(v), GET_SLOT_OR_ZERO(v),
-                 v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType());
+                 v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType(), v.getValue());
 
     return calculatedHash;
 }
@@ -112,7 +163,13 @@ size_t hash<dia::Array>::operator()(const dia::Array& v) const
     return calculatedHash;
 }
 
-size_t hash<dia::Annotation>::operator()(const dia::Annotation& v) const { throw std::runtime_error("Not implemented!"); }
+size_t hash<dia::Annotation>::operator()(const dia::Annotation& v) const
+{
+    size_t calculatedHash = 0;
+    hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), v.getAddressOffset(), v.getAddressSection(), v.getDataKind(),
+                 v.getRelativeVirtualAddress(), v.getValue(), v.getVirtualAddress());
+    return calculatedHash;
+}
 
 size_t hash<dia::BaseClass>::operator()(const dia::BaseClass& v) const { throw std::runtime_error("Not implemented!"); }
 

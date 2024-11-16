@@ -5,7 +5,7 @@
 #include <objbase.h>
 
 // C pydia imports
-#include "pydia_basetype.h"
+#include "pydia_compiland.h"
 #include "pydia_exceptions.h"
 #include "pydia_helper_routines.h"
 #include "pydia_symbol_private.h"
@@ -13,28 +13,23 @@
 #include "pydia_wrapping_types.h"
 
 // C++ DiaSymbolMaster imports
-#include <SymbolTypes/DiaBaseType.h>
+#include <SymbolTypes/DiaCompiland.h>
 
-TRIVIAL_INIT_DEINIT(BaseType);
+TRIVIAL_INIT_DEINIT(Compiland);
 
-static PyMethodDef PyDiaBaseType_methods[] = {
-
-    PyDiaSymbolMethodEntry_isConst,
-    PyDiaSymbolMethodEntry_isUnaligned,
-    PyDiaSymbolMethodEntry_isVolatile,
-    PyDiaSymbolMethodEntry_getBaseType,
-    PyDiaSymbolMethodEntry_getLength,
+static PyMethodDef PyDiaCompiland_methods[] = {
+    PyDiaSymbolMethodEntry_isEditAndContinueEnabled,
     PyDiaSymbolMethodEntry_getLexicalParent,
     PyDiaSymbolMethodEntry_getLexicalParentId,
+    PyDiaSymbolMethodEntry_getLibraryName,
+    PyDiaSymbolMethodEntry_getName,
+    PyDiaSymbolMethodEntry_getSourceFileName,
     PyDiaSymbolMethodEntry_getSymIndexId,
     PyDiaSymbolMethodEntry_getSymTag,
-
-    PyDiaSymbolMethodEntry_getModifierValues,
-
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
 // Define the Python DiaEnum type object
 
-PYDIA_SYMBOL_TYPE_DEFINITION(BaseType, PyDiaBaseType_methods);
-TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(BaseType);
+PYDIA_SYMBOL_TYPE_DEFINITION(Compiland, PyDiaCompiland_methods);
+TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(Compiland);

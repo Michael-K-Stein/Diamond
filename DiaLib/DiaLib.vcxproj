@@ -159,8 +159,10 @@
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\HashUtils.h" />
     <ClInclude Include="include\SymbolPathHelper.h" />
+    <ClInclude Include="include\SymbolTypes\DiaAnnotation.h" />
     <ClInclude Include="include\SymbolTypes\DiaArray.h" />
     <ClInclude Include="include\SymbolTypes\DiaBaseType.h" />
+    <ClInclude Include="include\SymbolTypes\DiaCompiland.h" />
     <ClInclude Include="include\SymbolTypes\DiaData.h" />
     <ClInclude Include="include\SymbolTypes\DiaEnum.h" />
     <ClInclude Include="include\SymbolTypes\DiaExe.h" />
@@ -169,6 +171,7 @@
     <ClInclude Include="include\SymbolTypes\DiaFunctionType.h" />
     <ClInclude Include="include\SymbolTypes\DiaNull.h" />
     <ClInclude Include="include\SymbolTypes\DiaPointer.h" />
+    <ClInclude Include="include\SymbolTypes\DiaPublicSymbol.h" />
     <ClInclude Include="include\SymbolTypes\DiaSymbolPrint.h" />
     <ClInclude Include="include\SymbolTypes\DiaSymbolTypes.h" />
     <ClInclude Include="include\SymbolTypes\DiaTypedef.h" />

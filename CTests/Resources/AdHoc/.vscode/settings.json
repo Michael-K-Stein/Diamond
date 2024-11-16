@@ -1,6 +1,17 @@
 {
     "files.associations": {
         "stdint.h": "c",
-        "atlbase.h": "c"
+        "atlbase.h": "c",
+        "cstdint": "cpp",
+        "cstdlib": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "cstddef": "cpp",
+        "exception": "cpp",
+        "initializer_list": "cpp",
+        "new": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xtr1common": "cpp"
     }
 }

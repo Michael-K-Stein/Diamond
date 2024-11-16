@@ -41,7 +41,8 @@ static inline void registerPyClassRegistrationFunction(PyClassRegistrationFuncti
 
 static PyObject* pydia_registerClasses(PyObject* module)
 {
-    XFOR_EACH_PYDIA_CLASS(__REGISTER_PYDIA_CLASS)
+    __REGISTER_PYDIA_CLASS(Symbol);
+    XFOR_EACH_PYDIA_CLASS(__REGISTER_PYDIA_CLASS);
 
     for (const auto& registrationFunction : getPyClassRegistrationFunctions())
     {
