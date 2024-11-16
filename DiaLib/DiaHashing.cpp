@@ -32,6 +32,7 @@
 #define GET_OBJECT_POINTER_TYPE_OR_EMPTY(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getObjectPointerType)
 #define GET_OFFSET_OR_ZERO(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getOffset)
 #define GET_ACCESS_OR_NONE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getAccess)
+#define GET_VALUE_OR_NONE(_symbol) GET_ATTRIBUTE_OR_DEFAULT(_symbol, getValue)
 
 namespace std
 {
@@ -123,7 +124,7 @@ size_t hash<dia::Data>::operator()(const dia::Data& v) const
     hash_combine(calculatedHash, std::wstring(dia::symTagToName(v.getSymTag())), GET_ACCESS_OR_NONE(v), GET_BIT_POSITION_OR_ZERO(v),
                  GET_CLASS_PARENT_OR_EMPTY(v), GET_COMPILER_GENERATED_OR_FALSE(v), v.getConstType(), v.getDataKind(), GET_AGGREGATED_OR_FALSE(v),
                  GET_SPLITTED_OR_FALSE(v), GET_LENGTH_OR_ZERO(v), v.getLocationType(), v.getName(), GET_OFFSET_OR_ZERO(v), GET_SLOT_OR_ZERO(v),
-                 v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType(), v.getValue());
+                 v.getSymTag(), GET_TOKEN_OR_ZERO(v), v.getType(), v.getUnalignedType(), v.getVolatileType(), GET_VALUE_OR_NONE(v));
 
     return calculatedHash;
 }
