@@ -10,20 +10,7 @@ namespace dia
 {
 DiaSymbolEnumerator<Data> UserDefinedType::enumerateMembers() const { return enumerate<Data>(*this, SymTagData); }
 
-std::set<UserDefinedType> UserDefinedType::queryDependencies() const
-{
-    std::set<UserDefinedType> types{};
-    for (const auto& member : enumerateMembers())
-    {
-        if (!member.getType().isUserDefinedType())
-        {
-            continue;
-        }
-        const auto& cType = std::move(member.getType());
-        types.insert(static_cast<const UserDefinedType&>(cType));
-    }
-    return types;
-}
+std::set<Symbol> UserDefinedType::queryDependencies() const { return dia::queryDependencies(*this); }
 
 std::set<UserDefinedType> UserDefinedType::queryForwardDependencies() const
 {

@@ -309,7 +309,7 @@ enum LocationType getLocationType(const Symbol& symbol)
 {
     DWORD retVal      = 0;
     const auto result = symbol.get()->get_locationType(&retVal);
-    CHECK_DIACOM_EXCEPTION("get_locationType failed!", result);
+    CHECK_DIACOM_EXCEPTION("get_locationType failed!", result, true);
     return static_cast<enum LocationType>(retVal);
 }
 

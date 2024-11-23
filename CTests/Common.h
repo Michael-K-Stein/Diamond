@@ -16,7 +16,7 @@ namespace CppUnitTestFramework
 template <>
 static std::wstring ToString<enum BasicType>(const enum BasicType& v)
 {
-    return dia::resolveBaseTypeName(v);
+    return dia::resolveBasicTypeName(v);
 }
 
 template <>

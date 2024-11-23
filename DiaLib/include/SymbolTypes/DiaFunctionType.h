@@ -41,6 +41,8 @@ public:
     auto begin() const { return enumerateParameters().begin(); }
 
     auto end() const { return enumerateParameters().end(); }
+
+    std::set<Symbol> queryDependencies() const { return dia::queryDependencies(*this); };
 };
 }  // namespace dia
 

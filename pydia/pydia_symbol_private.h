@@ -7,7 +7,9 @@
 #include "pydia_symbol.h"
 
 
-#define PYDIA_SYMBOL_TYPE_DEFINITION(className, classMethods)                                                                                        \
+#define PYDIA_SYMBOL_TYPE_DEFINITION(className, classMethods) PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(className, classMethods, &PyDiaSymbol_Type)
+
+#define PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(className, classMethods, baseType)                                                                    \
     PyTypeObject PyDia##className##_Type = {                                                                                                         \
         PyVarObject_HEAD_INIT(NULL, 0) "pydia." #className,                     /* tp_name */                                                        \
         sizeof(PyDia##className),                                               /* tp_basicsize */                                                   \
@@ -38,7 +40,7 @@
         classMethods,                                                           /* tp_methods */                                                     \
         0,                                                                      /* tp_members */                                                     \
         0,                                                                      /* tp_getset */                                                      \
-        0,                                                                      /* tp_base */                                                        \
+        baseType,                                                               /* tp_base */                                                        \
         0,                                                                      /* tp_dict */                                                        \
         0,                                                                      /* tp_descr_get */                                                   \
         0,                                                                      /* tp_descr_set */                                                   \
@@ -764,6 +766,7 @@ static PyMethodDef PyDiaSymbolMethodEntry_getVirtualTableShapeId = {"get_virtual
 PyObject* PyDiaSymbol_getAddressOffset(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getAddressOffset = {"get_address_offset", (PyCFunction)PyDiaSymbol_getAddressOffset, METH_NOARGS,
                                                               "Get the address offset of the function."};
+
 PyObject* PyDiaSymbol_getAddressSection(const PyDiaSymbol* self);
 static PyMethodDef PyDiaSymbolMethodEntry_getAddressSection = {"get_address_section", (PyCFunction)PyDiaSymbol_getAddressSection, METH_NOARGS,
                                                                "Get the address section of the function."};

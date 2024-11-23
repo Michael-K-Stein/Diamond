@@ -62,6 +62,7 @@ static PyMethodDef PyDiaFunction_methods[] = {
     PyDiaSymbolMethodEntry_getUndecoratedNameEx,
     PyDiaSymbolMethodEntry_getVirtualAddress,
     PyDiaSymbolMethodEntry_getVirtualBaseOffset,
+
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 

@@ -5,6 +5,7 @@
 // Further PyDia headers
 #include "pydia.h"
 #include "pydia_exceptions.h"
+#include "pydia_module_methods.h"
 #include "pydia_register_classes.h"
 #include "pydia_wrapping_types.h"
 
@@ -17,6 +18,8 @@ static void pydia_cleanup(PyObject* module);
 static PyDiaModuleState* pydia_getModuleState(PyObject* module);
 
 static PyMethodDef PyDiaMethods[] = {
+    PyDiaModuleMethodEntry_resolveTypeName,
+
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 

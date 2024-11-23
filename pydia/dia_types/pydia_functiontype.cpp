@@ -19,6 +19,8 @@
 TRIVIAL_INIT_DEINIT(FunctionType);
 
 static PyObject* PyDiaFunctionType_enumerateParameters(PyDiaFunctionType* self);
+static PyObject* PyDiaFunctionType_getDependencies(PyDiaFunctionType* self);
+
 
 // Python method table for dia::FunctionType
 static PyMethodDef PyDiaFunctionType_methods[] = {
@@ -38,6 +40,10 @@ static PyMethodDef PyDiaFunctionType_methods[] = {
     PyDiaSymbolMethodEntry_getTypeId,
 
     {"enumerate_parameters", (PyCFunction)PyDiaFunctionType_enumerateParameters, METH_NOARGS, "Enumerate the parameters of the function type."},
+
+    {"get_dependencies", (PyCFunction)PyDiaFunctionType_getDependencies, METH_VARARGS,
+     "Return the other types that this function signatures depends on. Pointer dependecies (forward declerations) are not included."},
+
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -59,4 +65,19 @@ static PyObject* PyDiaFunctionType_enumerateParameters(PyDiaFunctionType* self)
     }
 
     return (PyObject*)generator;
+}
+
+static PyObject* PyDiaFunctionType_getDependencies(PyDiaFunctionType* self)
+{
+    _ASSERT(NULL != self);
+    _ASSERT(NULL != self->diaFunctionType);
+
+    auto safeExecution = [&]() -> PyObject*
+    {
+        auto rawEnumerator = self->diaFunctionType->queryDependencies();
+        return PyObject_FromSymbolSet(rawEnumerator, self->dataSource);
+    };
+
+    PYDIA_SAFE_TRY({ return safeExecution(); });
+    Py_UNREACHABLE();
 }

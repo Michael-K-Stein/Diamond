@@ -16,9 +16,9 @@
 #include <SymbolTypes/DiaBaseType.h>
 
 TRIVIAL_INIT_DEINIT(BaseType);
+static PyObject* PyDiaBaseType_getName(const PyDiaBaseType* self);
 
 static PyMethodDef PyDiaBaseType_methods[] = {
-
     PyDiaSymbolMethodEntry_isConst,
     PyDiaSymbolMethodEntry_isUnaligned,
     PyDiaSymbolMethodEntry_isVolatile,
@@ -31,6 +31,9 @@ static PyMethodDef PyDiaBaseType_methods[] = {
 
     PyDiaSymbolMethodEntry_getModifierValues,
 
+    {"get_name", (PyCFunction)PyDiaBaseType_getName, METH_NOARGS,
+     "Get the C syntax name of the base type. This does NOT call IDiaSymbol::get_name ."},
+
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -38,3 +41,9 @@ static PyMethodDef PyDiaBaseType_methods[] = {
 
 PYDIA_SYMBOL_TYPE_DEFINITION(BaseType, PyDiaBaseType_methods);
 TRIVIAL_C_TO_PYTHON_SYMBOL_CONVERSION(BaseType);
+
+static PyObject* PyDiaBaseType_getName(const PyDiaBaseType* self)
+{
+    PYDIA_SAFE_TRY({ return PyObject_FromWstring(dia::resolveBaseTypeName(*self->diaBaseType)); });
+    Py_UNREACHABLE();
+}

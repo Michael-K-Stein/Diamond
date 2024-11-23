@@ -49,7 +49,59 @@ bool Symbol::isArray() const { return SymTagArrayType == getSymTag(); }
 
 bool Symbol::isPointer() const { return SymTagPointerType == getSymTag(); }
 
-bool Symbol::isUserDefinedType() const { return SymTagUDT == getSymTag() || SymTagEnum == getSymTag() || SymTagTypedef == getSymTag(); }
+bool Symbol::isUserDefinedType() const
+{
+    return SymTagUDT == getSymTag() || SymTagEnum == getSymTag() || SymTagTypedef == getSymTag() || SymTagFunctionType == getSymTag();
+}
+
+template <typename ContainerT>
+std::set<Symbol> queryDependencies(const ContainerT& symbol)
+{
+    std::set<Symbol> types{};
+    for (const auto& member : symbol)
+    {
+        Symbol symbolToCheck = member.getType();
+        if (symbolToCheck.isArray())
+        {
+            symbolToCheck = symbolToCheck.getType();
+        }
+
+        if (!symbolToCheck.isUserDefinedType())
+        {
+            continue;
+        }
+
+        if (isSymbolUnnamed(symbolToCheck))
+        {
+            // It does not make sense to have an unnamed symbol as a dependency, so we "inline" it and actually add the nested types as
+            // dependencies instead.
+            switch (symbolToCheck.getSymTag())
+            {
+            case SymTagUDT:
+            {
+                const UserDefinedType& unnamedNestedSymbol = static_cast<const UserDefinedType&>(symbolToCheck);
+                const auto& nestedDependencies             = queryDependencies(unnamedNestedSymbol);
+                types.insert(nestedDependencies.begin(), nestedDependencies.end());
+                break;
+            }
+            case SymTagEnum:
+                // Enums don't have dependencies... right?
+                __fallthrough;
+            default:
+                break;
+            };
+            continue;
+        }
+
+        types.insert(symbolToCheck);
+    }
+
+    return types;
+}
+
+// Explicit instantiations for specific types.
+template std::set<Symbol> queryDependencies<FunctionType>(const FunctionType& symbols);
+template std::set<Symbol> queryDependencies<UserDefinedType>(const UserDefinedType& symbols);
 
 size_t Symbol::calcHash() const
 {

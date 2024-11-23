@@ -62,7 +62,6 @@ PyObject* PyDiaSymbol_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSour
     PyObject* pySymbol = NULL;
     switch (symTag)
     {
-
     case SymTagNull:
         pySymbol = PyDiaNull_FromNullSymbol(std::move(symbol), dataSource);
         break;
@@ -432,10 +431,10 @@ static PyMethodDef PyDiaSymbol_methods[] = {
 
 #ifdef _DEBUG
 // Allow complete and unmonitored usage of the DiaLib private symbol functions in debug mode.
-PYDIA_SYMBOL_TYPE_DEFINITION(Symbol, PyDiaSymbol_methods);
+PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(Symbol, PyDiaSymbol_methods, 0);
 #else
 // In release mode, users should never directly access DiaLib methods without pydia checking that the type is valid.
-PYDIA_SYMBOL_TYPE_DEFINITION(Symbol, 0);
+PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(Symbol, 0, 0);
 #endif
 
 // Method: PyDiaSymbol_getClassParent

@@ -3,6 +3,7 @@
 #include <Python.h>
 // Python.h must be included before anything else
 #include <objbase.h>
+#include <optional>
 
 // C pydia imports
 #include "pydia_data.h"
@@ -20,6 +21,8 @@
 
 
 static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self);
+static PyObject* PyDiaUdt_Abstract_getDependencies(PyDiaUdt_Abstract* self);
+
 
 #define __INIT_DEINIT_UDT(udtName) TRIVIAL_INIT_DEINIT_CUSTOM_FIELD(udtName, UserDefinedType)
 
@@ -50,6 +53,8 @@ static PyMethodDef PyDiaUdt_Abstract_methods[] = {
     PyDiaSymbolMethodEntry_isVolatile,
 
     {"enumerate_members", (PyCFunction)PyDiaUdt_Abstract_enumerateMembers, METH_NOARGS, "Iterate over all members (fields) of the UDT."},
+    {"get_dependencies", (PyCFunction)PyDiaUdt_Abstract_getDependencies, METH_NOARGS,
+     "Return the other user defined types that this UDT depends on. Pointer dependecies (forward declerations) are not included."},
     {NULL, NULL, 0, NULL}  // Sentinel
 };
 
@@ -76,6 +81,52 @@ static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self)
 
         return (PyObject*)generator;
     };
+
+    PYDIA_SAFE_TRY({ return safeExecution(); });
+    Py_UNREACHABLE();
+}
+
+static PyObject* PyDiaUdt_Abstract_getDependencies(PyDiaUdt_Abstract* self
+#if 0
+    , PyObject* args
+#endif
+)
+{
+    _ASSERT(NULL != self);
+    _ASSERT(NULL != self->diaUserDefinedType);
+
+    // Lambda to handle execution
+    auto safeExecution = [&]() -> PyObject*
+    {
+        // If param is provided, call queryDependencies with the parameter
+        auto rawEnumerator = self->diaUserDefinedType->queryDependencies();
+        return PyObject_FromSymbolSet(rawEnumerator, self->dataSource);
+    };
+
+#if 0
+    // Parse arguments: 0 or 1 argument
+    if (PyTuple_Size(args) == 0)
+    {
+        // No arguments passed, call with no parameters
+        PYDIA_SAFE_TRY({ return safeExecution(); });
+    }
+    else if (PyTuple_Size(args) == 1)
+    {
+        // 1 argument passed, check if it's an integer
+        PyObject* arg = PyTuple_GetItem(args, 0);
+        if (!PyLong_Check(arg))
+        {
+            return PyErr_Format(PyExc_TypeError, "Expected an integer argument, got %s", Py_TYPE(arg)->tp_name);
+        }
+        int param = PyLong_AsLong(arg);
+        PYDIA_SAFE_TRY({ return safeExecution(param); });
+    }
+    else
+    {
+        // More than 1 argument is not allowed
+        return PyErr_Format(PyExc_TypeError, "Expected 0 or 1 arguments, got %d", PyTuple_Size(args));
+    }
+#endif
 
     PYDIA_SAFE_TRY({ return safeExecution(); });
     Py_UNREACHABLE();

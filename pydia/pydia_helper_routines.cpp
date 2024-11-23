@@ -1,6 +1,9 @@
 #include "pydia_helper_routines.h"
+#include "pydia_symbol.h"
+#include <DiaSymbol.h>
 #include <datetime.h>     // For PyDateTime_FromDateAndTime
 #include <propvarutil.h>  // For VariantToDouble
+#include <set>
 
 // Helper function to convert Python string to std::wstring
 AnyString PyObjectToAnyString(PyObject* obj)

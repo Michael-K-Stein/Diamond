@@ -387,6 +387,7 @@
     <ClCompile Include="pydia_enum.cpp" />
     <ClCompile Include="pydia_exceptions.h.cpp" />
     <ClCompile Include="pydia_helper_routines.cpp" />
+    <ClCompile Include="pydia_module_methods.cpp" />
     <ClCompile Include="pydia_other_types.cpp" />
     <ClCompile Include="pydia_pointer.cpp" />
     <ClCompile Include="pydia_symbol.cpp" />
@@ -407,6 +408,7 @@
     <ClInclude Include="pydia_array.h" />
     <ClInclude Include="pydia_basetype.h" />
     <ClInclude Include="pydia_generators.h" />
+    <ClInclude Include="pydia_module_methods.h" />
     <ClInclude Include="pydia_pointer.h" />
     <ClInclude Include="pydia_typedef.h" />
     <ClInclude Include="pydia_udts.h" />

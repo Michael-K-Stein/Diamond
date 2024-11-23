@@ -19,10 +19,15 @@ public:
 
     DiaSymbolEnumerator<Data> enumerateMembers() const;
 
-    std::set<UserDefinedType> queryDependencies() const;
+    std::set<Symbol> queryDependencies() const;
     std::set<UserDefinedType> queryForwardDependencies() const;
 
     Data getMember(const AnyString& memberName) const;
+
+    // Iterator-related methods
+    auto begin() const { return enumerateMembers().begin(); }
+
+    auto end() const { return enumerateMembers().end(); }
 
 protected:
     using Udt::get;

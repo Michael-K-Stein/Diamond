@@ -74,6 +74,9 @@ public:
     auto getSymIndexId() const { return dia::getSymIndexId(*this); }
 
     // Quick type checking functions
+
+    /// @brief Analogous to getVolatileType.
+    /// @return TRUE if the symbol is marked as volatile, FALSE otherwise.
     bool isVolatile() const;
     bool isArray() const;
     bool isPointer() const;
@@ -574,14 +577,33 @@ private:
     friend DiaSymbolEnumerator<DataMember>
     enumerate<DataMember>(const Symbol& parentSymbol, enum SymTagEnum symTag, LPCOLESTR name, DWORD compareFlags);
     friend ::std::wstring resolveTypeName(const Symbol& symbol);
+    friend ::std::wstring resolveBaseTypeName(const Symbol& symbol);
     friend class DataSource;
 
     template <typename T>
     friend std::wostream& streamSymbolTypeModifiers(std::wostream& os, const T& v);
 
+    template <typename ContainerT>
+    friend std::set<Symbol> queryDependencies(const ContainerT& symbol);
+
+    friend bool isSymbolUnnamed(const Symbol& symbol);
+
     // For tests
     friend class CTests::FindStructs;
 };
+
+static bool isSymbolUnnamed(const Symbol& symbol)
+{
+    const auto& symbolName   = symbol.getName();
+    const auto unnamedPrefix = L"<unnamed-";
+    return 0 == wcsncmp(symbolName.c_str(), unnamedPrefix, (sizeof(unnamedPrefix) / sizeof(unnamedPrefix[0]) - 1));
+}
+
+template <typename ContainerT>
+std::set<Symbol> queryDependencies(const ContainerT& symbol);
+// Explicit instantiation declarations (restrict instantiation to these types).
+extern template std::set<Symbol> queryDependencies<FunctionType>(const FunctionType& symbols);
+extern template std::set<Symbol> queryDependencies<UserDefinedType>(const UserDefinedType& symbols);
 
 template <typename ToTypeT>
 std::vector<ToTypeT> convertSymbolVector(const std::vector<Symbol>& v)

@@ -130,7 +130,7 @@ public:
 
 }  // namespace dia
 
-static inline void CHECK_DIACOM_EXCEPTION(const char* message, HRESULT hResult)
+static inline void CHECK_DIACOM_EXCEPTION(const char* message, HRESULT hResult, bool silentPropertyNotAvailable = false)
 {
     do
     {
@@ -143,7 +143,7 @@ static inline void CHECK_DIACOM_EXCEPTION(const char* message, HRESULT hResult)
         {
             throw DiaComException(message, hResult);
         }
-        if (S_FALSE == hResult)
+        if (S_FALSE == hResult && !silentPropertyNotAvailable)
         {
             /* __debugbreak(); */
             throw dia::PropertyNotAvailableException("Queried property that is not available for the symbol!");

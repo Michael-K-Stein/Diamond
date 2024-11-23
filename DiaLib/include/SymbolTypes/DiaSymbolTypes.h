@@ -80,35 +80,35 @@ XFOR_DIA_SYMBOL_TYPE(__FORWARD_DECLARE_DIA_TYPE_CLASS);
 // Enumeration for function call type
 enum class CvCall : uint8_t
 {
-    NearC      = 0x00,  // near right to left push, caller pops stack
-    FarC       = 0x01,  // far right to left push, caller pops stack
-    NearPascal = 0x02,  // near left to right push, callee pops stack
-    FarPascal  = 0x03,  // far left to right push, callee pops stack
-    NearFast   = 0x04,  // near left to right push with regs, callee pops stack
-    FarFast    = 0x05,  // far left to right push with regs, callee pops stack
-    Skipped    = 0x06,  // skipped (unused) call index
-    NearStd    = 0x07,  // near standard call
-    FarStd     = 0x08,  // far standard call
-    NearSys    = 0x09,  // near sys call
-    FarSys     = 0x0a,  // far sys call
-    ThisCall   = 0x0b,  // this call (this passed in register)
-    MipsCall   = 0x0c,  // Mips call
-    Generic    = 0x0d,  // Generic call sequence
-    AlphaCall  = 0x0e,  // Alpha call
-    PpcCall    = 0x0f,  // PPC call
-    ShCall     = 0x10,  // Hitachi SuperH call
-    ArmCall    = 0x11,  // ARM call
-    Am33Call   = 0x12,  // AM33 call
-    TriCall    = 0x13,  // TriCore Call
-    Sh5Call    = 0x14,  // Hitachi SuperH-5 call
-    M32rCall   = 0x15,  // M32R Call
-    ClrCall    = 0x16,  // CLR call
-    Inline     = 0x17,  // Marker for routines always inlined and thus lacking a
-                        // convention
-    NearVector = 0x18,  // near left to right push with regs, callee pops stack
-    Swift      = 0x19,  // Swift calling convention
-    Reserved   = 0x20   // first unused call enumeration
+    NearC      = CV_CALL_NEAR_C,       // near right to left push, caller pops stack
+    FarC       = CV_CALL_FAR_C,        // far right to left push, caller pops stack
+    NearPascal = CV_CALL_NEAR_PASCAL,  // near left to right push, callee pops stack
+    FarPascal  = CV_CALL_FAR_PASCAL,   // far left to right push, callee pops stack
+    NearFast   = CV_CALL_NEAR_FAST,    // near left to right push with regs, callee pops stack
+    FarFast    = CV_CALL_FAR_FAST,     // far left to right push with regs, callee pops stack
+    Skipped    = CV_CALL_SKIPPED,      // skipped (unused) call index
+    NearStd    = CV_CALL_NEAR_STD,     // near standard call
+    FarStd     = CV_CALL_FAR_STD,      // far standard call
+    NearSys    = CV_CALL_NEAR_SYS,     // near sys call
+    FarSys     = CV_CALL_FAR_SYS,      // far sys call
+    ThisCall   = CV_CALL_THISCALL,     // this call (this passed in register)
+    MipsCall   = CV_CALL_MIPSCALL,     // Mips call
+    Generic    = CV_CALL_GENERIC,      // Generic call sequence
+    AlphaCall  = CV_CALL_ALPHACALL,    // Alpha call
+    PpcCall    = CV_CALL_PPCCALL,      // PPC call
+    ShCall     = CV_CALL_SHCALL,       // Hitachi SuperH call
+    ArmCall    = CV_CALL_ARMCALL,      // ARM call
+    Am33Call   = CV_CALL_AM33CALL,     // AM33 call
+    TriCall    = CV_CALL_TRICALL,      // TriCore Call
+    Sh5Call    = CV_CALL_SH5CALL,      // Hitachi SuperH-5 call
+    M32rCall   = CV_CALL_M32RCALL,     // M32R Call
+    ClrCall    = CV_CALL_CLRCALL,      // CLR call
+    Inline     = CV_CALL_INLINE,       // Marker for routines always inlined
+    NearVector = CV_CALL_NEAR_VECTOR,  // near left to right push with regs, callee pops stack
+    Swift      = CV_CALL_SWIFT,        // Swift calling convention
+    Reserved   = CV_CALL_RESERVED      // first unused call enumeration
 };
+
 
 }  // namespace dia
 

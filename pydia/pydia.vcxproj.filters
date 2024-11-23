@@ -84,6 +84,9 @@
     <ClCompile Include="dia_types\pydia_publicsymbol.cpp">
       <Filter>Source Files\dia_types</Filter>
     </ClCompile>
+    <ClCompile Include="pydia_module_methods.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pydia.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="dia_types\pydia_publicsymbol.h">
       <Filter>Header Files\dia_types</Filter>
+    </ClInclude>
+    <ClInclude Include="pydia_module_methods.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
