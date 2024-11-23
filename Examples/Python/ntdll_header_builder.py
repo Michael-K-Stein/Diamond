@@ -267,6 +267,13 @@ def build_enum_header(data_sources: list[DataSource]):
     return all_enums
 
 
+def are_structs_equal(old_struct: UdtData, new_struct: UdtData):
+    return (hash(old_struct.data) == hash(new_struct.data)) or (
+        str(old_struct) == str(new_struct)
+    )
+    # f"Incompatible struct definition for {old_struct.name}\n{str(old_struct)}\n{str(new_struct)}\n{hash(old_struct.data)} != {hash(new_struct.data)}"
+
+
 def build_struct_header(data_sources: list[DataSource]):
     all_structs: dict[str, UdtData] = {}
     for data_source in data_sources:
@@ -277,10 +284,14 @@ def build_struct_header(data_sources: list[DataSource]):
                 continue
             new_structs[a.name] = a
 
-        for new_struct in new_structs:
-            if new_struct not in all_structs:
-                all_structs[new_struct] = new_structs[new_struct]
+        for new_struct_name in new_structs:
+            if new_struct_name not in all_structs:
+                all_structs[new_struct_name] = new_structs[new_struct_name]
                 continue
+            if not are_structs_equal(
+                all_structs[new_struct_name], new_structs[new_struct_name]
+            ):
+                all_structs.pop(new_struct_name)
 
     all_enums = build_enum_header(data_sources)
 
