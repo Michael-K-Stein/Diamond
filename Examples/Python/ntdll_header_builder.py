@@ -170,10 +170,13 @@ class DataData:
     @staticmethod
     def safe_type_name_resolution(type: pydia.Symbol):
         type_name = pydia.resolve_type_name(type)
+        print(type_name)
         if type_name[0 : len("<unnamed-")] != "<unnamed-":
             return type_name
 
         # This is an unnamed enum/union/struct/...
+        print(type.get_sym_tag())
+
         if type.get_sym_tag() == pydia.SymTag.Enum:
             values = enum_values_to_dict(type.get_values())
             return f"""
@@ -193,7 +196,9 @@ enum {{
         #     element_type = type.get_type()
         #     element_count = type.get_count()
         #     return f"""{DataData.safe_type_name_resolution(element_type)} {self.name}[{element_count}];"""
-        return f"""{DataData.safe_type_name_resolution(type)} {self.name};"""
+        if self.data.get_location_type() == pydia.LocationType.BitField:
+            return f"""/* {hex(self.data.get_offset())[2:].zfill(2)}:{self.data.get_bit_position()} */ {DataData.safe_type_name_resolution(type)} {self.name} : {self.data.get_length()};"""
+        return f"""/* {hex(self.data.get_offset())[2:].zfill(2)} */ {DataData.safe_type_name_resolution(type)} {self.name};"""
 
 
 class UdtData:

@@ -10,44 +10,50 @@
 #define PYDIA_SYMBOL_TYPE_DEFINITION(className, classMethods) PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(className, classMethods, &PyDiaSymbol_Type)
 
 #define PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE(className, classMethods, baseType)                                                                    \
+    PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE_AND_ITER(className, classMethods, baseType, 0)
+
+#define PYDIA_SYMBOL_TYPE_DEFINITION_WITH_ITER(className, classMethods, iterFunc)                                                                    \
+    PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE_AND_ITER(className, classMethods, &PyDiaSymbol_Type, iterFunc)
+
+#define PYDIA_SYMBOL_TYPE_DEFINITION_WITH_BASE_AND_ITER(className, classMethods, baseType, iterFunc)                                                 \
     PyTypeObject PyDia##className##_Type = {                                                                                                         \
-        PyVarObject_HEAD_INIT(NULL, 0) "pydia." #className,                     /* tp_name */                                                        \
-        sizeof(PyDia##className),                                               /* tp_basicsize */                                                   \
-        0,                                                                      /* tp_itemsize */                                                    \
-        (destructor)PyDia##className##_dealloc,                                 /* tp_dealloc */                                                     \
-        0,                                                                      /* tp_print */                                                       \
-        0,                                                                      /* tp_getattr */                                                     \
-        0,                                                                      /* tp_setattr */                                                     \
-        0,                                                                      /* tp_as_async */                                                    \
-        0 /* (reprfunc)PyDiaSymbol_repr --- TODO: This doesn't work to well */, /* tp_repr */                                                        \
-        0,                                                                      /* tp_as_number */                                                   \
-        0,                                                                      /* tp_as_sequence */                                                 \
-        0,                                                                      /* tp_as_mapping */                                                  \
-        (hashfunc)PyDiaSymbol_hash,                                             /* tp_hash  */                                                       \
-        0,                                                                      /* tp_call */                                                        \
-        0,                                                                      /* tp_str */                                                         \
-        0,                                                                      /* tp_getattro */                                                    \
-        0,                                                                      /* tp_setattro */                                                    \
-        0,                                                                      /* tp_as_buffer */                                                   \
-        Py_TPFLAGS_DEFAULT,                                                     /* tp_flags */                                                       \
-        #className " object",                                                   /* tp_doc */                                                         \
-        0,                                                                      /* tp_traverse */                                                    \
-        0,                                                                      /* tp_clear */                                                       \
-        (richcmpfunc)PyDiaSymbol_richcompare,                                   /* tp_richcompare */                                                 \
-        0,                                                                      /* tp_weaklistoffset */                                              \
-        0,                                                                      /* tp_iter */                                                        \
-        0,                                                                      /* tp_iternext */                                                    \
-        classMethods,                                                           /* tp_methods */                                                     \
-        0,                                                                      /* tp_members */                                                     \
-        0,                                                                      /* tp_getset */                                                      \
-        baseType,                                                               /* tp_base */                                                        \
-        0,                                                                      /* tp_dict */                                                        \
-        0,                                                                      /* tp_descr_get */                                                   \
-        0,                                                                      /* tp_descr_set */                                                   \
-        0,                                                                      /* tp_dictoffset */                                                  \
-        (initproc)PyDia##className##_init,                                      /* tp_init */                                                        \
-        0,                                                                      /* tp_alloc */                                                       \
-        PyType_GenericNew,                                                      /* tp_new */                                                         \
+        PyVarObject_HEAD_INIT(NULL, 0) "pydia." #className,                      /* tp_name */                                                       \
+        sizeof(PyDia##className),                                                /* tp_basicsize */                                                  \
+        0,                                                                       /* tp_itemsize */                                                   \
+        (destructor)PyDia##className##_dealloc,                                  /* tp_dealloc */                                                    \
+        0,                                                                       /* tp_print */                                                      \
+        0,                                                                       /* tp_getattr */                                                    \
+        0,                                                                       /* tp_setattr */                                                    \
+        0,                                                                       /* tp_as_async */                                                   \
+        0 /* (reprfunc)PyDiaSymbol_repr --- TODO: This doesn't work too well */, /* tp_repr */                                                       \
+        0,                                                                       /* tp_as_number */                                                  \
+        0,                                                                       /* tp_as_sequence */                                                \
+        0,                                                                       /* tp_as_mapping */                                                 \
+        (hashfunc)PyDiaSymbol_hash,                                              /* tp_hash  */                                                      \
+        0,                                                                       /* tp_call */                                                       \
+        0,                                                                       /* tp_str */                                                        \
+        0,                                                                       /* tp_getattro */                                                   \
+        0,                                                                       /* tp_setattro */                                                   \
+        0,                                                                       /* tp_as_buffer */                                                  \
+        Py_TPFLAGS_DEFAULT,                                                      /* tp_flags */                                                      \
+        #className " object",                                                    /* tp_doc */                                                        \
+        0,                                                                       /* tp_traverse */                                                   \
+        0,                                                                       /* tp_clear */                                                      \
+        (richcmpfunc)PyDiaSymbol_richcompare,                                    /* tp_richcompare */                                                \
+        0,                                                                       /* tp_weaklistoffset */                                             \
+        iterFunc,                                                                /* tp_iter */                                                       \
+        0,                                                                       /* tp_iternext */                                                   \
+        classMethods,                                                            /* tp_methods */                                                    \
+        0,                                                                       /* tp_members */                                                    \
+        0,                                                                       /* tp_getset */                                                     \
+        baseType,                                                                /* tp_base */                                                       \
+        0,                                                                       /* tp_dict */                                                       \
+        0,                                                                       /* tp_descr_get */                                                  \
+        0,                                                                       /* tp_descr_set */                                                  \
+        0,                                                                       /* tp_dictoffset */                                                 \
+        (initproc)PyDia##className##_init,                                       /* tp_init */                                                       \
+        0,                                                                       /* tp_alloc */                                                      \
+        PyType_GenericNew,                                                       /* tp_new */                                                        \
     };
 
 

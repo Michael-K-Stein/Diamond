@@ -423,7 +423,7 @@ std::wstring resolveTypeName(const Symbol& symbol)
     case SymTagUDT:
     case SymTagEnum:
     {
-        if (!isSymbolUnnamed(symbol))
+        if (!isSymbolUnnamed(symbol) || true)
         {
             const auto typeName = symbol.getName();
             return typeName;

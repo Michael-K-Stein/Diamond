@@ -3,7 +3,28 @@
 #include <Python.h>
 // Python.h must be included before anything else
 
+#include <Exceptions.h>
+
+#define PYDIA_SAFE_TRIVIAL_ERROR_HANDLER()                                                                                                           \
+    do                                                                                                                                               \
+    {                                                                                                                                                \
+        PyErr_SetString(PyDiaError, e.what());                                                                                                       \
+        return NULL;                                                                                                                                 \
+    } while (0)
+
+#define PYDIA_SAFE_TRIVIAL_PROPERTY_NOT_AVAILABLE_ERROR_HANDLER()                                                                                    \
+    do                                                                                                                                               \
+    {                                                                                                                                                \
+        PyErr_SetString(PyDiaPropertyNotAvailableError, e.what());                                                                                   \
+        return NULL;                                                                                                                                 \
+    } while (0)
+
 #define PYDIA_SAFE_TRY_EXCEPT(unsafeCode, exceptionHandler)                                                                                          \
+    PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE(unsafeCode, PYDIA_SAFE_TRIVIAL_PROPERTY_NOT_AVAILABLE_ERROR_HANDLER(), exceptionHandler)
+
+#define PYDIA_SAFE_TRY(unsafeCode) PYDIA_SAFE_TRY_EXCEPT(unsafeCode, PYDIA_SAFE_TRIVIAL_ERROR_HANDLER())
+
+#define PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE(unsafeCode, notAvailableHandler, exceptionHandler)                                                       \
     do                                                                                                                                               \
     {                                                                                                                                                \
         try                                                                                                                                          \
@@ -13,43 +34,25 @@
                 unsafeCode;                                                                                                                          \
             } while (0);                                                                                                                             \
         }                                                                                                                                            \
-        catch ([[maybe_unused]] const std::exception& e) /* The exception handler has no obligation of using the exception itself */                 \
+        catch ([[maybe_unused]] const dia::PropertyNotAvailableException& e)                                                                         \
         {                                                                                                                                            \
-            exceptionHandler;                                                                                                                        \
-        }                                                                                                                                            \
-    } while (0)
-
-#define PYDIA_SAFE_TRY(unsafeCode)                                                                                                                   \
-    PYDIA_SAFE_TRY_EXCEPT(unsafeCode, {                                                                                                              \
-        do                                                                                                                                           \
-        {                                                                                                                                            \
-            PyErr_SetString(PyDiaError, e.what());                                                                                                   \
-            return NULL;                                                                                                                             \
-        } while (0);                                                                                                                                 \
-    })
-
-#define PYDIA_SAFE_TRY_EXCEPT_NOT_AVAILABLE(unsafeCode, notAvailableHandler)                                                                         \
-    do                                                                                                                                               \
-    {                                                                                                                                                \
-        const auto __safeTryCode = [&]()                                                                                                             \
-        {                                                                                                                                            \
-            try                                                                                                                                      \
-            {                                                                                                                                        \
-                do                                                                                                                                   \
-                {                                                                                                                                    \
-                    unsafeCode;                                                                                                                      \
-                } while (0);                                                                                                                         \
-            }                                                                                                                                        \
-            catch ([[maybe_unused]] const dia::PropertyNotAvailableException& e)                                                                     \
+            do                                                                                                                                       \
             {                                                                                                                                        \
                 notAvailableHandler;                                                                                                                 \
-            }                                                                                                                                        \
-        };                                                                                                                                           \
-        PYDIA_SAFE_TRY({ return __safeTryCode(); });                                                                                                 \
+            } while (0);                                                                                                                             \
+        }                                                                                                                                            \
+        catch ([[maybe_unused]] const std::exception& e) /* The exception handler has no obligation of using the exception itself */                 \
+        {                                                                                                                                            \
+            do                                                                                                                                       \
+            {                                                                                                                                        \
+                exceptionHandler;                                                                                                                    \
+            } while (0);                                                                                                                             \
+        }                                                                                                                                            \
     } while (0)
 
 
 #define XFOR_TRIVIAL_PYDIA_ERRORS(opperation)                                                                                                        \
+    opperation(PropertyNotAvailable);                                                                                                                \
     opperation(InvalidUsage);                                                                                                                        \
     opperation(NotFound);
 

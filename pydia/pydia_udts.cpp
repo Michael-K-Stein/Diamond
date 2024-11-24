@@ -60,7 +60,8 @@ static PyMethodDef PyDiaUdt_Abstract_methods[] = {
 
 // Define the Python DiaEnum type object
 
-#define __DEFINE_UDT_TYPE(udtName) PYDIA_SYMBOL_TYPE_DEFINITION(udtName, PyDiaUdt_Abstract_methods);
+#define __DEFINE_UDT_TYPE(udtName)                                                                                                                   \
+    PYDIA_SYMBOL_TYPE_DEFINITION_WITH_ITER(udtName, PyDiaUdt_Abstract_methods, (getiterfunc)PyDiaUdt_Abstract_enumerateMembers);
 XFOR_EACH_UDT_KIND(__DEFINE_UDT_TYPE);
 
 static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self)

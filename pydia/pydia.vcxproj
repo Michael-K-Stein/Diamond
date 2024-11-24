@@ -265,6 +265,12 @@
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Building packaged folder structure</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -355,6 +361,12 @@
     <Lib>
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Building packaged folder structure</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CTest|Win32'">
     <ClCompile>
