@@ -594,8 +594,8 @@ private:
 
 static bool isSymbolUnnamed(const Symbol& symbol)
 {
-    const auto& symbolName   = symbol.getName();
-    const auto unnamedPrefix = L"<unnamed-";
+    const auto& symbolName        = symbol.getName();
+    const wchar_t unnamedPrefix[] = L"<unnamed-";
     return 0 == wcsncmp(symbolName.c_str(), unnamedPrefix, (sizeof(unnamedPrefix) / sizeof(unnamedPrefix[0]) - 1));
 }
 

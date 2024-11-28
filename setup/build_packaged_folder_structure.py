@@ -5,19 +5,22 @@ import shutil
 
 def create_init_file(dir_path: str):
     with open(os.path.join(dir_path, "__init__.py"), "w") as f:
-        f.write("\n")
+        f.write("from .pydia import *\n")
 
 
 def main():
-    pyd_file_path = sys.argv[1]
+    pyd_file_path = os.path.abspath(sys.argv[1])
     out_root_dir = sys.argv[2]
-    setup_root_dir = sys.argv[3]
-    project_root_dir = sys.argv[4]
+    setup_root_dir = os.path.abspath(sys.argv[3])
+    project_root_dir = os.path.abspath(sys.argv[4])
 
     assert os.path.splitext(pyd_file_path)[1] == ".pyd", "File extension must be .pyd !"
 
-    package_dir_path = os.path.join(out_root_dir, "package")
-    package_extension_dir_path = os.path.join(package_dir_path, "pydia")
+    package_dir_path = os.path.abspath(os.path.join(out_root_dir, "package"))
+    package_extension_dir_path = os.path.abspath(
+        os.path.join(package_dir_path, "pydia")
+    )
+
     os.makedirs(package_dir_path, exist_ok=True)
     os.makedirs(package_extension_dir_path, exist_ok=True)
 
@@ -26,13 +29,18 @@ def main():
     # Copy the binary to the output tree structure
     shutil.copy(
         pyd_file_path,
-        os.path.join(package_extension_dir_path, os.path.basename(pyd_file_path)),
+        os.path.join(package_extension_dir_path, "pydia.pyd"),
     )
 
     # Copy setup.py from local setup dir to output package
     shutil.copy(
         os.path.join(setup_root_dir, "setup.py"),
         os.path.join(package_dir_path, "setup.py"),
+    )
+
+    shutil.copy(
+        os.path.join(setup_root_dir, "MANIFEST.in"),
+        os.path.join(package_dir_path, "MANIFEST.in"),
     )
 
     shutil.copy(

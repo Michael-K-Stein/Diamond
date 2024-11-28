@@ -266,7 +266,7 @@
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup</Command>
+      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup $(SolutionDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Building packaged folder structure</Message>
@@ -362,7 +362,7 @@
       <AdditionalDependencies>DiaSymbols.lib</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup</Command>
+      <Command>python ..\setup\build_packaged_folder_structure.py $(TargetPath) $(OutDirFullPath) $(SolutionDir)\setup $(SolutionDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Building packaged folder structure</Message>

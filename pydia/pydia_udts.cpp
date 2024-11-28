@@ -87,11 +87,7 @@ static PyObject* PyDiaUdt_Abstract_enumerateMembers(PyDiaUdt_Abstract* self)
     Py_UNREACHABLE();
 }
 
-static PyObject* PyDiaUdt_Abstract_getDependencies(PyDiaUdt_Abstract* self
-#if 0
-    , PyObject* args
-#endif
-)
+static PyObject* PyDiaUdt_Abstract_getDependencies(PyDiaUdt_Abstract* self)
 {
     _ASSERT(NULL != self);
     _ASSERT(NULL != self->diaUserDefinedType);
@@ -227,4 +223,9 @@ PyObject* PyDiaUdt_FromSymbol(dia::Symbol&& symbol, PyDiaDataSource* dataSource)
     reinterpret_cast<PyDiaUdt_Abstract*>(pySymbol)->dataSource = dataSource;
 
     return pySymbol;
+}
+
+PyObject* PyDiaUserDefinedType_FromUserDefinedTypeSymbol(dia::UserDefinedType&& symbol, PyDiaDataSource* dataSource)
+{
+    return PyDiaUdt_FromSymbol(std::move(symbol), dataSource);
 }

@@ -43,26 +43,35 @@ public:
 
     DiaSymbolEnumerator<Symbol> getExports() const;
 
+    template <typename T>
+    DiaSymbolEnumerator<T> getSymbols(enum SymTagEnum symTag) const;
     DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag) const;
     DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const;
     DiaSymbolEnumerator<Symbol> getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName, DWORD nameComparisonFlags) const;
 
-    Enum getEnum(const AnyString& enumName) const;
     DiaSymbolEnumerator<Symbol> getUntypedSymbols() const;
     DiaSymbolEnumerator<Symbol> getCompilands() const;
     DiaSymbolEnumerator<Symbol> getCompilandDetails() const;
     DiaSymbolEnumerator<Symbol> getCompilandEnvs() const;
-    const std::vector<Function> getFunctions() const;
-    const std::vector<UserDefinedType> getUserDefinedTypes() const;
+
+    Enum getEnum(const AnyString& enumName) const;
+    DiaSymbolEnumerator<Enum> getEnums() const;
+
+    Function getFunction(const AnyString& name) const;
+    DiaSymbolEnumerator<Function> getFunctions() const;
+
+    Typedef getTypedef(const AnyString& name) const;
+    DiaSymbolEnumerator<Typedef> getTypedefs() const;
+
+    DiaSymbolEnumerator<UserDefinedType> getUserDefinedTypes() const;
     std::vector<Symbol> getUserDefinedTypes(enum UdtKind kind) const;
-    const std::vector<Struct> getStructs() const;
-    std::vector<Symbol> getClasses() const;
-    std::vector<Symbol> getInterfaces() const;
-    std::vector<Symbol> getUnions() const;
-    std::vector<Symbol> getTaggedUnions() const;
-    const std::vector<Typedef> getTypedefs() const;
 
     UserDefinedType getStruct(const AnyString& structName) const;
+    std::vector<Struct> getStructs() const;
+    std::vector<Class> getClasses() const;
+    std::vector<Interface> getInterfaces() const;
+    std::vector<Union> getUnions() const;
+    std::vector<TaggedUnion> getTaggedUnions() const;
 
     bool sessionOpened() const { return !(!m_session); }
 

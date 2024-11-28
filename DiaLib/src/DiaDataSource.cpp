@@ -87,14 +87,17 @@ Symbol DataSource::getSymbolByHash(size_t symbolHash) const
 
 DiaSymbolEnumerator<Symbol> DataSource::getExports() const { return m_session.getExports(); }
 
-DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const
+template <typename T>
+DiaSymbolEnumerator<T> DataSource::getSymbols(enum SymTagEnum symTag) const
 {
     if (SymTagExport == symTag)
     {
         throw InvalidUsageException("You probably meant to use DataSource::getExports()");
     }
-    return enumerate<Symbol>(getGlobalScope(), symTag);
+    return enumerate<T>(getGlobalScope(), symTag);
 }
+
+DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag) const { return getSymbols<Symbol>(symTag); }
 
 DiaSymbolEnumerator<Symbol> DataSource::getSymbols(enum SymTagEnum symTag, LPCOLESTR symbolName) const
 {
@@ -128,6 +131,8 @@ Enum DataSource::getEnum(const AnyString& enumName) const
     return static_cast<const Enum&>(rawEnumSymbols.at(0));
 }
 
+DiaSymbolEnumerator<Enum> DataSource::getEnums() const { return getSymbols<Enum>(SymTagEnum); }
+
 DiaSymbolEnumerator<Symbol> DataSource::getUntypedSymbols() const { return getSymbols(SymTagNull); }
 
 DiaSymbolEnumerator<Symbol> DataSource::getCompilands() const { return getSymbols(SymTagCompiland); }
@@ -136,36 +141,23 @@ DiaSymbolEnumerator<Symbol> DataSource::getCompilandDetails() const { return get
 
 DiaSymbolEnumerator<Symbol> DataSource::getCompilandEnvs() const { return getSymbols(SymTagCompilandEnv); }
 
-const std::vector<Function> DataSource::getFunctions() const { return convertSymbolVector<Function>(getSymbols(SymTagFunction)); }
-
-const std::vector<UserDefinedType> DataSource::getUserDefinedTypes() const { return convertSymbolVector<UserDefinedType>(getSymbols(SymTagUDT)); }
-
-const std::vector<Struct> DataSource::getStructs() const { return convertSymbolVector<Struct>(getUserDefinedTypes(UdtStruct)); }
-
-std::vector<Symbol> DataSource::getClasses() const { return getUserDefinedTypes(UdtClass); }
-
-std::vector<Symbol> DataSource::getInterfaces() const { return getUserDefinedTypes(UdtInterface); }
-
-std::vector<Symbol> DataSource::getUnions() const { return getUserDefinedTypes(UdtUnion); }
-
-std::vector<Symbol> DataSource::getTaggedUnions() const { return getUserDefinedTypes(UdtTaggedUnion); }
-
-const std::vector<Typedef> DataSource::getTypedefs() const { return convertSymbolVector<Typedef>(getSymbols(SymTagTypedef)); }
-
-std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
+Function DataSource::getFunction(const AnyString& name) const
 {
-    std::vector<Symbol> items{};
-    const auto userDefinedTypes = getUserDefinedTypes();
-    for (const auto& type : userDefinedTypes)
+    const auto rawSymbol = std::vector<Symbol>{getSymbols(SymTagFunction, name.c_str())};
+    if (rawSymbol.size() < 1)
     {
-        if (type.getUdtKind() != kind)
-        {
-            continue;
-        }
-        items.push_back(type);
+        throw SymbolNotFoundException("Function by name not found!");
     }
-    return items;
+    if (rawSymbol.size() > 1)
+    {
+        throw std::runtime_error("Too many functions found matching name!");
+    }
+    return static_cast<const Function&>(rawSymbol.at(0));
 }
+
+DiaSymbolEnumerator<Function> DataSource::getFunctions() const { return getSymbols<Function>(SymTagFunction); }
+
+DiaSymbolEnumerator<UserDefinedType> DataSource::getUserDefinedTypes() const { return getSymbols<UserDefinedType>(SymTagUDT); }
 
 UserDefinedType DataSource::getStruct(const AnyString& structName) const
 {
@@ -188,6 +180,47 @@ UserDefinedType DataSource::getStruct(const AnyString& structName) const
         throw std::runtime_error("Too many structs found matching name!");
     }
     return static_cast<const UserDefinedType&>(items.at(0));
+}
+
+std::vector<Struct> DataSource::getStructs() const { return convertSymbolVector<Struct>(getUserDefinedTypes(UdtStruct)); }
+
+std::vector<Class> DataSource::getClasses() const { return convertSymbolVector<Class>(getUserDefinedTypes(UdtClass)); }
+
+std::vector<Interface> DataSource::getInterfaces() const { return convertSymbolVector<Interface>(getUserDefinedTypes(UdtInterface)); }
+
+std::vector<Union> DataSource::getUnions() const { return convertSymbolVector<Union>(getUserDefinedTypes(UdtUnion)); }
+
+std::vector<TaggedUnion> DataSource::getTaggedUnions() const { return convertSymbolVector<TaggedUnion>(getUserDefinedTypes(UdtTaggedUnion)); }
+
+Typedef DataSource::getTypedef(const AnyString& name) const
+{
+    const auto rawSymbol = std::vector<Symbol>{getSymbols(SymTagTypedef, name.c_str())};
+    if (rawSymbol.size() < 1)
+    {
+        throw SymbolNotFoundException("Typedef by name not found!");
+    }
+    if (rawSymbol.size() > 1)
+    {
+        throw std::runtime_error("Too many typedefs found matching name!");
+    }
+    return static_cast<const Typedef&>(rawSymbol.at(0));
+}
+
+DiaSymbolEnumerator<Typedef> DataSource::getTypedefs() const { return getSymbols<Typedef>(SymTagTypedef); }
+
+std::vector<Symbol> DataSource::getUserDefinedTypes(enum UdtKind kind) const
+{
+    std::vector<Symbol> items{};
+    auto userDefinedTypes = getUserDefinedTypes();
+    for (const auto& type : userDefinedTypes)
+    {
+        if (type.getUdtKind() != kind)
+        {
+            continue;
+        }
+        items.push_back(type);
+    }
+    return items;
 }
 
 const Symbol& DataSource::getGlobalScope() const { return m_session.getGlobalScope(); }

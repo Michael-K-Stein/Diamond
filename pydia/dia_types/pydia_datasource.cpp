@@ -22,9 +22,17 @@
 
 static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getSymbols(PyDiaDataSource* self, PyObject* args);
-static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self);
+
+static PyObject* PyDiaDataSource_getFunction(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getFunctions(PyDiaDataSource* self);
+
 static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getEnums(PyDiaDataSource* self);
+
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args);
+static PyObject* PyDiaDataSource_getUserDefinedTypes(PyDiaDataSource* self);
+
+static PyObject* PyDiaDataSource_getTypedef(PyDiaDataSource* self, PyObject* args);
 static PyObject* PyDiaDataSource_getTypedefs(PyDiaDataSource* self);
 
 static void PyDiaDataSource_dealloc(PyDiaDataSource* self)
@@ -124,10 +132,21 @@ static int PyDiaDataSource_init(PyDiaDataSource* self, PyObject* args, PyObject*
 // Python method table for DiaDataSource
 static PyMethodDef PyDiaDataSource_methods[] = {
     {"load_data_from_pdb", (PyCFunction)PyDiaDataSource_loadDataFromPdb, METH_VARARGS, "Load data from a PDB file."},
-    {"get_functions", (PyCFunction)PyDiaDataSource_getExportedFunctions, METH_NOARGS, "Get exported functions."},
+
     {"get_symbols", (PyCFunction)PyDiaDataSource_getSymbols, METH_VARARGS, "Get all symbols of specified type."},
+
+    {"get_function", (PyCFunction)PyDiaDataSource_getFunction, METH_VARARGS, "Get function by name."},
+    {"get_functions", (PyCFunction)PyDiaDataSource_getFunctions, METH_NOARGS, "Get functions."},
+
     {"get_enum", (PyCFunction)PyDiaDataSource_getEnum, METH_VARARGS, "Get enum by name."},
+    {"get_enums", (PyCFunction)PyDiaDataSource_getEnums, METH_NOARGS, "Get all enums."},
+
     {"get_struct", (PyCFunction)PyDiaDataSource_getStruct, METH_VARARGS, "Get struct by name."},
+
+    {"get_user_defined_types", (PyCFunction)PyDiaDataSource_getUserDefinedTypes, METH_NOARGS,
+     "Get all user defined types (structs, unions, classes, interfaces, ...)."},
+
+    {"get_typedef", (PyCFunction)PyDiaDataSource_getTypedef, METH_VARARGS, "Get typedef by name."},
     {"get_typedefs", (PyCFunction)PyDiaDataSource_getTypedefs, METH_NOARGS, "Get all typedefs."},
     {NULL, NULL, 0, NULL},
 };
@@ -201,36 +220,75 @@ static PyObject* PyDiaDataSource_loadDataFromPdb(PyDiaDataSource* self, PyObject
     return (PyObject*)self;
 }
 
-// Method: getExportedFunctions
-static PyObject* PyDiaDataSource_getExportedFunctions(PyDiaDataSource* self)
+template <typename T>
+static PyObject* getSymbolByName(PyDiaDataSource* self,
+                                 PyObject* args,
+                                 std::function<T(const AnyString&)> getter,
+                                 std::function<PyObject*(T&&, PyDiaDataSource*)> transformer)
 {
-    std::vector<dia::Function> functions{};
+    // The PyObject argument for symbol name
+    PyObject* pySymbolName = NULL;
+
+    // Parse the argument as a Python object (expected string or bytes)
+    if (!PyArg_ParseTuple(args, "O", &pySymbolName))
+    {
+        return NULL;  // If parsing fails, return NULL (error already set)
+    }
+
+    // Try to retrieve the smbol using the provided name
     try
     {
-        functions = self->diaDataSource->getFunctions();
+        auto cSymbol = getter(PyObjectToAnyString(pySymbolName));
+        return transformer(std::move(cSymbol), self);
     }
-    catch (const std::exception& e)
+    catch (const dia::SymbolNotFoundException& e)
+    {
+        PyErr_SetString(PyExc_ValueError, e.what());
+        return NULL;
+    }
+    catch (const std::runtime_error& e)
     {
         PyErr_SetString(PyExc_RuntimeError, e.what());
         return NULL;
     }
-
-    PyObject* resultList = PyList_New(functions.size());
-    if (!resultList) return NULL;
-
-    for (size_t i = 0; i < functions.size(); ++i)
+    catch (const std::bad_alloc&)
     {
-        PyObject* functionStr = PyObject_FromWstring(functions[i].getName());
-        if (!functionStr)
-        {
-            Py_DECREF(resultList);
-            return NULL;
-        }
-        PyList_SET_ITEM(resultList, i, functionStr);
+        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed.");
+        return NULL;
     }
-
-    return resultList;
+    Py_UNREACHABLE();
 }
+
+template <typename EntryT>
+static PyObject* getSymbolsEnumeration(PyDiaDataSource* self, dia::DiaSymbolEnumerator<EntryT>&& rawEnumeration)
+{
+    auto safeExecution = [&]() -> PyObject*
+    {
+        dia::DiaSymbolEnumerator<EntryT> rawEnumerator = rawEnumeration;
+        PyDiaDataGenerator* generator =
+            (PyDiaDataGenerator*)PyDiaSymbolGenerator_create<PyDiaSymbol, EntryT>(self->diaGlobalScope, std::move(rawEnumerator));
+        if (!generator)
+        {
+            PyErr_SetString(PyExc_RuntimeError, "Failed to create generator.");
+            return NULL;  // Failed to allocate generator
+        }
+
+        return (PyObject*)generator;
+    };
+
+    PYDIA_SAFE_TRY({ return safeExecution(); });
+    Py_UNREACHABLE();
+}
+
+static PyObject* PyDiaDataSource_getFunction(PyDiaDataSource* self, PyObject* args)
+{
+    using T                                       = dia::Function;
+    std::function<T(const AnyString&)> getterFunc = std::bind(&dia::DataSource::getFunction, self->diaDataSource, std::placeholders::_1);
+    std::function<PyObject*(T&&, PyDiaDataSource*)> transformer = PyDiaFunction_FromFunctionSymbol;
+    return getSymbolByName(self, args, getterFunc, transformer);
+}
+
+static PyObject* PyDiaDataSource_getFunctions(PyDiaDataSource* self) { return getSymbolsEnumeration(self, self->diaDataSource->getFunctions()); }
 
 static PyObject* PyDiaDataSource_getSymbols(PyDiaDataSource* self, PyObject* args)
 {
@@ -263,107 +321,37 @@ static PyObject* PyDiaDataSource_getSymbols(PyDiaDataSource* self, PyObject* arg
 
 static PyObject* PyDiaDataSource_getEnum(PyDiaDataSource* self, PyObject* args)
 {
-    // The PyObject argument for enum name
-    PyObject* pyEnumName = NULL;
 
-    // Parse the argument as a Python object (expected string or bytes)
-    if (!PyArg_ParseTuple(args, "O", &pyEnumName))
-    {
-        return NULL;  // If parsing fails, return NULL (error already set)
-    }
-
-    // Try to retrieve the enum using the provided name
-    try
-    {
-        auto enumSymbol = self->diaDataSource->getEnum(PyObjectToAnyString(pyEnumName));
-        return PyDiaEnum_FromEnumSymbol(std::move(enumSymbol), self);
-    }
-    catch (const dia::SymbolNotFoundException& e)
-    {
-        PyErr_SetString(PyExc_ValueError, e.what());
-        return NULL;
-    }
-    catch (const std::runtime_error& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
-    catch (const std::bad_alloc&)
-    {
-        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for DiaEnum.");
-        return NULL;
-    }
-    Py_UNREACHABLE();
+    using T                                                     = dia::Enum;
+    std::function<T(const AnyString&)> getterFunc               = std::bind(&dia::DataSource::getEnum, self->diaDataSource, std::placeholders::_1);
+    std::function<PyObject*(T&&, PyDiaDataSource*)> transformer = PyDiaEnum_FromEnumSymbol;
+    return getSymbolByName(self, args, getterFunc, transformer);
 }
+
+static PyObject* PyDiaDataSource_getEnums(PyDiaDataSource* self) { return getSymbolsEnumeration(self, self->diaDataSource->getEnums()); }
 
 static PyObject* PyDiaDataSource_getStruct(PyDiaDataSource* self, PyObject* args)
 {
-    _ASSERT(self);
-    _ASSERT(self->diaDataSource);
-
-    // The PyObject argument for struct name
-    PyObject* pyStructName = NULL;
-
-    // Parse the argument as a Python object (expected string or bytes)
-    if (!PyArg_ParseTuple(args, "O", &pyStructName))
-    {
-        return NULL;  // If parsing fails, return NULL (error already set)
-    }
-
-    // Try to retrieve the struct using the provided name
-    try
-    {
-        auto structSymbol = self->diaDataSource->getStruct(PyObjectToAnyString(pyStructName));
-        return PyDiaUdt_FromSymbol(std::move(static_cast<dia::Symbol&>(structSymbol)), self);
-    }
-    catch (const dia::SymbolNotFoundException& e)
-    {
-        PyErr_SetString(PyExc_ValueError, e.what());
-        return NULL;
-    }
-    catch (const std::runtime_error& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        return NULL;
-    }
-    catch (const std::bad_alloc&)
-    {
-        PyErr_SetString(PyExc_MemoryError, "Memory allocation failed!");
-        return NULL;
-    }
+    using T                                                     = dia::Struct;
+    std::function<T(const AnyString&)> getterFunc               = std::bind(&dia::DataSource::getStruct, self->diaDataSource, std::placeholders::_1);
+    std::function<PyObject*(T&&, PyDiaDataSource*)> transformer = PyDiaUdt_FromSymbol;
+    return getSymbolByName(self, args, getterFunc, transformer);
 }
 
-static PyObject* PyDiaDataSource_getTypedefs(PyDiaDataSource* self)
+static PyObject* PyDiaDataSource_getUserDefinedTypes(PyDiaDataSource* self)
 {
-    const auto unsafeFunc = [&]() -> PyObject*
-    {
-        auto typedefs        = self->diaDataSource->getTypedefs();
-
-        PyObject* resultList = PyList_New(typedefs.size());
-        if (!resultList)
-        {
-            PyErr_SetString(PyExc_MemoryError, "Memory allocation failed for typedefs list.");
-            return NULL;  // Return NULL on failure
-        }
-
-        for (size_t i = 0; i < typedefs.size(); ++i)
-        {
-            PyDiaTypedef* sym = reinterpret_cast<PyDiaTypedef*>(PyDiaTypedef_FromTypedefSymbol(std::move(typedefs[i]), self));
-
-            // Set the item in the list, transferring ownership
-            if (PyList_SetItem(resultList, i, reinterpret_cast<PyObject*>(sym)) < 0)
-            {
-                Py_DECREF(resultList);  // Clean up the result list
-                return NULL;            // Return NULL on failure
-            }
-        }
-
-        return resultList;
-    };
-
-    PYDIA_SAFE_TRY({ return unsafeFunc(); });
-    Py_UNREACHABLE();
+    return getSymbolsEnumeration(self, self->diaDataSource->getUserDefinedTypes());
 }
+
+static PyObject* PyDiaDataSource_getTypedef(PyDiaDataSource* self, PyObject* args)
+{
+    using T                                                     = dia::Typedef;
+    std::function<T(const AnyString&)> getterFunc               = std::bind(&dia::DataSource::getTypedef, self->diaDataSource, std::placeholders::_1);
+    std::function<PyObject*(T&&, PyDiaDataSource*)> transformer = PyDiaTypedef_FromTypedefSymbol;
+    return getSymbolByName(self, args, getterFunc, transformer);
+}
+
+static PyObject* PyDiaDataSource_getTypedefs(PyDiaDataSource* self) { return getSymbolsEnumeration(self, self->diaDataSource->getTypedefs()); }
 
 PyDiaDataSource* PyDiaDataSource_FromInitializerList(PyObject* initializerList)
 {
